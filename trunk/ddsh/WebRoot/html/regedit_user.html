@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>用户注册</title>
+	
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    
+    <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+	<link href="../css/mainstyle.css" rel="stylesheet" type="text/css">
+  </head>
+  
+  <body>
+  	<form name="regedit" action="/ddsh/system/user!regedit.zf" method="POST">
+	<!--标题开始-->
+	<table border="0" width="100%" cellspacing="0" cellpadding="0" height="25">
+	<tr class="tree_title_txt">
+	<td nowrap width="100%" class="tree_title_txt" valign="middle" id="cwCellTopTitTxt">
+	人员管理 &gt; 新建</td>
+	</tr>
+	</table>
+	<!--标题结束-->
+	 
+	 
+	 
+	<!--报表开始-->
+	<div>
+	<table border="0" width="100%" id="table2" cellspacing="0" cellpadding="0">
+		<tr>
+			<td class="maintab_kuang">
+	<table border="0" width="100%" id="table3" cellspacing="0" cellpadding="0" class="tab_table_title">
+		<tr>
+			<td>新增类型：</td>
+			<td><select size="1" name="type" class="text">
+				<option checked value="2">设计师</option>
+				<option value="3">售货员</option>
+				<option value="1">管理员</option>
+				<option value="4">测数员</option>
+			</select></td>
+			<td>　</td>
+			<td>　</td>
+		</tr>
+		<tr>
+			<td>登录用户ID：</td>
+			<td><input type="text" name="userid" size="20" class="text">仅英文和数字</td>
+			<td>　</td>
+			<td>　</td>
+		</tr>
+		<tr>
+			<td>密码：</td>
+			<td><input type="text" name="password" size="20" class="text"></td>
+			<td>确认密码：</td>
+			<td><input type="text" name="password_" size="20" class="text"></td>
+		</tr>
+		<tr>
+			<td colspan="4"><hr size="1"></td>
+		</tr>
+		<tr>
+			<td colspan="4"><b>基本信息：</b></td>
+		</tr>
+		<tr>
+			<td>姓名：</td>
+			<td><input type="text" name="name" size="20" class="text"></td>
+			<td>　</td>
+			<td>　</td>
+		</tr>
+		<tr>
+			<td>性别：</td>
+			<td><input type="radio" value="1" checked name="sex">男 
+			<input type="radio" value="0" name="sex">女</td>
+			<td>手机：</td>
+			<td><input type="text" name="mobile" size="20" class="text"></td>
+		</tr>
+		<tr>
+			<td>固定电话：</td>
+			<td><input type="text" name="telephone" size="20" class="text"></td>
+			<td>传真：</td>
+			<td><input type="text" name="fax" size="20" class="text"></td>
+		</tr>
+		<tr>
+			<td>备注：</td>
+			<td><textarea rows="6" name="memo" cols="100" class="text"></textarea></td>
+			<td>　</td>
+			<td>　</td>
+		</tr>
+		<tr>
+			<td colspan="4"><hr size="1"></td>
+		</tr>
+	 
+		<tr>
+			<td colspan="4"><b>售货员附加信息：</b></td>
+		</tr>
+		<tr>
+			<td>店面名称：</td>
+			<td><input type="text" name="T4" size="20" class="text"></td>
+			<td>　</td>
+			<td>　</td>
+		</tr>
+		<tr>
+			<td colspan="4"><hr size="1"></td>
+		</tr>
+		<tr>
+			<td colspan="4"><b>设计师附加信息：</b></td>
+		</tr>
+		<tr>
+			<td>品牌：</td>
+			<td><input type="text" name="T8" size="20" class="text"></td>
+			<td>身份证：</td>
+			<td><input type="text" name="idcard" size="20" class="text"></td>
+		</tr>
+		<tr>
+			<td>所在地：</td>
+			<td><input type="text" name="address" size="20" class="text"></td>
+			<td>邮件</td>
+			<td><input type="text" name="mail" size="20" class="text"></td>
+		</tr>
+		</table>
+	 
+	 
+			</td>
+		</tr>
+	</table>
+	 
+	<table border="0" width="100%" cellspacing="0" cellpadding="0" style="margin-top:2px;" class="maintab2">
+	<tr class="maintab">
+	<td style="padding:0px 10px 0px 10px" align="center" >
+		
+	<table border="0" cellspacing="0" cellpadding="0">
+	<tr>
+	<td nowrap><input type="submit" value="保 存" name="B5" class="com_button2">
+	&nbsp;&nbsp;<input type="reset" value="重 置" name="B3" class="com_button2">
+	 
+	</td>
+	</tr>
+	</table>
+	 
+	</div>
+	</form>
+  </body>
+</html>

@@ -1,0 +1,22 @@
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,dd,dl,dt,li,ol,ul,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;font-size:100%;font-weight:normal;font-style:normal;font-family:inherit;font:normal 12px tahoma,arial,helvetica,sans-serif;}
+
+body {background-image:url(../images/bg_01.gif)}
+a,a:active,a:visited {text-decoration:none}
+a:hover {text-decoration:underline}
+ul,ol {list-style-type:none}
+.left  {float:left}
+.right {float:right}
+.center {text-align:center}
+p {margin: 5px 0}
+pre {border:1px dotted #777;background:#ffe;margin:1em;padding:5px}
+h1, h2, h3 {font-weight:normal;color:#111;}
+h1 {font-size:3em;line-height:1;margin-top:0.5em}
+h2 {font-size:2em;margin-top:0.75em}
+h3 {font-size:1.5em;line-height:1;margin-bottom:1em}
+ul.bullet {list-style-type:square; padding-left:20px; margin:5px 0}
+
+img {
+margin-bottom:-3px;
+}
+li{position:relative;}
+li span{position:absolute ;right:0px;top:3px}
