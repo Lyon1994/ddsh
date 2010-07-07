@@ -69,10 +69,10 @@ public class TopperAction extends CrudAction{
 
 		String submitdate=dateFormat.format(new   Date()); 
 
-		String operator=String.valueOf((Integer) getSession().getAttribute("id"));
+		String operator=String.valueOf((Integer) getSession().getAttribute("userid"));
 
 		String sql="insert into dd_topper (name,image,amount,price,totalprice,spec,material,location,memo,status,submitdate,userid) " +
-				"values ('"+name+"','"+image+"',"+amount+","+price+","+totalprice+",'"+spec+"','"+material+"','"+location+"','"+memo+"','0','"+submitdate+"',"+operator+")";
+				"values ('"+name+"','"+image+"',"+amount+","+price+","+totalprice+",'"+spec+"','"+material+"','"+location+"','"+memo+"','0','"+submitdate+"','"+operator+"')";
 		System.out.println(sql);
 		int v=CommonDAO.executeUpdate(sql);
 		if(v>0)
@@ -144,7 +144,7 @@ public class TopperAction extends CrudAction{
 		for(int i=0;i<l.size();i++)
 		{
 			DdTopper d=(DdTopper)l.get(i);
-			content += "\"<tr><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getName()+"</td><td>"+d.getUserid()+"</td><td>"+d.getImage()+"</td><td>"+d.getAmount()+"</td><td>"+d.getPrice()+"</td><td>"+d.getTotalprice()+"</td><td>"+d.getSpec()+"</td><td>"+d.getGrade()+"</td><td>"+d.getMaterial()+"</td><td>"+d.getLocation()+"</td><td>"+d.getSubmitdate()+"</td><td>"+d.getMemo()+"</td></tr>\",";
+			content += "\"<tr><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getName()+"</td><td>"+d.getUserid()+"</td><td>"+d.getImage()+"</td><td class='editbox'>"+d.getAmount()+"</td><td class='editbox'>"+d.getPrice()+"</td><td class='editbox'>"+d.getTotalprice()+"</td><td>"+d.getSpec()+"</td><td>"+d.getGrade()+"</td><td>"+d.getMaterial()+"</td><td>"+d.getLocation()+"</td><td>"+d.getSubmitdate()+"</td><td>"+d.getMemo()+"</td></tr>\",";
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";

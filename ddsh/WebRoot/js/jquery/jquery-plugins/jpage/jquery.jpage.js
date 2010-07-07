@@ -30,7 +30,7 @@
 				if(totalRecord == 0){
 					$(t).css("text-align","center");
 					$(t).css("line-height","50px");
-					$(t).html("很遗憾，没有检索到任何记录！");
+					$(t).html("很遗憾，没有共任何记录！");
 					return;
 				}
 			}	
@@ -43,7 +43,8 @@
 			var themeName = config.themeName == null || config.themeName == '' ? 'default' : config.themeName;			//主题名称
 			var dataBefore = config.dataBefore == null ? '' : config.dataBefore;
 			var dataAfter = config.dataAfter == null ? '' : config.dataAfter;
-			//var afterEvent=config.afterEvent;
+			var actionAfter=config.actionAfter;
+			var actionBefore=config.actionBefore;
 			//私有变量
 			var totalPage = Math.ceil(totalRecord/perPage);																//总页数
 			var currentPage = !openCookies || $.cookie(t+"_currentPage") == null ? 1 : parseInt($.cookie(t+"_currentPage"));//当前页码
@@ -59,20 +60,8 @@
 		
 			//添加工具条
 			var toolbar = '<table width="100%" border="0" cellpadding="0" cellspacing="0" class="'+themeName+'_pgToolbar"><tr><td>';
-			toolbar += '<table border="0" cellspadding="0" cellspacing="0" class="'+themeName+'_pgPanel"><tr>';
-			if(showMode == 'full' && allowChangePerPage){
-				toolbar += '<td valign="middle"><select class="'+themeName+'_pgPerPage" title="每页显示条数">';
-				if(config.perPage>0)
-					toolbar += '<option value="'+config.perPage+'">'+config.perPage+'</option>';
-				toolbar += '<option value="5">5</option>';
-				toolbar += '<option value="10">10</option>';
-				toolbar += '<option value="15">15</option>';
-				toolbar += '<option value="20">20</option>';
-				toolbar += '<option value="25">25</option>';
-				toolbar += '<option value="40">40</option>';
-				toolbar += '</select>&nbsp;</td>';
-				toolbar += '<td valign="middle"><div class="'+themeName+'_separator"></div></td>';
-			}
+			toolbar += '<table border="0" cellspadding="0" cellspacing="0" class="'+themeName+'_pgPanel2"><tr>';
+			
 			toolbar += '<td valign="middle"><div class="'+themeName+'_pgBtn '+themeName+'_pgFirst" title="首页"></div></td>';
 			toolbar += '<td valign="middle"><div class="'+themeName+'_pgBtn '+themeName+'_pgPrev" title="上页"></div></td>';
 			if(showMode == 'full'){
@@ -92,7 +81,20 @@
 			}
 			if(showMode == 'full'){
 				toolbar += '<td valign="middle" width="10" align="left"><div class="'+themeName+'_separator"></div></td>';
-				toolbar += '<td valign="middle" class="'+themeName+'_pgSearchInfo">检索到&nbsp;' + totalRecord + '&nbsp;条记录，显示第&nbsp;<span class="'+themeName+'_pgStartRecord">' + startRecord + '</span>&nbsp;条&nbsp;-&nbsp;第&nbsp;<span class="'+themeName+'_pgEndRecord">' + endRecord + '</span>&nbsp;条记录</td>';
+				toolbar += '<td valign="middle" class="'+themeName+'_pgSearchInfo">共&nbsp;' + totalRecord + '&nbsp;条记录，显示第&nbsp;<span class="'+themeName+'_pgStartRecord">' + startRecord + '</span>&nbsp;-&nbsp;<span class="'+themeName+'_pgEndRecord">' + endRecord + '</span>&nbsp;条记录</td>';
+			}
+			if(showMode == 'full' && allowChangePerPage){
+				toolbar += '<td valign="middle">&nbsp;<select class="'+themeName+'_pgPerPage" title="每页显示条数">';
+				if(config.perPage>0)
+					toolbar += '<option value="'+config.perPage+'">'+config.perPage+'</option>';
+				toolbar += '<option value="5">5</option>';
+				toolbar += '<option value="10">10</option>';
+				toolbar += '<option value="15">15</option>';
+				toolbar += '<option value="20">20</option>';
+				toolbar += '<option value="25">25</option>';
+				toolbar += '<option value="40">40</option>';
+				toolbar += '</select>&nbsp;</td>';
+				toolbar += '<td valign="middle"><div class="'+themeName+'_separator"></div></td>';
 			}
 			toolbar += '</td></tr></table>';
 			toolbar += '</td></tr></table>';
@@ -275,7 +277,7 @@
 			   */
 			function overLoad(){
 				$(t+" ."+themeName+"_pgRefresh").removeClass(themeName+"_pgLoad");
-				$(t+" ."+themeName+"_pgSearchInfo").html('检索到&nbsp;' + totalRecord + '&nbsp;条记录，显示第&nbsp;<span class="'+themeName+'_pgStartRecord">' + (startRecord+gpStartRecord-1) + '</span>&nbsp;条&nbsp;-&nbsp;第&nbsp;<span class="'+themeName+'_pgEndRecord">' + (endRecord+gpStartRecord-1) + '</span>&nbsp;条记录');
+				$(t+" ."+themeName+"_pgSearchInfo").html('共&nbsp;' + totalRecord + '&nbsp;条记录，显示第&nbsp;<span class="'+themeName+'_pgStartRecord">' + (startRecord+gpStartRecord-1) + '</span>&nbsp;-&nbsp;<span class="'+themeName+'_pgEndRecord">' + (endRecord+gpStartRecord-1) + '</span>&nbsp;条记录');
 				$(mask).remove();
 				valStartRecord = $(t+" ."+themeName+"_pgStartRecord");
 				valEndRecord =$(t+" ."+themeName+"_pgEndRecord");
@@ -302,6 +304,8 @@
 							loadData();
 							refresh();
 							overLoad();
+							if(actionAfter!=undefined)
+								actionAfter();
 						},
 						error: function(){
 							alert("请求失败或超时，请稍后再试！");
@@ -346,7 +350,7 @@
 				if(dataStore==null||dataStore.length==0){
 					valContainer.css("text-align","center");
 					valContainer.css("line-height","50px");
-					valContainer.html("很遗憾，没有检索到任何记录！");
+					valContainer.html("很遗憾，没有共任何记录！");
 					return;
 				}
 				

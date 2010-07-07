@@ -70,9 +70,9 @@ public class UserAction extends CrudAction{
 
 		String submitdate=dateFormat.format(new   Date()); 
 
-		String operator=String.valueOf((Integer) getSession().getAttribute("id"));
+		String operator=String.valueOf((Integer) getSession().getAttribute("userid"));
 
-		String sql="insert into dd_user (userid,password,name,idcard,sex,address,mobile,telephone,fax,mail,type,status,submitdate,operator) values ('"+userid+"','"+password+"','"+name+"','"+idcard+"','"+sex+"','"+address+"','"+mobile+"','"+telephone+"','"+fax+"','"+mail+"','"+type+"','1','"+submitdate+"',"+operator+")";
+		String sql="insert into dd_user (userid,password,name,idcard,sex,address,mobile,telephone,fax,mail,type,status,submitdate,operator) values ('"+userid+"','"+password+"','"+name+"','"+idcard+"','"+sex+"','"+address+"','"+mobile+"','"+telephone+"','"+fax+"','"+mail+"','"+type+"','1','"+submitdate+"','"+operator+"')";
 
 		int v=CommonDAO.executeUpdate(sql);
 		if(v>0)

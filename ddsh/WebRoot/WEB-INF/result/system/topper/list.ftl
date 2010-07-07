@@ -20,6 +20,58 @@
 		<script language="javascript">
 			<!--
 			var b=false;
+			var editHTML;
+			var editText;
+			function setEditHTML(value){
+				editHTML = '<input type="text" value="'+value+'" />';
+				editHTML += '<input type="button" onclick="ok(this)" value="修改" />';
+				editHTML += '<input type="button" onclick="cancel(this)" value="取消" />';
+			}
+			//取消
+			function cancel(cbtn){
+				var $obj = $(cbtn).parent(); //'取消'按钮的上一级，即单元格td
+				$obj.html($obj.data("oldtxt")); //将单元格内容设为原始数据，取消修改
+				$obj.bind("dblclick",function(){ //重新绑定单元格双击事件
+					editText = $(this).html();
+					setEditHTML(editText);
+					$(this).data("oldtxt",editText).html(editHTML).unbind("dblclick");
+				});
+			}
+			
+			//修改
+			function ok(obtn){
+				var $obj = $(obtn).parent(); //'修改'按钮的上一级，即单元格td
+				var id = $obj.parent().attr("id").replace("tr_",""); //取得该行数据的ID，此例ID绑定在tr中
+				var value = $obj.find("input:text")[0].value; //取得文本框的值，即新数据
+			
+				//AJAX 修改数据略
+				//成功
+				if(true){
+					alert("success");
+					$obj.data("oldtxt",value); //设置此单元格缓存为新数据
+					cancel(obtn); //调用'取消'方法，
+					//在此应传'取消'按钮过去，
+					//但在'取消'事件中没有用'取消'按钮这个对象,
+					//用的只是它的上一级，即td，
+					//固在此直接用'修改'按钮替代
+				}else{
+					alert("error");
+					cancel(obtn);
+				}
+			}
+			function editbox()
+			{
+				//绑定事件
+				$(".editbox").each(function(){ //取得所有class为editbox的对像
+					$(this).bind("dblclick",function(){ //给其绑定双击事件
+						editText = $(this).html(); //取得表格单元格的文本
+						setEditHTML(editText); //初始化控件
+						$(this).data("oldtxt",editText) //将单元格原文本保存在其缓存中，便修改失败或取消时用
+						.html(editHTML) //改变单元格内容为编辑状态
+						.unbind("dblclick"); //删除单元格双击事件，避免多次双击
+					});
+				});
+			}
 			function ck()
 			{
 				if(b)
@@ -94,7 +146,7 @@
 					 	success: function(json){
 							//蓝色主题
 							$('#list').jpage({dataBefore:b,dataAfter:a,dataStore: null,themeName:'blue',totalRecord:json[0],proxyUrl:'topper!result.zf?t='+new Date().getTime()+'&type=0',openCookies:false,
-							showMode:'full',ajaxParam:param}); 
+							showMode:'full',ajaxParam:param,actionAfter:editbox}); 
 					 	}
 					}); 
 			}
@@ -123,7 +175,7 @@
 	<table border="0" width="100%" cellspacing="0" cellpadding=" height="25">
 	<tr class="tree_title_txt">
 	<td nowrap width="100%" class="tree_title_txt" valign="middle" id="cwCellTopTitTxt">
-	人员管理</td>
+	上货审批列表</td>
 	</tr>
 	</table>
 	<!--标题结束-->
