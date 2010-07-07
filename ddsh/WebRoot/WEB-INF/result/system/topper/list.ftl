@@ -10,7 +10,7 @@
         <meta http-equiv="Expires" content="0"/>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-    	<title>待审用户列表</title>
+    	<title>上货审批列表</title>
 		<link href="${css}/mainstyle.css" rel="stylesheet" type="text/css">
 		<script language="javascript" src="${jquery}/jquery-1.4.2.min.js"></script>
 		<script language="javascript" src="${jquery_lib}/jquery.cookie.min.js"></script>
@@ -43,9 +43,9 @@
 					alert("请至少选择一条记录");
 					return false;
 				}
-				if(window.confirm("确定要删除这些用户吗？")){
+				if(window.confirm("确定要删除这些记录吗？")){
 					$.ajax({
-					 	url: 'user!del.zf?ids='+str+'&t='+new Date().getTime(),
+					 	url: 'topper!del.zf?ids='+str+'&t='+new Date().getTime(),
 					 	type: 'POST',
 					 	dataType: 'json',
 					 	error: function(){alert('error');},
@@ -56,8 +56,7 @@
 					}); 
 				}
 			}
-			
-			function enable()
+			function apply()
 			{
 				var str="";
 				var sel = document.getElementsByName("row");
@@ -70,9 +69,9 @@
 					alert("请至少选择一条记录");
 					return false;
 				}
-				if(window.confirm("确定要启用这些用户吗？")){
+				if(window.confirm("确定要接收这些产品吗？")){
 					$.ajax({
-					 	url: 'user!enable.zf?ids='+str+'&t='+new Date().getTime(),
+					 	url: 'topper!apply.zf?ids='+str+'&t='+new Date().getTime(),
 					 	type: 'POST',
 					 	dataType: 'json',
 					 	error: function(){alert('error');},
@@ -85,16 +84,16 @@
 			}
 			function load(param)
 			{
-				var b="<table cellspacing=1 id='data'><thead><tr><th><input type='checkbox' name='select' onclick='ck()'/></th><th>用户编号</th><th>名称</th><th>类型</th><th>状态</th><th>手机号码</th><th>电话</th><th>传真</th><th>邮件</th><th>联系地址</th><th>提交日期</th></tr></thead><tbody>";
+				var b="<table cellspacing=1 id='data'><thead><tr><th><input type='checkbox' name='select' onclick='ck()'/></th><th>物品名称</th><th>设计师</th><th>图片</th><th>数量</th><th>单价</th><th>总价</th><th>型号</th><th>规格</th><th>材料</th><th>产地</th><th>提交日期</th><th>备注</th></tr></thead><tbody>";
 				var a="</tbody></table>";
 				$.ajax({
-					 	url: 'user!count.zf?type=0&t='+new Date().getTime(),
+					 	url: 'topper!count.zf?type=0&t='+new Date().getTime(),
 					 	type: 'POST',
 					 	dataType: 'json',
 					 	error: function(){alert('error');},
 					 	success: function(json){
 							//蓝色主题
-							$('#list').jpage({dataBefore:b,dataAfter:a,dataStore: null,themeName:'blue',totalRecord:json[0],proxyUrl:'user!result.zf?t='+new Date().getTime()+'&type=0',openCookies:false,
+							$('#list').jpage({dataBefore:b,dataAfter:a,dataStore: null,themeName:'blue',totalRecord:json[0],proxyUrl:'topper!result.zf?t='+new Date().getTime()+'&type=0',openCookies:false,
 							showMode:'full',ajaxParam:param}); 
 					 	}
 					}); 
@@ -132,8 +131,8 @@
 		<table border="0" width="100%" cellspacing="0" cellpadding=" height="30">
 			<tr>
 				<td>
-					<img src="${images}/apply.png" onclick="enable()"/>
 					<img src="${images}/delete.png" onclick="deletes()" />
+					<img src="${images}/apply.png" onclick="apply()"/>
 					<img src="${images}/export.png"/>
 					<img src="${images}/printer.png"/>
 				</td>

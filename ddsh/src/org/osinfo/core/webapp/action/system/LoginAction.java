@@ -20,7 +20,6 @@ import org.apache.struts2.convention.annotation.Results;
 import org.osinfo.core.webapp.action.BaseAction;
 import org.osinfo.core.webapp.dao.CommonDAO;
 import org.osinfo.core.webapp.model.DdUser;
-import org.osinfo.core.webapp.util.DBUtil;
 @Results({
 	 @Result(name="login",location = "/WEB-INF/result/system/login.ftl"),
 	 @Result(name="workbench",location = "/WEB-INF/result/system/workbench.ftl"),

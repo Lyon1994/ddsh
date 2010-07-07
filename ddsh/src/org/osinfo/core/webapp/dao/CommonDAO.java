@@ -89,7 +89,7 @@ public class CommonDAO {
 		}
 		return count;
 	}
-	public static PageUtil findPageByMultiTableSQLQuery(String sql, long start, long end,long pageSize)
+	public static PageUtil findPageByMultiTableSQLQuery(String sql, long start, long end,long pageSize,Class c)
 	{
 		ResultSet rs = null;
 		Statement stmt = null;
@@ -100,7 +100,7 @@ public class CommonDAO {
 		try {
 			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
 			rs=stmt.executeQuery(sql+" limit "+(start-1)+","+pageSize);
-			list = DBUtil.populate(rs, DdUser.class);
+			list = DBUtil.populate(rs, c);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

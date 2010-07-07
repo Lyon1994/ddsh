@@ -19,21 +19,21 @@ import org.apache.struts2.convention.annotation.Results;
 import org.osinfo.core.webapp.action.CrudAction;
 import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
-import org.osinfo.core.webapp.model.DdUser;
+import org.osinfo.core.webapp.model.DdTopper;
 import org.osinfo.core.webapp.util.PageUtil;
 @Results({
-	 @Result(name="list",location = "/WEB-INF/result/system/user/list.ftl"),
-	 @Result(name="list2",location = "/WEB-INF/result/system/user/list2.ftl"),
-	 @Result(name="add",location = "/WEB-INF/result/system/user/add.ftl"),
-	 @Result(name="edit",location = "/WEB-INF/result/system/user/edit.ftl"),
+	 @Result(name="list",location = "/WEB-INF/result/system/topper/list.ftl"),
+	 @Result(name="list2",location = "/WEB-INF/result/system/topper/list2.ftl"),
+	 @Result(name="add",location = "/WEB-INF/result/system/topper/add.ftl"),
+	 @Result(name="edit",location = "/WEB-INF/result/system/topper/edit.ftl"),
 })
 /**
  * @Author Lucifer.Zhou 4:29:47 PM Jan 6, 2010
  * @Description
- * 用户管理
+ * 上货审批
  */
-public class UserAction extends CrudAction{
-	private static Logger logger = Logger.getLogger ( UserAction.class.getName () ) ;
+public class TopperAction extends CrudAction{
+	private static Logger logger = Logger.getLogger ( TopperAction.class.getName () ) ;
 	/**
 	 * @Author Lucifer.Zhou 4:30:01 PM Jan 6, 2010
 	 * long LoginAction.java
@@ -41,6 +41,7 @@ public class UserAction extends CrudAction{
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
+	
 	public String list() {
 		return "list";
 	}
@@ -50,43 +51,42 @@ public class UserAction extends CrudAction{
 	@Override
 	public String add() {
 		// TODO Auto-generated method stub
-		String userid=getParameter("userid");
-		String password=getParameter("password");
-		String type=getParameter("type");
-		
 		String name=getParameter("name");
-		String sex=getParameter("sex");
-		String idcard=getParameter("idcard");		
+		String image=getParameter("image");
+		String amount=getParameter("amount");
 		
-		String mobile=getParameter("mobile");
-		String telephone=getParameter("telephone");
-		String fax=getParameter("fax");		
+		String price=getParameter("price");
+		String totalprice=getParameter("totalprice");
+		String spec=getParameter("spec");		
 		
-		String address=getParameter("address");
-		String mail=getParameter("mail");
-
+		String material=getParameter("material");
+		String grade=getParameter("grade");
+		String location=getParameter("location");		
+		
 		String memo=getParameter("memo");
+
 		SimpleDateFormat   dateFormat   =   new   SimpleDateFormat("yyyy-MM-dd hh:mm:ss");//可以方便地修改日期格式   
 
 		String submitdate=dateFormat.format(new   Date()); 
 
 		String operator=String.valueOf((Integer) getSession().getAttribute("id"));
 
-		String sql="insert into dd_user (userid,password,name,idcard,sex,address,mobile,telephone,fax,mail,type,status,submitdate,operator) values ('"+userid+"','"+password+"','"+name+"','"+idcard+"','"+sex+"','"+address+"','"+mobile+"','"+telephone+"','"+fax+"','"+mail+"','"+type+"','1','"+submitdate+"',"+operator+")";
-
+		String sql="insert into dd_topper (name,image,amount,price,totalprice,spec,material,location,memo,status,submitdate,userid) " +
+				"values ('"+name+"','"+image+"',"+amount+","+price+","+totalprice+",'"+spec+"','"+material+"','"+location+"','"+memo+"','0','"+submitdate+"',"+operator+")";
+		System.out.println(sql);
 		int v=CommonDAO.executeUpdate(sql);
 		if(v>0)
 			return "success";
 		else
 			return "error";
 	}
-	public String enable() {
+	public String apply() {
 		// TODO Auto-generated method stub
 		if(logger.isDebugEnabled())
-			logger.debug("加载启用页面...");
+			logger.debug("加载接收页面...");
 	    String ids=getParameter("ids");
 	    if(!"".equals(ids.trim())){
-	    		String sql="update dd_user set status='1' where id in ("+ids.substring(0,ids.length()-1)+")";
+	    	String sql="update dd_topper set status='1' where id in ("+ids.substring(0,ids.length()-1)+")";
 	    		CommonDAO.executeUpdate(sql);
 	    }
 	    renderSimpleResult(true,"ok");
@@ -99,7 +99,7 @@ public class UserAction extends CrudAction{
 			logger.debug("加载删除页面...");
 	    String ids=getParameter("ids");
 	    if(!"".equals(ids.trim())){
-	    		String sql="delete from dd_user where id in ("+ids.substring(0,ids.length()-1)+")";
+	    		String sql="delete from dd_topper where id in ("+ids.substring(0,ids.length()-1)+")";
 	    		CommonDAO.executeUpdate(sql);
 	    }
 	    renderSimpleResult(true,"ok");
@@ -132,10 +132,10 @@ public class UserAction extends CrudAction{
 		// TODO Auto-generated method stub
 		String sql;
 		if(type.equals("1"))
-			sql="select * from dd_user where status='1'";
+			sql="select * from dd_topper where status='1'";
 		else
-			sql="select * from dd_user where status='0'";
-		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,DdUser.class);
+			sql="select * from dd_topper where status='0'";
+		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,DdTopper.class);
 		
 		String content = "totalPage = " + p.getTotalPageCount() + ";";
 		content += "dataStore = [";
@@ -143,19 +143,8 @@ public class UserAction extends CrudAction{
 		List l=(List)p.getResult();
 		for(int i=0;i<l.size();i++)
 		{
-			DdUser d=(DdUser)l.get(i);
-			String type="<font color='green'>管理员</a>";
-			if(d.getType().equals("2"))
-			{
-				type="<font color='green'>设计师</a>";
-			}else if(d.getType().equals("3"))
-			{
-				type="<font color='yellow'>店员</a>";
-			}else if(d.getType().equals("4"))
-			{
-				type="<font color='blue'>测试人员</a>";
-			}
-			content += "\"<tr><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getUserid()+"</td><td>"+d.getName()+"</td><td>"+type+"</td><td>"+d.getMobile()+"</td><td>"+d.getTelephone()+"</td><td>"+d.getFax()+"</td><td>"+d.getMail()+"</td><td>"+d.getAddress()+"</td></tr>\",";
+			DdTopper d=(DdTopper)l.get(i);
+			content += "\"<tr><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getName()+"</td><td>"+d.getUserid()+"</td><td>"+d.getImage()+"</td><td>"+d.getAmount()+"</td><td>"+d.getPrice()+"</td><td>"+d.getTotalprice()+"</td><td>"+d.getSpec()+"</td><td>"+d.getGrade()+"</td><td>"+d.getMaterial()+"</td><td>"+d.getLocation()+"</td><td>"+d.getSubmitdate()+"</td><td>"+d.getMemo()+"</td></tr>\",";
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";
@@ -168,9 +157,9 @@ public class UserAction extends CrudAction{
 		type=(String)getParameter("type");//操作类型
 		String sql;
 		if(type.equals("1"))
-			sql="select * from dd_user where status='1'";
+			sql="select * from dd_topper where status='1'";
 		else
-			sql="select * from dd_user where status='0'";
+			sql="select * from dd_topper where status='0'";
 		int count=CommonDAO.count(sql);
 		return count;
 	}

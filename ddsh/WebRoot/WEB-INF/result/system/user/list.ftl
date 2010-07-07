@@ -43,7 +43,7 @@
 					alert("请至少选择一条记录");
 					return false;
 				}
-				if(window.confirm("确定要删除这些记录吗？")){
+				if(window.confirm("确定要删除这些用户吗？")){
 					$.ajax({
 					 	url: 'user!del.zf?ids='+str+'&t='+new Date().getTime(),
 					 	type: 'POST',
@@ -56,44 +56,19 @@
 					}); 
 				}
 			}
-			function disable()
-			{
-				var str="";
-				var sel = document.getElementsByName("row");
-			    for(var i=0;i<sel.length;i++)
-			    {
-			   		if(sel[i].checked==true)
-			   			str+=sel[i].value+",";
-			    }
-				if(str==""){
-					alert("请至少选择一条记录");
-					return false;
-				}
-				if(window.confirm("确定要禁用这些记录吗？")){
-					$.ajax({
-					 	url: 'user!disable.zf?ids='+str+'&t='+new Date().getTime(),
-					 	type: 'POST',
-					 	dataType: 'json',
-					 	error: function(){alert('error');},
-					 	success: function(json){
-							alert(json.info); 
-							load('');
-					 	}
-					}); 
-				}
-			}
+			
 			function load(param)
 			{
-				var b="<table cellspacing=1 id='data'><thead><tr><th><input type='checkbox' name='select' onclick='ck()'/></th><th>用户编号</th><th>名称</th><th>类型</th><th>状态</th><th>手机号码</th><th>电话</th><th>传真</th><th>邮件</th><th>联系地址</th></tr></thead><tbody>";
+				var b="<table cellspacing=1 id='data'><thead><tr><th><input type='checkbox' name='select' onclick='ck()'/></th><th>用户编号</th><th>名称</th><th>类型</th><th>手机号码</th><th>电话</th><th>传真</th><th>邮件</th><th>联系地址</th></tr></thead><tbody>";
 				var a="</tbody></table>";
 				$.ajax({
-					 	url: 'user!count.zf?t='+new Date().getTime(),
+					 	url: 'user!count.zf?type=1&t='+new Date().getTime(),
 					 	type: 'POST',
 					 	dataType: 'json',
 					 	error: function(){alert('error');},
 					 	success: function(json){
 							//蓝色主题
-							$('#list').jpage({dataBefore:b,dataAfter:a,dataStore: null,themeName:'blue',totalRecord:json[0],proxyUrl:'user!result.zf',openCookies:false,
+							$('#list').jpage({dataBefore:b,dataAfter:a,dataStore: null,themeName:'blue',totalRecord:json[0],proxyUrl:'user!result.zf?t='+new Date().getTime()+'&type=1',openCookies:false,
 							showMode:'full',ajaxParam:param}); 
 					 	}
 					}); 
@@ -134,7 +109,6 @@
 					<a href="${base}/html/regedit_user.html"><img src="${images}/add.png"/></a>
 					<img src="${images}/delete.png" onclick="deletes()" />
 					<img src="${images}/edit.png"/>
-					<img src="${images}/cancel.png" onclick="disable()"/>
 					<img src="${images}/export.png"/>
 					<img src="${images}/printer.png"/>
 				</td>
