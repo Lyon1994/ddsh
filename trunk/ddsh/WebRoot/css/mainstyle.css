@@ -205,9 +205,8 @@ table.maintab_content_table tr {
 
 table.maintab_content_table td {
 padding:3px;
-text-indent:3px;
 border: 1px solid #EDEDED; 
-height:25px;
+height:20px;
 z-index:-1;
 }
 
@@ -220,22 +219,21 @@ background-color:#ffffff;
 height:25px!important;
 color:#15428B;
 text-align:center;
-border-top:1px solid #FF0000;
-
 }
 
 tr.maintab_content_table_title th {
 white-space: nowrap;
-border:0px;
+border: 1px solid #ffffff;
 text-align:center;
-font-weight:normal;
+font-weight:bold;
 padding:0px 10px 0px 10px;
 color:#154288;
 background-color:#D8E6F6;
-border-top: 1 solid #ffffff;
-border-bottom: 1 solid #ffffff;
-border-right: 1 solid #ffffff;
 height:25px;
+}
+
+table.maintab_content_table tr:hover {
+background:#D8E6F6;
 }
 
 td.main1 {

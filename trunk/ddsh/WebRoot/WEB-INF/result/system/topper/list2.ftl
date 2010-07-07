@@ -10,7 +10,7 @@
         <meta http-equiv="Expires" content="0"/>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-    	<title>上货审批列表</title>
+    	<title>已审批商品列表</title>
 		<link href="${css}/mainstyle.css" rel="stylesheet" type="text/css">
 		<script language="javascript" src="${jquery}/jquery-1.4.2.min.js"></script>
 		<script language="javascript" src="${jquery_lib}/jquery.cookie.min.js"></script>
@@ -123,7 +123,7 @@
 	<table border="0" width="100%" cellspacing="0" cellpadding=" height="25">
 	<tr class="tree_title_txt">
 	<td nowrap width="100%" class="tree_title_txt" valign="middle" id="cwCellTopTitTxt">
-	人员管理</td>
+	已审批商品列表</td>
 	</tr>
 	</table>
 	<!--标题结束-->

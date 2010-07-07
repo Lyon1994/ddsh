@@ -1,0 +1,33 @@
+<!--
+/* ап╠М
+
+*/
+#data {
+border-collapse:collapse;
+padding:0px;
+background-color:expression((this.sectionRowIndex%2==0)?"#FFFFFF":"#F9F9F9");
+}
+#data thead tr {
+border-collapse:collapse;
+background:#D8E6F6;
+}
+#data th {
+font-size:12px;
+font-weight:normal;
+border-bottom:1px solid #fff;
+border-right:1px solid #fff;
+color:#000;
+padding:8px;
+}
+#data td {
+border-bottom:1px solid #fff;
+color:#669;
+border-top:1px solid transparent;
+padding:8px;
+}
+#data tbody tr:hover td {
+color:#339;
+background:#cdcdee;
+}
+
+-->

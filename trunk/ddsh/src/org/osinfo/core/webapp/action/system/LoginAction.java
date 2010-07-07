@@ -83,10 +83,6 @@ public class LoginAction extends BaseAction{
 		String password=getParameter("password");
 		String code=getParameter("code");
 		
-		System.out.println("userid="+userid);
-		System.out.println("password="+password);
-		System.out.println("code="+code);
-		
 		String sql="select * from dd_user where userid='"+userid+"' and password='"+password+"'";
 		List l=CommonDAO.executeQuery(sql,DdUser.class);
 		if(l.size()==1)
