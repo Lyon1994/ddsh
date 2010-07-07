@@ -26,8 +26,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.osinfo.core.webapp.Constants;
 import org.osinfo.core.webapp.action.util.DynamicGrid;
-import org.osinfo.core.webapp.model.DdUser;
-import org.osinfo.core.webapp.util.PageUtil;
 
 /**
  * @Author Lucifer.Zhou 1:29:33 PM Jan 29, 2010
@@ -79,6 +77,8 @@ public abstract class CrudAction extends BaseAction {
     protected long start;
     protected long end;
     protected long perpage;
+    protected String type="1";
+    
 	/**
 	 * @Author Lucifer.Zhou 1:29:39 PM Jan 29, 2010
 	 * long CrudAction.java
@@ -220,7 +220,6 @@ public abstract class CrudAction extends BaseAction {
 	{
 		if(logger.isDebugEnabled())
 			logger.debug("加载列表结果集页面...");
-
 		SORT_=getParameter(SORT);//排序字段
 		DIR_=getParameter(DIR);//排序方式
 		//START=getRequest().getParameter(START_);//开始
@@ -234,15 +233,13 @@ public abstract class CrudAction extends BaseAction {
 
 		//pageNo=Integer.parseInt((String)getParameter(PageNo));//开始
 		//pageSize=Integer.parseInt((String)getParameter(ROWS));//开始
-
 		//ddshow
 		start=Integer.parseInt((String)getParameter(STARTRECORD));//开始
 		end=Integer.parseInt((String)getParameter(ENDRECORD));//开始
 		perpage=Integer.parseInt((String)getParameter(PERPAGE));//开始
-
+		type=(String)getParameter("type");//操作类型
 		expressions=this.expressionsTranslation(Search_, SearchField_, SearchOper_, SearchString_);
 		String filter = getParameter("filter");
-
 		if(filter!=null)
 		{
 			try {
@@ -273,6 +270,7 @@ public abstract class CrudAction extends BaseAction {
 			logger.debug("start..."+start);
 			logger.debug("end..."+end);
 			logger.debug("perpage..."+perpage);
+			logger.debug("type..."+type);
 		}
 		
 		cfg=new JsonConfig();

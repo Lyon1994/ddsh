@@ -289,7 +289,7 @@
 				$.ajax(
 					{
 						type: "POST",
-						url: proxyUrl + "?startrecord="+gpStartRecord+"&endrecord="+gpEndRecord+"&perpage="+perPage ,
+						url: proxyUrl + "&startrecord="+gpStartRecord+"&endrecord="+gpEndRecord+"&perpage="+perPage ,
 						cache: false,
 						data: ajaxParam,
 						dataType: "script",

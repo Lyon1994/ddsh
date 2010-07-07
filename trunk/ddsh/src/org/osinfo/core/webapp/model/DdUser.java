@@ -23,9 +23,9 @@ public class DdUser implements java.io.Serializable {
 	private String type;
 	private String status;
 	private Timestamp submitdate;
-	private String operator;
+	private Integer operator;
 	private Timestamp verifydate;
-	private String updateby;
+	private Integer updateby;
 	private Timestamp updatedate;
 	private String password;
 
@@ -36,15 +36,12 @@ public class DdUser implements java.io.Serializable {
 	}
 
 	/** minimal constructor */
-	public DdUser(String userid, String name, String idcard, String sex,
-			String address, String mobile, String type, String status,
-			Timestamp submitdate, String operator, String password) {
+	public DdUser(String userid, String name, String sex, String type,
+			String status, Timestamp submitdate, Integer operator,
+			String password) {
 		this.userid = userid;
 		this.name = name;
-		this.idcard = idcard;
 		this.sex = sex;
-		this.address = address;
-		this.mobile = mobile;
 		this.type = type;
 		this.status = status;
 		this.submitdate = submitdate;
@@ -56,7 +53,7 @@ public class DdUser implements java.io.Serializable {
 	public DdUser(String userid, String name, String idcard, String sex,
 			String address, String mobile, String telephone, String fax,
 			String mail, String type, String status, Timestamp submitdate,
-			String operator, Timestamp verifydate, String updateby,
+			Integer operator, Timestamp verifydate, Integer updateby,
 			Timestamp updatedate, String password) {
 		this.userid = userid;
 		this.name = name;
@@ -183,11 +180,11 @@ public class DdUser implements java.io.Serializable {
 		this.submitdate = submitdate;
 	}
 
-	public String getOperator() {
+	public Integer getOperator() {
 		return this.operator;
 	}
 
-	public void setOperator(String operator) {
+	public void setOperator(Integer operator) {
 		this.operator = operator;
 	}
 
@@ -199,11 +196,11 @@ public class DdUser implements java.io.Serializable {
 		this.verifydate = verifydate;
 	}
 
-	public String getUpdateby() {
+	public Integer getUpdateby() {
 		return this.updateby;
 	}
 
-	public void setUpdateby(String updateby) {
+	public void setUpdateby(Integer updateby) {
 		this.updateby = updateby;
 	}
 
