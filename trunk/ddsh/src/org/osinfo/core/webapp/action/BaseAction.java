@@ -12,9 +12,11 @@ import java.io.IOException;
 
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +26,7 @@ import javax.servlet.http.HttpSession;
 import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
@@ -87,8 +90,81 @@ public class BaseAction extends ActionSupport {
     }
     protected String getCurrentTime()
     {
-    	SimpleDateFormat   dateFormat   =   new   SimpleDateFormat("yyyy-MM-dd hh:mm:ss");//可以方便地修改日期格式   
-		return dateFormat.format(new   Date()); 
+    	long longCalendar = 0;
+		// 获得当前日期
+		Calendar cldCurrent = Calendar.getInstance();
+		// 获得年月日
+		String strYear = String.valueOf(cldCurrent.get(Calendar.YEAR));
+		String strMonth = String.valueOf(cldCurrent.get(Calendar.MONTH) + 1);
+		String strDate = String.valueOf(cldCurrent.get(Calendar.DATE));
+		String strHour = String.valueOf(cldCurrent.get(Calendar.HOUR));
+		String strAM_PM = String.valueOf(cldCurrent.get(Calendar.AM_PM));
+		String strMinute = String.valueOf(cldCurrent.get(Calendar.MINUTE));
+		String strSecond = String.valueOf(cldCurrent.get(Calendar.SECOND));
+
+		// 把时间转换为24小时制
+		// strAM_PM=="1",表示当前时间是下午，所以strHour需要加12
+		if (strAM_PM.equals("1")) {
+			strHour = String.valueOf(Long.parseLong(strHour) + 12);
+		}
+		// 整理格式
+		if (strMonth.length() < 2) {
+			strMonth = "0" + strMonth;
+		}
+		if (strDate.length() < 2) {
+			strDate = "0" + strDate;
+		}
+		if (strHour.length() < 2) {
+			strHour = "0" + strHour;
+		}
+		if (strMinute.length() < 2) {
+			strMinute = "0" + strMinute;
+		}
+		if (strSecond.length() < 2) {
+			strSecond = "0" + strSecond;
+		}
+
+		return strYear+"-"+strMonth+"-"+strDate+" "+strHour+":"+strMinute+":"+strSecond; 
+    }
+    protected String getRandomBarCode()
+    {
+    	long longCalendar = 0;
+			// 获得当前日期
+			Calendar cldCurrent = Calendar.getInstance();
+			// 获得年月日
+			String strYear = String.valueOf(cldCurrent.get(Calendar.YEAR));
+			String strMonth = String.valueOf(cldCurrent.get(Calendar.MONTH) + 1);
+			String strDate = String.valueOf(cldCurrent.get(Calendar.DATE));
+			String strHour = String.valueOf(cldCurrent.get(Calendar.HOUR));
+			String strAM_PM = String.valueOf(cldCurrent.get(Calendar.AM_PM));
+			String strMinute = String.valueOf(cldCurrent.get(Calendar.MINUTE));
+			String strSecond = String.valueOf(cldCurrent.get(Calendar.SECOND));
+
+			// 把时间转换为24小时制
+			// strAM_PM=="1",表示当前时间是下午，所以strHour需要加12
+			if (strAM_PM.equals("1")) {
+				strHour = String.valueOf(Long.parseLong(strHour) + 12);
+			}
+			// 整理格式
+			if (strMonth.length() < 2) {
+				strMonth = "0" + strMonth;
+			}
+			if (strDate.length() < 2) {
+				strDate = "0" + strDate;
+			}
+			if (strHour.length() < 2) {
+				strHour = "0" + strHour;
+			}
+			if (strMinute.length() < 2) {
+				strMinute = "0" + strMinute;
+			}
+			if (strSecond.length() < 2) {
+				strSecond = "0" + strSecond;
+			}
+			// 组合结果
+			longCalendar = Long.parseLong(strYear + strMonth + strDate + strHour + strMinute + strSecond);
+	
+    	return String.valueOf(longCalendar)+RandomStringUtils.randomNumeric(4);
     }
     /**
      * 

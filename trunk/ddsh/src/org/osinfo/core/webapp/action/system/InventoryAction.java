@@ -18,20 +18,21 @@ import org.apache.struts2.convention.annotation.Results;
 import org.osinfo.core.webapp.action.CrudAction;
 import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
+import org.osinfo.core.webapp.model.DdInventory;
 import org.osinfo.core.webapp.model.DdTopper;
 import org.osinfo.core.webapp.util.PageUtil;
 @Results({
-	 @Result(name="list",location = "/WEB-INF/result/system/topper/list.ftl"),
-	 @Result(name="list2",location = "/WEB-INF/result/system/topper/list2.ftl"),
-	 @Result(name="list3",location = "/WEB-INF/result/system/topper/list3.ftl")
+	 @Result(name="list",location = "/WEB-INF/result/system/inventory/list.ftl"),
+	 @Result(name="list2",location = "/WEB-INF/result/system/inventory/list2.ftl"),
+	 @Result(name="list3",location = "/WEB-INF/result/system/inventory/list3.ftl")
 })
 /**
  * @Author Lucifer.Zhou 4:29:47 PM Jan 6, 2010
  * @Description
- * 上货审批
+ * 库存管理
  */
-public class TopperAction extends CrudAction{
-	private static Logger logger = Logger.getLogger ( TopperAction.class.getName () ) ;
+public class InventoryAction extends CrudAction{
+	private static Logger logger = Logger.getLogger ( InventoryAction.class.getName () ) ;
 	/**
 	 * @Author Lucifer.Zhou 4:30:01 PM Jan 6, 2010
 	 * long LoginAction.java
@@ -39,7 +40,7 @@ public class TopperAction extends CrudAction{
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	//审批商品
+	//库存列表
 	public String list() {
 		return "list";
 	}
@@ -173,18 +174,12 @@ public class TopperAction extends CrudAction{
 		String t=(String) getSession().getAttribute("type");
 		if(t.equals("2"))
 		{
-			if(type.equals("1"))
-				sql="select * from dd_topper where status='1' and userid='"+userid+"'";
-			else
-				sql="select * from dd_topper where status='0' and userid='"+userid+"'";
+			sql="select * from dd_inventory where userid='"+userid+"'";
 		}else
 		{
-			if(type.equals("1"))
-				sql="select * from dd_topper where status='1'";
-			else
-				sql="select * from dd_topper where status='0'";
+			sql="select * from dd_inventory";
 		}
-		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,DdTopper.class);
+		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,DdInventory.class);
 		
 		String content = "totalPage = " + p.getTotalPageCount() + ";";
 		content += "dataStore = [";
@@ -192,16 +187,10 @@ public class TopperAction extends CrudAction{
 		List l=(List)p.getResult();
 		for(int i=0;i<l.size();i++)
 		{
-			DdTopper d=(DdTopper)l.get(i);
-			Timestamp date;
-			if(type.equals("1"))
-				date=d.getDate();
-			else
-				date=d.getSubmitdate();
-			if(type.equals("1"))
-				content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td>"+d.getUserid()+"</td><td>"+d.getImage()+"</td><td class='editbox' id='amount'>"+d.getAmount()+"</td><td class='editbox' id='price'>"+d.getPrice()+"</td><td class='editbox' id='totalprice'>"+d.getTotalprice()+"</td><td>"+d.getSpec()+"</td><td>"+d.getGrade()+"</td><td>"+d.getMaterial()+"</td><td>"+d.getLocation()+"</td><td>"+date+"</td><td>"+d.getMemo()+"</td></tr>\",";
-			else
-				content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getName()+"</td><td>"+d.getUserid()+"</td><td>"+d.getImage()+"</td><td class='editbox' id='amount'>"+d.getAmount()+"</td><td class='editbox' id='price'>"+d.getPrice()+"</td><td class='editbox' id='totalprice'>"+d.getTotalprice()+"</td><td>"+d.getSpec()+"</td><td>"+d.getGrade()+"</td><td>"+d.getMaterial()+"</td><td>"+d.getLocation()+"</td><td>"+date+"</td><td>"+d.getMemo()+"</td></tr>\",";
+			DdInventory d=(DdInventory)l.get(i);
+			Timestamp date=d.getDate();
+
+			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td>"+d.getUserid()+"</td><td class='editbox' id='amount'>"+d.getAmount()+"</td><td class='editbox' id='price'>"+d.getPrice()+"</td><td class='editbox' id='totalprice'>"+d.getTotalprice()+"</td><td>"+d.getSpec()+"</td><td>"+d.getGrade()+"</td><td>"+d.getMaterial()+"</td><td>"+d.getLocation()+"</td><td>"+date+"</td><td>"+d.getOperator()+"</td></tr>\",";
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";
@@ -216,19 +205,11 @@ public class TopperAction extends CrudAction{
 		String t=(String) getSession().getAttribute("type");
 		if(t.equals("2"))
 		{
-			if(type.equals("1"))
-				sql="select * from dd_topper where status='1' and userid='"+userid+"'";
-			else
-				sql="select * from dd_topper where status='0' and userid='"+userid+"'";
+			sql="select * from dd_inventory where userid='"+userid+"'";
 		}else
 		{
-			if(type.equals("1"))
-				sql="select * from dd_topper where status='1'";
-			else
-				sql="select * from dd_topper where status='0'";
+			 sql="select * from dd_inventory";
 		}
-		
-		
 		int count=CommonDAO.count(sql);
 		return count;
 	}
