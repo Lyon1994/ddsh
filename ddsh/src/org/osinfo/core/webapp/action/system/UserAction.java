@@ -8,6 +8,7 @@
  */
 package org.osinfo.core.webapp.action.system;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -66,11 +67,9 @@ public class UserAction extends CrudAction{
 		String mail=getParameter("mail");
 
 		String memo=getParameter("memo");
-		SimpleDateFormat   dateFormat   =   new   SimpleDateFormat("yyyy-MM-dd hh:mm:ss");//可以方便地修改日期格式   
+		String submitdate=getCurrentTime();
 
-		String submitdate=dateFormat.format(new   Date()); 
-
-		String operator=String.valueOf((Integer) getSession().getAttribute("userid"));
+		String operator=(String) getSession().getAttribute("userid");
 
 		String sql="insert into dd_user (userid,password,name,idcard,sex,address,mobile,telephone,fax,mail,type,status,submitdate,operator) values ('"+userid+"','"+password+"','"+name+"','"+idcard+"','"+sex+"','"+address+"','"+mobile+"','"+telephone+"','"+fax+"','"+mail+"','"+type+"','1','"+submitdate+"','"+operator+"')";
 
@@ -85,8 +84,10 @@ public class UserAction extends CrudAction{
 		if(logger.isDebugEnabled())
 			logger.debug("加载启用页面...");
 	    String ids=getParameter("ids");
+	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");//可以方便地修改日期格式   
+		String date=dateFormat.format(new Date()); 
 	    if(!"".equals(ids.trim())){
-	    		String sql="update dd_user set status='1' where id in ("+ids.substring(0,ids.length()-1)+")";
+	    		String sql="update dd_user set status='1' , verifydate='"+date+"' where id in ("+ids.substring(0,ids.length()-1)+")";
 	    		CommonDAO.executeUpdate(sql);
 	    }
 	    renderSimpleResult(true,"ok");
@@ -98,6 +99,7 @@ public class UserAction extends CrudAction{
 		if(logger.isDebugEnabled())
 			logger.debug("加载删除页面...");
 	    String ids=getParameter("ids");
+
 	    if(!"".equals(ids.trim())){
 	    		String sql="delete from dd_user where id in ("+ids.substring(0,ids.length()-1)+")";
 	    		CommonDAO.executeUpdate(sql);
@@ -144,18 +146,23 @@ public class UserAction extends CrudAction{
 		for(int i=0;i<l.size();i++)
 		{
 			DdUser d=(DdUser)l.get(i);
-			String type="<font color='green'>管理员</a>";
+			String t="<font color='green'>管理员</a>";
 			if(d.getType().equals("2"))
 			{
-				type="<font color='green'>设计师</a>";
+				t="<font color='green'>设计师</a>";
 			}else if(d.getType().equals("3"))
 			{
-				type="<font color='yellow'>店员</a>";
+				t="<font color='yellow'>店员</a>";
 			}else if(d.getType().equals("4"))
 			{
-				type="<font color='blue'>测试人员</a>";
+				t="<font color='blue'>测试人员</a>";
 			}
-			content += "\"<tr><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getUserid()+"</td><td>"+d.getName()+"</td><td>"+type+"</td><td>"+d.getMobile()+"</td><td>"+d.getTelephone()+"</td><td>"+d.getFax()+"</td><td>"+d.getMail()+"</td><td>"+d.getAddress()+"</td></tr>\",";
+			Timestamp date;
+			if(type.equals("1"))
+				date=d.getVerifydate();
+			else
+				date=d.getSubmitdate();
+			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getUserid()+"</td><td>"+d.getName()+"</td><td>"+t+"</td><td>"+d.getMobile()+"</td><td>"+d.getTelephone()+"</td><td>"+d.getFax()+"</td><td>"+d.getMail()+"</td><td>"+d.getAddress()+"</td><td>"+date+"</td></tr>\",";
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";

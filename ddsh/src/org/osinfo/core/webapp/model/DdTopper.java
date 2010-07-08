@@ -16,7 +16,7 @@ public class DdTopper implements java.io.Serializable {
 	private Integer amount;
 	private Float price;
 	private Float totalprice;
-	private Integer userid;
+	private String userid;
 	private String spec;
 	private String material;
 	private String grade;
@@ -24,6 +24,8 @@ public class DdTopper implements java.io.Serializable {
 	private String status;
 	private String memo;
 	private Timestamp submitdate;
+	private Timestamp date;
+	private String operator;
 
 	// Constructors
 
@@ -33,8 +35,7 @@ public class DdTopper implements java.io.Serializable {
 
 	/** minimal constructor */
 	public DdTopper(String name, String image, Integer amount, Float price,
-			Float totalprice, Integer userid, String status,
-			Timestamp submitdate) {
+			Float totalprice, String userid, String status, Timestamp submitdate) {
 		this.name = name;
 		this.image = image;
 		this.amount = amount;
@@ -47,9 +48,9 @@ public class DdTopper implements java.io.Serializable {
 
 	/** full constructor */
 	public DdTopper(String name, String image, Integer amount, Float price,
-			Float totalprice, Integer userid, String spec, String material,
+			Float totalprice, String userid, String spec, String material,
 			String grade, String location, String status, String memo,
-			Timestamp submitdate) {
+			Timestamp submitdate, Timestamp date, String operator) {
 		this.name = name;
 		this.image = image;
 		this.amount = amount;
@@ -63,6 +64,8 @@ public class DdTopper implements java.io.Serializable {
 		this.status = status;
 		this.memo = memo;
 		this.submitdate = submitdate;
+		this.date = date;
+		this.operator = operator;
 	}
 
 	// Property accessors
@@ -115,11 +118,11 @@ public class DdTopper implements java.io.Serializable {
 		this.totalprice = totalprice;
 	}
 
-	public Integer getUserid() {
+	public String getUserid() {
 		return this.userid;
 	}
 
-	public void setUserid(Integer userid) {
+	public void setUserid(String userid) {
 		this.userid = userid;
 	}
 
@@ -177,6 +180,22 @@ public class DdTopper implements java.io.Serializable {
 
 	public void setSubmitdate(Timestamp submitdate) {
 		this.submitdate = submitdate;
+	}
+
+	public Timestamp getDate() {
+		return this.date;
+	}
+
+	public void setDate(Timestamp date) {
+		this.date = date;
+	}
+
+	public String getOperator() {
+		return this.operator;
+	}
+
+	public void setOperator(String operator) {
+		this.operator = operator;
 	}
 
 }

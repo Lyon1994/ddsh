@@ -84,9 +84,9 @@ public class WorkbenchAction extends BaseAction {
 		{
 			m.put("用户注册", "html/regedit_user.html");
 			m.put("用户审批", "system/user!list2.zf");
-			m.put("待批商品", "system/topper!list.zf");
-			m.put("已批商品", "system/topper!list2.zf");
-			m.put("商品退回", "user.zf");
+			m.put("商品审批", "system/topper!list.zf");
+			m.put("已批记录", "system/topper!list2.zf");
+			m.put("商品退回", "system/back!list.zf");
 			m.put("库存管理", "user.zf");
 			m.put("商品上架", "user.zf");
 			m.put("商品下架", "user.zf");
@@ -101,8 +101,9 @@ public class WorkbenchAction extends BaseAction {
 		}else if(type.equals("2"))
 		{
 			m.put("上货审批", "html/regedit_topper.html");
-			m.put("已批记录", "user.zf");
-			m.put("退回记录", "user.zf");
+			m.put("待批记录", "system/topper!list3.zf");
+			m.put("已批记录", "system/topper!list2.zf");
+			m.put("退回记录", "system/back!list2.zf");
 			m.put("库存记录", "user.zf");
 			m.put("上架记录", "user.zf");
 			m.put("下架记录", "user.zf");
@@ -114,8 +115,9 @@ public class WorkbenchAction extends BaseAction {
 		{
 			m.put("售货管理", "user.zf");
 			m.put("退货管理", "user.zf");
-			m.put("已批记录", "user.zf");
-			m.put("退回记录", "user.zf");
+			m.put("待批记录", "system/topper!list3.zf");
+			m.put("已批记录", "system/topper!list2.zf");
+			m.put("退回记录", "system/back!list2.zf");
 			m.put("库存管理", "user.zf");
 			m.put("商品上架", "user.zf");
 			m.put("商品下架", "user.zf");

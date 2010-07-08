@@ -33,6 +33,7 @@ import org.osinfo.core.webapp.util.SQLUtil;
 public class CommonDAO {
 	protected final static Logger logger = Logger.getLogger(CommonDAO.class);
 	public static List executeQuery(String sql,Class c) {
+		System.out.println(sql);
 		ResultSet rs = null;
 		Statement stmt = null;
 		List list = new ArrayList();
@@ -51,6 +52,7 @@ public class CommonDAO {
 	}
 
 	public static int executeUpdate(String sql) {
+		System.out.println(sql);
 		int r=0;
 		Connection conn=DBUtil.getConnection();
 		Statement stmt = null;
@@ -68,8 +70,7 @@ public class CommonDAO {
 	public static int count(String sql)
 	{
 		sql=SQLUtil.buildSQL(sql).toString();
-		if(logger.isInfoEnabled())
-			logger.info("执行SQL:"+sql);
+		System.out.println(sql);
 		ResultSet rs = null;
 		Statement stmt = null;
 		Connection conn=DBUtil.getConnection();
@@ -100,6 +101,7 @@ public class CommonDAO {
 		try {
 			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
 			rs=stmt.executeQuery(sql+" limit "+(start-1)+","+pageSize);
+			System.out.println(sql);
 			list = DBUtil.populate(rs, c);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

@@ -9,7 +9,7 @@ public class DdWallet implements java.io.Serializable {
 	// Fields
 
 	private Integer id;
-	private Integer userid;
+	private String userid;
 	private String bankname;
 	private String location;
 	private String accounter;
@@ -23,7 +23,7 @@ public class DdWallet implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public DdWallet(Integer userid, String bankname, String location,
+	public DdWallet(String userid, String bankname, String location,
 			String accounter, Integer money, String account) {
 		this.userid = userid;
 		this.bankname = bankname;
@@ -43,11 +43,11 @@ public class DdWallet implements java.io.Serializable {
 		this.id = id;
 	}
 
-	public Integer getUserid() {
+	public String getUserid() {
 		return this.userid;
 	}
 
-	public void setUserid(Integer userid) {
+	public void setUserid(String userid) {
 		this.userid = userid;
 	}
 

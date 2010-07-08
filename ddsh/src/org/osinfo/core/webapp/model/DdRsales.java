@@ -17,9 +17,9 @@ public class DdRsales implements java.io.Serializable {
 	private Integer amount;
 	private Float price;
 	private Float totalprice;
-	private Integer userid;
+	private String userid;
 	private String reason;
-	private Integer operator;
+	private String operator;
 	private Timestamp data;
 
 	// Constructors
@@ -30,7 +30,7 @@ public class DdRsales implements java.io.Serializable {
 
 	/** minimal constructor */
 	public DdRsales(String barcode, Float discount, Integer amount,
-			Float price, Float totalprice, Integer operator, Timestamp data) {
+			Float price, Float totalprice, String operator, Timestamp data) {
 		this.barcode = barcode;
 		this.discount = discount;
 		this.amount = amount;
@@ -42,8 +42,8 @@ public class DdRsales implements java.io.Serializable {
 
 	/** full constructor */
 	public DdRsales(String barcode, String name, Float discount,
-			Integer amount, Float price, Float totalprice, Integer userid,
-			String reason, Integer operator, Timestamp data) {
+			Integer amount, Float price, Float totalprice, String userid,
+			String reason, String operator, Timestamp data) {
 		this.barcode = barcode;
 		this.name = name;
 		this.discount = discount;
@@ -114,11 +114,11 @@ public class DdRsales implements java.io.Serializable {
 		this.totalprice = totalprice;
 	}
 
-	public Integer getUserid() {
+	public String getUserid() {
 		return this.userid;
 	}
 
-	public void setUserid(Integer userid) {
+	public void setUserid(String userid) {
 		this.userid = userid;
 	}
 
@@ -130,11 +130,11 @@ public class DdRsales implements java.io.Serializable {
 		this.reason = reason;
 	}
 
-	public Integer getOperator() {
+	public String getOperator() {
 		return this.operator;
 	}
 
-	public void setOperator(Integer operator) {
+	public void setOperator(String operator) {
 		this.operator = operator;
 	}
 

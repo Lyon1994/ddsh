@@ -16,9 +16,9 @@ public class DdDown implements java.io.Serializable {
 	private Integer gridid;
 	private Integer amount;
 	private Float price;
-	private Integer userid;
+	private String userid;
 	private String reason;
-	private Integer operator;
+	private String operator;
 	private Timestamp date;
 
 	// Constructors
@@ -28,7 +28,7 @@ public class DdDown implements java.io.Serializable {
 	}
 
 	/** minimal constructor */
-	public DdDown(String barcode, Integer gridid, Integer userid, Timestamp date) {
+	public DdDown(String barcode, Integer gridid, String userid, Timestamp date) {
 		this.barcode = barcode;
 		this.gridid = gridid;
 		this.userid = userid;
@@ -37,7 +37,7 @@ public class DdDown implements java.io.Serializable {
 
 	/** full constructor */
 	public DdDown(String barcode, String name, Integer gridid, Integer amount,
-			Float price, Integer userid, String reason, Integer operator,
+			Float price, String userid, String reason, String operator,
 			Timestamp date) {
 		this.barcode = barcode;
 		this.name = name;
@@ -100,11 +100,11 @@ public class DdDown implements java.io.Serializable {
 		this.price = price;
 	}
 
-	public Integer getUserid() {
+	public String getUserid() {
 		return this.userid;
 	}
 
-	public void setUserid(Integer userid) {
+	public void setUserid(String userid) {
 		this.userid = userid;
 	}
 
@@ -116,11 +116,11 @@ public class DdDown implements java.io.Serializable {
 		this.reason = reason;
 	}
 
-	public Integer getOperator() {
+	public String getOperator() {
 		return this.operator;
 	}
 
-	public void setOperator(Integer operator) {
+	public void setOperator(String operator) {
 		this.operator = operator;
 	}
 

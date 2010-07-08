@@ -23,7 +23,7 @@
 			var editHTML;
 			var editText;
 			function setEditHTML(value){
-				editHTML = '<input type="text" value="'+value+'" />';
+				editHTML = '<input type="text" size=5 value="'+value+'" />';
 				editHTML += '<input type="button" onclick="ok(this)" value="修改" />';
 				editHTML += '<input type="button" onclick="cancel(this)" value="取消" />';
 			}
@@ -41,23 +41,32 @@
 			//修改
 			function ok(obtn){
 				var $obj = $(obtn).parent(); //'修改'按钮的上一级，即单元格td
-				var id = $obj.parent().attr("id").replace("tr_",""); //取得该行数据的ID，此例ID绑定在tr中
+				var tdid=$obj.attr("id");
+				var trid = $obj.parent().attr("id"); //取得该行数据的ID，此例ID绑定在tr中
 				var value = $obj.find("input:text")[0].value; //取得文本框的值，即新数据
-			
-				//AJAX 修改数据略
-				//成功
-				if(true){
-					alert("success");
-					$obj.data("oldtxt",value); //设置此单元格缓存为新数据
-					cancel(obtn); //调用'取消'方法，
-					//在此应传'取消'按钮过去，
-					//但在'取消'事件中没有用'取消'按钮这个对象,
-					//用的只是它的上一级，即td，
-					//固在此直接用'修改'按钮替代
-				}else{
-					alert("error");
-					cancel(obtn);
-				}
+				//alert(tdid);
+				//alert(trid);
+				//alert(value);
+				$.ajax({
+					 	url: 'topper!edit.zf?trid='+trid+'&tdid='+tdid+'&value='+value+'&t='+new Date().getTime(),
+					 	type: 'POST',
+					 	dataType: 'json',
+					 	error: function(){alert('error');},
+					 	success: function(json){
+							alert(json.info); 
+							if(json.result==true){
+								$obj.data("oldtxt",value); //设置此单元格缓存为新数据
+								cancel(obtn); //调用'取消'方法，
+								//在此应传'取消'按钮过去，
+								//但在'取消'事件中没有用'取消'按钮这个对象,
+								//用的只是它的上一级，即td，
+								//固在此直接用'修改'按钮替代
+							}else{
+								cancel(obtn);
+							}
+							load('');
+					 	}
+				}); 
 			}
 			function editbox()
 			{
@@ -136,7 +145,7 @@
 			}
 			function load(param)
 			{
-				var b="<table cellspacing=1 id='data'><thead><tr><th><input type='checkbox' name='select' onclick='ck()'/></th><th>物品名称</th><th>设计师</th><th>图片</th><th>数量</th><th>单价</th><th>总价</th><th>型号</th><th>规格</th><th>材料</th><th>产地</th><th>提交日期</th><th>备注</th></tr></thead><tbody>";
+				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th width='1%'><input type='checkbox' name='select' onclick='ck()'/></th><th>物品名称</th><th>设计师</th><th>图片</th><th>数量</th><th>单价</th><th>总价</th><th>型号</th><th>规格</th><th>材料</th><th>产地</th><th>提交日期</th><th>备注</th></tr></thead><tbody>";
 				var a="</tbody></table>";
 				$.ajax({
 					 	url: 'topper!count.zf?type=0&t='+new Date().getTime(),
@@ -161,13 +170,6 @@
 			)
 			//-->
 		</script>
-		<style type="text/css">
-			#data{font-family:"Lucida Sans Unicode", "Lucida Grande", Sans-Serif;font-size:12px;width:99%;text-align:left;border-collapse:collapse;background:url("http://media.smashingmagazine.com/cdn_smash/images/express-css-table-design/table-images/patternb.png");}
-			#data thead tr{background:url("http://media.smashingmagazine.com/cdn_smash/images/express-css-table-design/table-images/patternb-head.png");}
-			#data th{font-size:13px;font-weight:normal;border-bottom:1px solid #fff;color:#039;padding:8px;}
-			#data td{border-bottom:1px solid #fff;color:#669;border-top:1px solid transparent;padding:8px;}
-			#data tbody tr:hover td{color:#339;background:#cdcdee;}
-		</style>
 	</head>
 
 <body>

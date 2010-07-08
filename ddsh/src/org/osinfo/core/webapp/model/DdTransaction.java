@@ -11,13 +11,13 @@ public class DdTransaction implements java.io.Serializable {
 	// Fields
 
 	private Integer id;
-	private Integer userid;
+	private String userid;
 	private String fromAccount;
 	private String toAccount;
 	private String transactionType;
 	private Float transactionMoney;
 	private String memo;
-	private Integer operator;
+	private String operator;
 	private Timestamp date;
 
 	// Constructors
@@ -27,9 +27,9 @@ public class DdTransaction implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public DdTransaction(Integer userid, String fromAccount, String toAccount,
+	public DdTransaction(String userid, String fromAccount, String toAccount,
 			String transactionType, Float transactionMoney, String memo,
-			Integer operator, Timestamp date) {
+			String operator, Timestamp date) {
 		this.userid = userid;
 		this.fromAccount = fromAccount;
 		this.toAccount = toAccount;
@@ -50,11 +50,11 @@ public class DdTransaction implements java.io.Serializable {
 		this.id = id;
 	}
 
-	public Integer getUserid() {
+	public String getUserid() {
 		return this.userid;
 	}
 
-	public void setUserid(Integer userid) {
+	public void setUserid(String userid) {
 		this.userid = userid;
 	}
 
@@ -98,11 +98,11 @@ public class DdTransaction implements java.io.Serializable {
 		this.memo = memo;
 	}
 
-	public Integer getOperator() {
+	public String getOperator() {
 		return this.operator;
 	}
 
-	public void setOperator(Integer operator) {
+	public void setOperator(String operator) {
 		this.operator = operator;
 	}
 
