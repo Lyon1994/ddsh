@@ -117,10 +117,10 @@ public class DBUtil {
 								f.set(obj, value);
 							} catch (IllegalArgumentException e) {
 								// TODO Auto-generated catch block
-								e.printStackTrace();
+								//e.printStackTrace();
 							} catch (IllegalAccessException e) {
 								// TODO Auto-generated catch block
-								e.printStackTrace();
+								//e.printStackTrace();
 							}
 	 						 f.setAccessible(flag);
 	 					 }

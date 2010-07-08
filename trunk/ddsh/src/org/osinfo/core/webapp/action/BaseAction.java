@@ -11,6 +11,8 @@ package org.osinfo.core.webapp.action;
 import java.io.IOException;
 
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -82,6 +84,11 @@ public class BaseAction extends ActionSupport {
      */
     protected HttpSession getSession() {
         return Struts2Utils.getSession();
+    }
+    protected String getCurrentTime()
+    {
+    	SimpleDateFormat   dateFormat   =   new   SimpleDateFormat("yyyy-MM-dd hh:mm:ss");//可以方便地修改日期格式   
+		return dateFormat.format(new   Date()); 
     }
     /**
      * 

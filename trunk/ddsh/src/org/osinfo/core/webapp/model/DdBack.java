@@ -11,10 +11,11 @@ public class DdBack implements java.io.Serializable {
 	// Fields
 
 	private Integer id;
-	private Integer topperid;
-	private String reson;
+	private String userid;
+	private String name;
 	private Integer amount;
-	private Integer operator;
+	private String reason;
+	private String operator;
 	private Timestamp date;
 
 	// Constructors
@@ -24,11 +25,12 @@ public class DdBack implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public DdBack(Integer topperid, String reson, Integer amount,
-			Integer operator, Timestamp date) {
-		this.topperid = topperid;
-		this.reson = reson;
+	public DdBack(String userid, String name, Integer amount, String reason,
+			String operator, Timestamp date) {
+		this.userid = userid;
+		this.name = name;
 		this.amount = amount;
+		this.reason = reason;
 		this.operator = operator;
 		this.date = date;
 	}
@@ -43,20 +45,20 @@ public class DdBack implements java.io.Serializable {
 		this.id = id;
 	}
 
-	public Integer getTopperid() {
-		return this.topperid;
+	public String getUserid() {
+		return this.userid;
 	}
 
-	public void setTopperid(Integer topperid) {
-		this.topperid = topperid;
+	public void setUserid(String userid) {
+		this.userid = userid;
 	}
 
-	public String getReson() {
-		return this.reson;
+	public String getName() {
+		return this.name;
 	}
 
-	public void setReson(String reson) {
-		this.reson = reson;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public Integer getAmount() {
@@ -67,11 +69,19 @@ public class DdBack implements java.io.Serializable {
 		this.amount = amount;
 	}
 
-	public Integer getOperator() {
+	public String getReason() {
+		return this.reason;
+	}
+
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
+
+	public String getOperator() {
 		return this.operator;
 	}
 
-	public void setOperator(Integer operator) {
+	public void setOperator(String operator) {
 		this.operator = operator;
 	}
 

@@ -8,8 +8,7 @@
  */
 package org.osinfo.core.webapp.action.system;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -24,8 +23,7 @@ import org.osinfo.core.webapp.util.PageUtil;
 @Results({
 	 @Result(name="list",location = "/WEB-INF/result/system/topper/list.ftl"),
 	 @Result(name="list2",location = "/WEB-INF/result/system/topper/list2.ftl"),
-	 @Result(name="add",location = "/WEB-INF/result/system/topper/add.ftl"),
-	 @Result(name="edit",location = "/WEB-INF/result/system/topper/edit.ftl"),
+	 @Result(name="list3",location = "/WEB-INF/result/system/topper/list3.ftl")
 })
 /**
  * @Author Lucifer.Zhou 4:29:47 PM Jan 6, 2010
@@ -41,13 +39,20 @@ public class TopperAction extends CrudAction{
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	
+	//审批商品
 	public String list() {
 		return "list";
 	}
+	//已批商品
 	public String list2() {
 		return "list2";
 	}
+	//待批商品
+	public String list3() {
+		return "list3";
+	}
+
+	//商品递交
 	@Override
 	public String add() {
 		// TODO Auto-generated method stub
@@ -64,29 +69,47 @@ public class TopperAction extends CrudAction{
 		String location=getParameter("location");		
 		
 		String memo=getParameter("memo");
+		String submitdate=getCurrentTime();
 
-		SimpleDateFormat   dateFormat   =   new   SimpleDateFormat("yyyy-MM-dd hh:mm:ss");//可以方便地修改日期格式   
+		String operator=(String) getSession().getAttribute("userid");
 
-		String submitdate=dateFormat.format(new   Date()); 
-
-		String operator=String.valueOf((Integer) getSession().getAttribute("userid"));
-
-		String sql="insert into dd_topper (name,image,amount,price,totalprice,spec,material,location,memo,status,submitdate,userid) " +
-				"values ('"+name+"','"+image+"',"+amount+","+price+","+totalprice+",'"+spec+"','"+material+"','"+location+"','"+memo+"','0','"+submitdate+"','"+operator+"')";
-		System.out.println(sql);
+		String sql="insert into dd_topper (name,image,amount,price,totalprice,spec,material,grade,location,memo,status,submitdate,userid) " +
+				"values ('"+name+"','"+image+"',"+amount+","+price+","+totalprice+",'"+spec+"','"+material+"','"+grade+"','"+location+"','"+memo+"','0','"+submitdate+"','"+operator+"')";
 		int v=CommonDAO.executeUpdate(sql);
 		if(v>0)
 			return "success";
 		else
 			return "error";
 	}
+	//商品退回
+	public String back() {
+		// TODO Auto-generated method stub
+		String userid=getParameter("userid");
+		String name=getParameter("name");
+		String amount=getParameter("amount");
+		String memo=getParameter("memo");
+		String submitdate=getCurrentTime();
+
+		String operator=(String) getSession().getAttribute("userid");
+
+		String sql="insert into dd_back (userid,name,amount,memo,date,operator) " +
+				"values ('"+userid+"','"+name+"',"+amount+","+memo+","+submitdate+",'"+operator+"'')";
+		int v=CommonDAO.executeUpdate(sql);
+		if(v>0)
+			return "success";
+		else
+			return "error";
+	}
+	//审核通过
 	public String apply() {
 		// TODO Auto-generated method stub
 		if(logger.isDebugEnabled())
 			logger.debug("加载接收页面...");
 	    String ids=getParameter("ids");
+		String submitdate=getCurrentTime();
+		String operator=(String) getSession().getAttribute("userid");
 	    if(!"".equals(ids.trim())){
-	    	String sql="update dd_topper set status='1' where id in ("+ids.substring(0,ids.length()-1)+")";
+	    	String sql="update dd_topper set status='1',date_='"+submitdate+"',operator='"+operator+"' where id in ("+ids.substring(0,ids.length()-1)+")";
 	    		CommonDAO.executeUpdate(sql);
 	    }
 	    renderSimpleResult(true,"ok");
@@ -108,6 +131,13 @@ public class TopperAction extends CrudAction{
 	@Override
 	public String edit() {
 		// TODO Auto-generated method stub
+		String trid=getParameter("trid");
+		String tdid=getParameter("tdid");
+		String value=getParameter("value");
+		
+		String sql="update dd_topper set "+tdid+"="+value+" where id in ("+trid+")";
+		CommonDAO.executeUpdate(sql);
+		renderSimpleResult(true,"修改成功");
 		return null;
 	}
 	@Override
@@ -131,10 +161,21 @@ public class TopperAction extends CrudAction{
 	public String myResult() {
 		// TODO Auto-generated method stub
 		String sql;
-		if(type.equals("1"))
-			sql="select * from dd_topper where status='1'";
-		else
-			sql="select * from dd_topper where status='0'";
+		String userid=(String) getSession().getAttribute("userid");
+		String t=(String) getSession().getAttribute("type");
+		if(t.equals("2"))
+		{
+			if(type.equals("1"))
+				sql="select * from dd_topper where status='1' and userid='"+userid+"'";
+			else
+				sql="select * from dd_topper where status='0' and userid='"+userid+"'";
+		}else
+		{
+			if(type.equals("1"))
+				sql="select * from dd_topper where status='1'";
+			else
+				sql="select * from dd_topper where status='0'";
+		}
 		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,DdTopper.class);
 		
 		String content = "totalPage = " + p.getTotalPageCount() + ";";
@@ -144,11 +185,15 @@ public class TopperAction extends CrudAction{
 		for(int i=0;i<l.size();i++)
 		{
 			DdTopper d=(DdTopper)l.get(i);
-			content += "\"<tr><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getName()+"</td><td>"+d.getUserid()+"</td><td>"+d.getImage()+"</td><td class='editbox'>"+d.getAmount()+"</td><td class='editbox'>"+d.getPrice()+"</td><td class='editbox'>"+d.getTotalprice()+"</td><td>"+d.getSpec()+"</td><td>"+d.getGrade()+"</td><td>"+d.getMaterial()+"</td><td>"+d.getLocation()+"</td><td>"+d.getSubmitdate()+"</td><td>"+d.getMemo()+"</td></tr>\",";
+			Timestamp date;
+			if(type.equals("1"))
+				date=d.getDate();
+			else
+				date=d.getSubmitdate();
+			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getName()+"</td><td>"+d.getUserid()+"</td><td>"+d.getImage()+"</td><td class='editbox' id='amount'>"+d.getAmount()+"</td><td class='editbox' id='price'>"+d.getPrice()+"</td><td class='editbox' id='totalprice'>"+d.getTotalprice()+"</td><td>"+d.getSpec()+"</td><td>"+d.getGrade()+"</td><td>"+d.getMaterial()+"</td><td>"+d.getLocation()+"</td><td>"+date+"</td><td>"+d.getMemo()+"</td></tr>\",";
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";
-		
 		return content;
 	}
 	@Override
@@ -156,10 +201,23 @@ public class TopperAction extends CrudAction{
 		// TODO Auto-generated method stub
 		type=(String)getParameter("type");//操作类型
 		String sql;
-		if(type.equals("1"))
-			sql="select * from dd_topper where status='1'";
-		else
-			sql="select * from dd_topper where status='0'";
+		String userid=(String) getSession().getAttribute("userid");
+		String t=(String) getSession().getAttribute("type");
+		if(t.equals("2"))
+		{
+			if(type.equals("1"))
+				sql="select * from dd_topper where status='1' and userid='"+userid+"'";
+			else
+				sql="select * from dd_topper where status='0' and userid='"+userid+"'";
+		}else
+		{
+			if(type.equals("1"))
+				sql="select * from dd_topper where status='1'";
+			else
+				sql="select * from dd_topper where status='0'";
+		}
+		
+		
 		int count=CommonDAO.count(sql);
 		return count;
 	}

@@ -23,9 +23,9 @@ public class DdUser implements java.io.Serializable {
 	private String type;
 	private String status;
 	private Timestamp submitdate;
-	private Integer operator;
+	private String operator;
 	private Timestamp verifydate;
-	private Integer updateby;
+	private String updateby;
 	private Timestamp updatedate;
 	private String password;
 
@@ -37,7 +37,7 @@ public class DdUser implements java.io.Serializable {
 
 	/** minimal constructor */
 	public DdUser(String userid, String name, String sex, String type,
-			String status, Timestamp submitdate, Integer operator,
+			String status, Timestamp submitdate, String operator,
 			String password) {
 		this.userid = userid;
 		this.name = name;
@@ -53,7 +53,7 @@ public class DdUser implements java.io.Serializable {
 	public DdUser(String userid, String name, String idcard, String sex,
 			String address, String mobile, String telephone, String fax,
 			String mail, String type, String status, Timestamp submitdate,
-			Integer operator, Timestamp verifydate, Integer updateby,
+			String operator, Timestamp verifydate, String updateby,
 			Timestamp updatedate, String password) {
 		this.userid = userid;
 		this.name = name;
@@ -180,11 +180,11 @@ public class DdUser implements java.io.Serializable {
 		this.submitdate = submitdate;
 	}
 
-	public Integer getOperator() {
+	public String getOperator() {
 		return this.operator;
 	}
 
-	public void setOperator(Integer operator) {
+	public void setOperator(String operator) {
 		this.operator = operator;
 	}
 
@@ -196,11 +196,11 @@ public class DdUser implements java.io.Serializable {
 		this.verifydate = verifydate;
 	}
 
-	public Integer getUpdateby() {
+	public String getUpdateby() {
 		return this.updateby;
 	}
 
-	public void setUpdateby(Integer updateby) {
+	public void setUpdateby(String updateby) {
 		this.updateby = updateby;
 	}
 

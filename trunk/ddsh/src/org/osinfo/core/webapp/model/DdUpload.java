@@ -16,8 +16,8 @@ public class DdUpload implements java.io.Serializable {
 	private Integer amount;
 	private Integer gridid;
 	private Float price;
-	private Integer userid;
-	private Integer operator;
+	private String userid;
+	private String operator;
 	private Timestamp date;
 
 	// Constructors
@@ -27,7 +27,7 @@ public class DdUpload implements java.io.Serializable {
 	}
 
 	/** minimal constructor */
-	public DdUpload(String barcode, Integer gridid, Integer userid,
+	public DdUpload(String barcode, Integer gridid, String userid,
 			Timestamp date) {
 		this.barcode = barcode;
 		this.gridid = gridid;
@@ -37,7 +37,7 @@ public class DdUpload implements java.io.Serializable {
 
 	/** full constructor */
 	public DdUpload(String barcode, String name, Integer amount,
-			Integer gridid, Float price, Integer userid, Integer operator,
+			Integer gridid, Float price, String userid, String operator,
 			Timestamp date) {
 		this.barcode = barcode;
 		this.name = name;
@@ -99,19 +99,19 @@ public class DdUpload implements java.io.Serializable {
 		this.price = price;
 	}
 
-	public Integer getUserid() {
+	public String getUserid() {
 		return this.userid;
 	}
 
-	public void setUserid(Integer userid) {
+	public void setUserid(String userid) {
 		this.userid = userid;
 	}
 
-	public Integer getOperator() {
+	public String getOperator() {
 		return this.operator;
 	}
 
-	public void setOperator(Integer operator) {
+	public void setOperator(String operator) {
 		this.operator = operator;
 	}
 
