@@ -252,7 +252,7 @@ public abstract class CrudAction extends BaseAction {
 			String[] filters=filter.split("\\,");
 			expressions=this.filter(expressions, filters);
 		}
-
+		/*
 		if(logger.isDebugEnabled())
 		{
 			logger.debug("sort..."+SORT_);
@@ -271,7 +271,7 @@ public abstract class CrudAction extends BaseAction {
 			logger.debug("end..."+end);
 			logger.debug("perpage..."+perpage);
 			logger.debug("type..."+type);
-		}
+		}*/
 		
 		cfg=new JsonConfig();
 		//具体实现类

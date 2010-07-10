@@ -822,6 +822,15 @@ color:#FF0000;
 
 .icon0{margin-right:2px}
 
+/*可编辑输入框
+
+*/
+
+td.editbox {
+color:#3669A3;
+cursor:hand;
+}
+
 /*带边框线、交换色的表格
 
 */

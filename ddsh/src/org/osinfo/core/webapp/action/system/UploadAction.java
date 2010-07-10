@@ -18,21 +18,18 @@ import org.apache.struts2.convention.annotation.Results;
 import org.osinfo.core.webapp.action.CrudAction;
 import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
-import org.osinfo.core.webapp.model.DdInventory;
-import org.osinfo.core.webapp.model.DdTopper;
+import org.osinfo.core.webapp.model.DdUpload;
 import org.osinfo.core.webapp.util.PageUtil;
 @Results({
-	 @Result(name="list",location = "/WEB-INF/result/system/inventory/list.ftl"),
-	 @Result(name="list2",location = "/WEB-INF/result/system/inventory/list2.ftl"),
-	 @Result(name="list3",location = "/WEB-INF/result/system/inventory/list3.ftl")
+	 @Result(name="list",location = "/WEB-INF/result/system/upload/list.ftl"),
 })
 /**
  * @Author Lucifer.Zhou 4:29:47 PM Jan 6, 2010
  * @Description
- * 库存管理
+ * 上架记录
  */
-public class InventoryAction extends CrudAction{
-	private static Logger logger = Logger.getLogger ( InventoryAction.class.getName () ) ;
+public class UploadAction extends CrudAction{
+	private static Logger logger = Logger.getLogger ( UploadAction.class.getName () ) ;
 	/**
 	 * @Author Lucifer.Zhou 4:30:01 PM Jan 6, 2010
 	 * long LoginAction.java
@@ -40,7 +37,7 @@ public class InventoryAction extends CrudAction{
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	//库存列表
+	//上架记录
 	public String list() {
 		return "list";
 	}
@@ -75,27 +72,7 @@ public class InventoryAction extends CrudAction{
 		else
 			return "error";
 	}
-	//批量上传,修改库存表的数量为0,用户可在上传记录表进行修改数量和格子编号
-	//如果数量被修改了，则要补全库存表
-	public String batchAdd() {
-		// TODO Auto-generated method stub
-	    String ids=getParameter("ids");
-	    ids=ids.substring(0,ids.length()-1);
-	    if(!"".equals(ids.trim())){
-	    		String submitdate=getCurrentTime();
 
-	    		String operator=(String) getSession().getAttribute("userid");
-		    	String sql2="insert into dd_upload (barcode,name,amount,gridid,price,userid,operator,date) " +
-		    			"select barcode,name,amount,'',price,userid,'"+operator+"','"+submitdate+"' from dd_inventory where id in ("+ids+")";
-		    	CommonDAO.executeUpdate(sql2);
-		    	
-	    		String sql="update dd_inventory set amount=0 where id in ("+ids+")";
-	    		CommonDAO.executeUpdate(sql);
-	    }
-	    renderSimpleResult(true,"ok");
-	    return null;
-	}
-	
 	@Override
 	public String del() {
 		// TODO Auto-generated method stub
@@ -103,7 +80,7 @@ public class InventoryAction extends CrudAction{
 			logger.debug("加载删除页面...");
 	    String ids=getParameter("ids");
 	    if(!"".equals(ids.trim())){
-	    		String sql="delete from dd_topper where id in ("+ids.substring(0,ids.length()-1)+")";
+	    		String sql="delete from dd_upload where id in ("+ids.substring(0,ids.length()-1)+")";
 	    		CommonDAO.executeUpdate(sql);
 	    }
 	    renderSimpleResult(true,"ok");
@@ -116,7 +93,7 @@ public class InventoryAction extends CrudAction{
 		String tdid=getParameter("tdid");
 		String value=getParameter("value");
 		
-		String sql="update dd_topper set "+tdid+"="+value+" where id in ("+trid+")";
+		String sql="update dd_upload set "+tdid+"="+value+" where id in ("+trid+")";
 		CommonDAO.executeUpdate(sql);
 		renderSimpleResult(true,"修改成功");
 		return null;
@@ -146,12 +123,12 @@ public class InventoryAction extends CrudAction{
 		String t=(String) getSession().getAttribute("type");
 		if(t.equals("2"))
 		{
-			sql="select * from dd_inventory where userid='"+userid+"' and amount>0";
+			sql="select * from dd_upload where userid='"+userid+"' and amount>0";
 		}else
 		{
-			sql="select * from dd_inventory where amount>0";
+			sql="select * from dd_upload where amount>0";
 		}
-		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,DdInventory.class);
+		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,DdUpload.class);
 		
 		String content = "totalPage = " + p.getTotalPageCount() + ";";
 		content += "dataStore = [";
@@ -159,10 +136,10 @@ public class InventoryAction extends CrudAction{
 		List l=(List)p.getResult();
 		for(int i=0;i<l.size();i++)
 		{
-			DdInventory d=(DdInventory)l.get(i);
+			DdUpload d=(DdUpload)l.get(i);
 			Timestamp date=d.getDate();
 
-			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td>"+d.getUserid()+"</td><td class='editbox' id='amount'>"+d.getAmount()+"</td><td class='editbox' id='price'>"+d.getPrice()+"</td><td class='editbox' id='totalprice'>"+d.getTotalprice()+"</td><td>"+d.getSpec()+"</td><td>"+d.getGrade()+"</td><td>"+d.getMaterial()+"</td><td>"+d.getLocation()+"</td><td>"+date+"</td><td>"+d.getOperator()+"</td></tr>\",";
+			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td>"+d.getUserid()+"</td><td>"+d.getAmount()+"</td><td>"+d.getPrice()+"</td><td class='editbox' id='gridid'>"+d.getGridid()+"</td><td>"+date+"</td><td>"+d.getOperator()+"</td></tr>\",";
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";
@@ -177,10 +154,10 @@ public class InventoryAction extends CrudAction{
 		String t=(String) getSession().getAttribute("type");
 		if(t.equals("2"))
 		{
-			sql="select * from dd_inventory where userid='"+userid+"' and amount>0";
+			sql="select * from dd_upload where userid='"+userid+"' and amount>0";
 		}else
 		{
-			 sql="select * from dd_inventory where amount>0";
+			 sql="select * from dd_upload where amount>0";
 		}
 		int count=CommonDAO.count(sql);
 		return count;

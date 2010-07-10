@@ -99,8 +99,8 @@
 		<table border="0" width="100%" cellspacing="0" cellpadding=" height="30">
 			<tr>
 				<td>
-					<img src="${images}/export.png"/>
-					<img src="${images}/printer.png"/>
+					<img src="${images}/export.gif"/>
+					<img src="${images}/printer.gif"/>
 				</td>
 			</tr>
 		</table>

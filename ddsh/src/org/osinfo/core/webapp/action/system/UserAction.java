@@ -66,12 +66,12 @@ public class UserAction extends CrudAction{
 		String address=getParameter("address");
 		String mail=getParameter("mail");
 
-		String memo=getParameter("memo");
+		String brand=getParameter("brand");
 		String submitdate=getCurrentTime();
 
 		String operator=(String) getSession().getAttribute("userid");
 
-		String sql="insert into dd_user (userid,password,name,idcard,sex,address,mobile,telephone,fax,mail,type,status,submitdate,operator) values ('"+userid+"','"+password+"','"+name+"','"+idcard+"','"+sex+"','"+address+"','"+mobile+"','"+telephone+"','"+fax+"','"+mail+"','"+type+"','1','"+submitdate+"','"+operator+"')";
+		String sql="insert into dd_user (userid,password,name,idcard,sex,address,mobile,telephone,fax,mail,type,status,submitdate,operator,verifydate,brand) values ('"+userid+"','"+password+"','"+name+"','"+idcard+"','"+sex+"','"+address+"','"+mobile+"','"+telephone+"','"+fax+"','"+mail+"','"+type+"','1','"+submitdate+"','"+operator+"','"+submitdate+"','"+brand+"')";
 
 		int v=CommonDAO.executeUpdate(sql);
 		if(v>0)
@@ -110,6 +110,13 @@ public class UserAction extends CrudAction{
 	@Override
 	public String edit() {
 		// TODO Auto-generated method stub
+		String trid=getParameter("trid");
+		String tdid=getParameter("tdid");
+		String value=getParameter("value");
+		
+		String sql="update dd_user set "+tdid+"="+value+" where id in ('"+trid+"')";
+		CommonDAO.executeUpdate(sql);
+		renderSimpleResult(true,"修改成功");
 		return null;
 	}
 	@Override
@@ -149,7 +156,7 @@ public class UserAction extends CrudAction{
 			String t="<font color='green'>管理员</a>";
 			if(d.getType().equals("2"))
 			{
-				t="<font color='green'>设计师</a>";
+				t="<font color='green'>设计师("+d.getBrand()+")</a>";
 			}else if(d.getType().equals("3"))
 			{
 				t="<font color='yellow'>店员</a>";
@@ -162,7 +169,7 @@ public class UserAction extends CrudAction{
 				date=d.getVerifydate();
 			else
 				date=d.getSubmitdate();
-			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getUserid()+"</td><td>"+d.getName()+"</td><td>"+t+"</td><td>"+d.getMobile()+"</td><td>"+d.getTelephone()+"</td><td>"+d.getFax()+"</td><td>"+d.getMail()+"</td><td>"+d.getAddress()+"</td><td>"+date+"</td></tr>\",";
+			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getUserid()+"</td><td>"+d.getName()+"</td><td>"+t+"</td><td class='editbox' id='mobile'>"+d.getMobile()+"</td><td class='editbox' id='telephone'>"+d.getTelephone()+"</td><td class='editbox' id='fax'>"+d.getFax()+"</td><td class='editbox' id='mail'>"+d.getMail()+"</td><td class='editbox' id='address'>"+d.getAddress()+"</td><td>"+date+"</td></tr>\",";
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";

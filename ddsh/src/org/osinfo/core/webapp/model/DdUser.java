@@ -28,6 +28,7 @@ public class DdUser implements java.io.Serializable {
 	private String updateby;
 	private Timestamp updatedate;
 	private String password;
+	private String brand;
 
 	// Constructors
 
@@ -54,7 +55,7 @@ public class DdUser implements java.io.Serializable {
 			String address, String mobile, String telephone, String fax,
 			String mail, String type, String status, Timestamp submitdate,
 			String operator, Timestamp verifydate, String updateby,
-			Timestamp updatedate, String password) {
+			Timestamp updatedate, String password, String brand) {
 		this.userid = userid;
 		this.name = name;
 		this.idcard = idcard;
@@ -72,6 +73,7 @@ public class DdUser implements java.io.Serializable {
 		this.updateby = updateby;
 		this.updatedate = updatedate;
 		this.password = password;
+		this.brand = brand;
 	}
 
 	// Property accessors
@@ -218,6 +220,14 @@ public class DdUser implements java.io.Serializable {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getBrand() {
+		return this.brand;
+	}
+
+	public void setBrand(String brand) {
+		this.brand = brand;
 	}
 
 }

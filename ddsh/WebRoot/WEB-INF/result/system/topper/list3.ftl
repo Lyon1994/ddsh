@@ -99,9 +99,9 @@
 		<table border="0" width="100%" cellspacing="0" cellpadding=" height="30">
 			<tr>
 				<td>
-					<img src="${images}/delete.png" onclick="deletes()" />
-					<img src="${images}/export.png"/>
-					<img src="${images}/printer.png"/>
+					<img src="${images}/delete.gif" onclick="deletes()" />
+					<img src="${images}/export.gif"/>
+					<img src="${images}/printer.gif"/>
 				</td>
 			</tr>
 		</table>
