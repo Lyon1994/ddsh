@@ -20,7 +20,7 @@
 				return;
 			var dataStore = config.dataStore;																			//数据
 			var openCookies = config.openCookies != null ? config.openCookies : true;
-			var configPage = config.perPage > 0 ? config.perPage : 10;
+			var configPage = config.perPage > 0 ? config.perPage : 20;
 			var perPage = !openCookies || $.cookie(t+"_perPage") == null ? configPage : parseInt($.cookie(t+"_perPage"));//每页显示记录数
 			var totalRecord = config.totalRecord;																		//总记录数
 			if(totalRecord==undefined)
@@ -87,12 +87,12 @@
 				toolbar += '<td valign="middle">&nbsp;<select class="'+themeName+'_pgPerPage" title="每页显示条数">';
 				if(config.perPage>0)
 					toolbar += '<option value="'+config.perPage+'">'+config.perPage+'</option>';
-				toolbar += '<option value="5">5</option>';
 				toolbar += '<option value="10">10</option>';
-				toolbar += '<option value="15">15</option>';
 				toolbar += '<option value="20">20</option>';
-				toolbar += '<option value="25">25</option>';
 				toolbar += '<option value="40">40</option>';
+				toolbar += '<option value="80">80</option>';
+				toolbar += '<option value="160">160</option>';
+				toolbar += '<option value="320">320</option>';
 				toolbar += '</select>&nbsp;</td>';
 				toolbar += '<td valign="middle"><div class="'+themeName+'_separator"></div></td>';
 			}

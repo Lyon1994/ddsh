@@ -18,6 +18,7 @@ import org.osinfo.core.webapp.action.CrudAction;
 import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
 import org.osinfo.core.webapp.model.DdBack;
+import org.osinfo.core.webapp.model.DdTopper;
 import org.osinfo.core.webapp.util.PageUtil;
 @Results({
 	 @Result(name="list",location = "/WEB-INF/result/system/back/list.ftl"),
@@ -54,18 +55,43 @@ public class BackAction extends CrudAction{
 		String amount=getParameter("amount");
 		String reason=getParameter("reason");
 		String submitdate=getCurrentTime();
-
+		String topperid=getParameter("topperid");
 		String operator=(String) getSession().getAttribute("userid");
 
-		String sql="insert into dd_back (userid,name,amount,reason,date,operator) " +
-				"values ('"+userid+"','"+name+"',"+amount+",'"+reason+"','"+submitdate+"','"+operator+"')";
+		String sql="insert into dd_back (topperid,userid,name,amount,reason,date,operator) " +
+				"values ("+topperid+",'"+userid+"','"+name+"',"+amount+",'"+reason+"','"+submitdate+"','"+operator+"')";
 		int v=CommonDAO.executeUpdate(sql);
-		if(v>0)
-			return "success";
-		else
-			return "error";
+		//更新商品接收表数量
+		String sql2="select * from dd_topper where id ="+topperid;
+    	List l=CommonDAO.executeQuery(sql2,DdTopper.class);
+    	for(int i=0;i<l.size();i++)
+    	{
+    		DdTopper t=(DdTopper)l.get(i);
+    		sql="update dd_topper set  amount="+(t.getAmount()-Integer.valueOf(amount))+" where id ="+topperid;
+	    	CommonDAO.executeUpdate(sql);
+    	}
+    	renderSimpleResult(true,"ok");
+	    return null;
 	}
+	//批量删除
+	public String batchAdd() {
+		// TODO Auto-generated method stub
+	    String ids=getParameter("ids");
+	    ids=ids.substring(0,ids.length()-1);
+	    if(!"".equals(ids.trim())){
+	    		String submitdate=getCurrentTime();
 
+	    		String operator=(String) getSession().getAttribute("userid");
+		    	String sql2="insert into dd_back (topperid,userid,name,amount,reason,operator,date) " +
+		    			"select id,userid,name,amount,'批量退回','"+operator+"','"+submitdate+"' from dd_topper where id in ("+ids+")";
+		    	CommonDAO.executeUpdate(sql2);
+		    	
+	    		String sql="update dd_topper set amount=0 where id in ("+ids+")";
+	    		CommonDAO.executeUpdate(sql);
+	    }
+	    renderSimpleResult(true,"ok");
+	    return null;
+	}
 	@Override
 	public String del() {
 		// TODO Auto-generated method stub
@@ -110,9 +136,9 @@ public class BackAction extends CrudAction{
 		if(t.equals("2"))
 		{
 			if(type.equals("1"))
-				sql="select * from dd_back where userid='"+userid+"'";
+				sql="select * from dd_back where userid='"+userid+"' and amount>0";
 			else
-				sql="select * from dd_back where userid='"+userid+"'";
+				sql="select * from dd_back where userid='"+userid+"' and amount>0";
 		}else
 		{
 			if(type.equals("1"))
@@ -146,9 +172,9 @@ public class BackAction extends CrudAction{
 		if(t.equals("2"))
 		{
 			if(type.equals("1"))
-				sql="select * from dd_back where userid='"+userid+"'";
+				sql="select * from dd_back where userid='"+userid+"' and amount>0";
 			else
-				sql="select * from dd_back where userid='"+userid+"'";
+				sql="select * from dd_back where userid='"+userid+"' and amount>0";
 		}else
 		{
 			if(type.equals("1"))

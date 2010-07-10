@@ -100,10 +100,10 @@
 	<div style="width:50%;padding:0px;marging:0px">
 		<table border="0" width="100%" cellspacing="0" cellpadding=" height="30">
 			<tr>
-				<td><a href="${base}/html/topper_back.html"><img src="${images}/add.png"/></a>
-					<img src="${images}/delete.png" onclick="deletes()" />
-					<img src="${images}/export.png"/>
-					<img src="${images}/printer.png"/>
+				<td>
+					<img src="${images}/delete.gif" onclick="deletes()" />
+					<img src="${images}/export.gif"/>
+					<img src="${images}/printer.gif"/>
 				</td>
 			</tr>
 		</table>

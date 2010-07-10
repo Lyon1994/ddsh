@@ -33,10 +33,10 @@
 					<td valign="top">
 					<table border="0" width="968" id="table3" cellspacing="0" cellpadding="0">
 						<tr>
-							<td height="287" width="557">　</td>
-							<td height="287" width="205" valign="bottom">
-							<input type="text" name="userid" size="33" style="BORDER:solid 0px;BACKGROUND-COLOR: transparent"></td>
-							<td width="206" valign="bottom" rowspan="4">
+							<td height="287" width="580">　</td>
+							<td height="287" valign="bottom" align="left">
+							<input type="text" name="userid" size="25" style="BORDER:solid 0px;BACKGROUND-COLOR: transparent"></td>
+							<td valign="bottom" rowspan="4">
 							<table border="0" width="100%" id="table4" cellspacing="0" cellpadding="0">
 								<tr>
 									<td align="left">
@@ -54,8 +54,8 @@
 						</tr>
 						<tr>
 							<td height="21" width="557">　</td>
-							<td width="205" height="21">
-							<input type="password" name="password" size="33" style="BORDER:solid 0px;BACKGROUND-COLOR: transparent"></td>
+							<td width="205" height="21" align="left">
+							<input type="password" name="password" size="25" style="BORDER:solid 0px;BACKGROUND-COLOR: transparent"></td>
 						</tr>
 						<tr>
 							<td width="557" height="22">　</td>

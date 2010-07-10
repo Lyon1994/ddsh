@@ -9,7 +9,10 @@
 package org.osinfo.core.webapp.action.system;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
+
+import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -19,6 +22,7 @@ import org.osinfo.core.webapp.action.CrudAction;
 import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
 import org.osinfo.core.webapp.model.DdTopper;
+import org.osinfo.core.webapp.util.JsonUtil;
 import org.osinfo.core.webapp.util.PageUtil;
 @Results({
 	 @Result(name="list",location = "/WEB-INF/result/system/topper/list.ftl"),
@@ -81,25 +85,7 @@ public class TopperAction extends CrudAction{
 		else
 			return "error";
 	}
-	//商品退回
-	public String back() {
-		// TODO Auto-generated method stub
-		String userid=getParameter("userid");
-		String name=getParameter("name");
-		String amount=getParameter("amount");
-		String memo=getParameter("memo");
-		String submitdate=getCurrentTime();
 
-		String operator=(String) getSession().getAttribute("userid");
-
-		String sql="insert into dd_back (userid,name,amount,memo,date,operator) " +
-				"values ('"+userid+"','"+name+"',"+amount+","+memo+","+submitdate+",'"+operator+"'')";
-		int v=CommonDAO.executeUpdate(sql);
-		if(v>0)
-			return "success";
-		else
-			return "error";
-	}
 	//审核通过,入库
 	public String apply() {
 		// TODO Auto-generated method stub
@@ -121,6 +107,29 @@ public class TopperAction extends CrudAction{
 	    	CommonDAO.executeUpdate(sql2);
 	    }
 	    renderSimpleResult(true,"ok");
+        return null;
+	}
+	//单件物品退回数据加载
+	public String load() {
+		// TODO Auto-generated method stub
+		if(logger.isDebugEnabled())
+			logger.debug("加载装入页面...");
+	    String id=getParameter("id");
+	    List l=new ArrayList();
+	    if(!"".equals(id.trim())){
+	    		String sql="select * from dd_topper where id ="+id;
+	    		l=CommonDAO.executeQuery(sql,DdTopper.class);
+	    }
+	    try
+	    {
+	    	String json = JsonUtil.list2json(l);
+	    	renderJson(json.toString());
+		    System.out.println(json.toString());
+	    }catch(Exception e)
+	    {
+	    	e.printStackTrace();
+	    }
+	    
         return null;
 	}
 	@Override
@@ -174,15 +183,15 @@ public class TopperAction extends CrudAction{
 		if(t.equals("2"))
 		{
 			if(type.equals("1"))
-				sql="select * from dd_topper where status='1' and userid='"+userid+"'";
+				sql="select * from dd_topper where status='1' and amount>0 and userid='"+userid+"'";
 			else
-				sql="select * from dd_topper where status='0' and userid='"+userid+"'";
+				sql="select * from dd_topper where status='0' and amount>0 and userid='"+userid+"'";
 		}else
 		{
 			if(type.equals("1"))
-				sql="select * from dd_topper where status='1'";
+				sql="select * from dd_topper where status='1' and amount>0";
 			else
-				sql="select * from dd_topper where status='0'";
+				sql="select * from dd_topper where status='0' and amount>0";
 		}
 		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,DdTopper.class);
 		
@@ -217,15 +226,15 @@ public class TopperAction extends CrudAction{
 		if(t.equals("2"))
 		{
 			if(type.equals("1"))
-				sql="select * from dd_topper where status='1' and userid='"+userid+"'";
+				sql="select * from dd_topper where status='1' and amount>0 and userid='"+userid+"'";
 			else
-				sql="select * from dd_topper where status='0' and userid='"+userid+"'";
+				sql="select * from dd_topper where status='0' and amount>0 and userid='"+userid+"'";
 		}else
 		{
 			if(type.equals("1"))
-				sql="select * from dd_topper where status='1'";
+				sql="select * from dd_topper where status='1' and amount>0";
 			else
-				sql="select * from dd_topper where status='0'";
+				sql="select * from dd_topper where status='0' and amount>0";
 		}
 		
 		
