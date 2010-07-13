@@ -45,7 +45,7 @@
 				}
 				if(window.confirm("确定要批量上架这些记录吗？")){
 					$.ajax({
-					 	url: 'inventory!batchAdd.zf?ids='+str+'&t='+new Date().getTime(),
+					 	url: 'upload!batchAdd.zf?ids='+str+'&t='+new Date().getTime(),
 					 	type: 'POST',
 					 	dataType: 'json',
 					 	error: function(){alert('error');},

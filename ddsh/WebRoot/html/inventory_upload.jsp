@@ -22,21 +22,26 @@
 					 	dataType: 'json',
 					 	error: function(){alert('error');},
 					 	success: function(json){
+					 		$('#barcode').attr('value',json[0].barcode);
 							$('#name').attr('value',json[0].name);
 							$('#userid').attr('value',json[0].userid);
 							$('#amount').attr('value',json[0].amount);
 							$('#id').attr('value',json[0].id);
+							$('#price').attr('value',json[0].id);
 					 	}
 					});
 					$('#ok').click( 
 						function(){	
-							var topperid=$('#id').attr('value');
-							var reason=$('#reason').attr('value');
+							var barcode=$('#barcode').attr('value');
+							var inventoryid=$('#id').attr('value');
+							var barcode=$('#barcode').attr('value');
 							var amount=$('#amount').attr('value');
 							var userid=$('#userid').attr('value');
 							var name=$('#name').attr('value');
+							var price=$('#price').attr('value');
+							var gridid=$('#gridid').attr('value');
 							$.ajax({
-								 	url: '../system/inventory!add.zf?topperid='+topperid+'&name='+name+'&amount='+amount+'&reason='+reason+'&userid='+userid+'&t='+new Date().getTime(),
+								 	url: '../system/upload!add.zf?inventoryid='+inventoryid+'&name='+name+'&price='+price+'&gridid='+gridid+'&amount='+amount+'&barcode='+barcode+'&userid='+userid+'&t='+new Date().getTime(),
 								 	type: 'POST',
 								 	dataType: 'json',
 								 	error: function(){alert('error');},
@@ -68,22 +73,22 @@
 			<td class="maintab_kuang">
 			<table border="0" width="100%" cellspacing="0" cellpadding="0" class="tab_table_title">
 				<tr>
-					<td>商品名称：</td>
-					<td><input type="text" id="name" name="name" size="20" class="readonly" readonly="readonly" /></td>
+					<td>条形码：</td>
+					<td><input type="text" id="barcode" name="barcode" size="20" class="readonly" readonly="readonly" /></td>
 					<td>用户ID：</td>
 					<td><input type="text" id="userid" name="userid" size="20" class="readonly" readonly="readonly" /></td>
 				</tr>
 				<tr>
+					<td>商品名称：</td>
+					<td><input type="text" id="name" name="name" size="20" class="readonly" readonly="readonly" /></td>
 					<td>数量：</td>
 					<td><input type="text" id="amount" name="amount" size="20" class="text"/></td>
-					<td></td>
-					<td></td>
 				</tr>
-				
 				<tr>
-					<td>退回原因：</td>
-					<td colspan="3"><textarea rows="6" id="reason" name="reason" cols="100" class="text"></textarea></td>
-
+					<td>价格：</td>
+					<td><input type="text" id="price" name="price" size="20" class="readonly" readonly="readonly" /></td>
+					<td>格子编号：</td>
+					<td><input type="text" id="gridid" name=""gridid"" size="20" class="text"/></td>
 				</tr>
 				<tr>
 					<td colspan="4"><hr size="1"/></td>
