@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50130
 File Encoding         : 65001
 
-Date: 2010-07-10 21:35:42
+Date: 2010-07-13 21:52:58
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -57,6 +57,7 @@ INSERT INTO `dd_back` VALUES ('18', '15', 'user2', '6786', '6', 'dfasf', 'user1'
 DROP TABLE IF EXISTS `dd_down`;
 CREATE TABLE `dd_down` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `inventoryid` int(11) DEFAULT NULL,
   `barcode` varchar(128) NOT NULL,
   `name` varchar(10) DEFAULT NULL,
   `gridid` varchar(10) NOT NULL,
@@ -132,13 +133,13 @@ CREATE TABLE `dd_inventory` (
 -- ----------------------------
 -- Records of dd_inventory
 -- ----------------------------
-INSERT INTO `dd_inventory` VALUES ('1', 's', '32', '33', '2', '66', 'user77', '2', '2', '2', '2', null, null);
-INSERT INTO `dd_inventory` VALUES ('2', 's', '出饿', '22', '2', '2.09', 'user77', '2', '2', '2', '2', null, null);
+INSERT INTO `dd_inventory` VALUES ('1', 's', '32', '0', '2', '66', 'user77', '2', '2', '2', '2', null, null);
+INSERT INTO `dd_inventory` VALUES ('2', 's', '出饿', '0', '2', '2.09', 'user77', '2', '2', '2', '2', null, null);
 INSERT INTO `dd_inventory` VALUES ('3', 's', '234234', '0', '29.99', '2.999', 'user2', '2', '2', '2', '2', 'user1', '2010-07-08 02:28:19');
 INSERT INTO `dd_inventory` VALUES ('4', '201007081015305457', '2342342344', '0', '2.6767', '4', 'user2', '2', '2', '2', '2', 'user1', '2010-07-08 10:15:30');
 INSERT INTO `dd_inventory` VALUES ('5', '201007082221325407', '32', '0', '2', '66', 'user2', '2', '2', '2', '2', 'user1', '2010-07-08 10:21:32');
-INSERT INTO `dd_inventory` VALUES ('6', '201007082224212206', '546456', '45', '5', '55', 'user2', '55', '5', '5', '5', 'user1', '2010-07-08 10:24:21');
-INSERT INTO `dd_inventory` VALUES ('7', '201007082224212190', '54444', '4', '4', '4', 'user2', '4', '4', '4', '44', 'user1', '2010-07-08 10:24:21');
+INSERT INTO `dd_inventory` VALUES ('6', '201007082224212206', '546456', '0', '5', '55', 'user2', '55', '5', '5', '5', 'user1', '2010-07-08 10:24:21');
+INSERT INTO `dd_inventory` VALUES ('7', '201007082224212190', '54444', '0', '4', '4', 'user2', '4', '4', '4', '44', 'user1', '2010-07-08 10:24:21');
 INSERT INTO `dd_inventory` VALUES ('9', '201007082230407496', 'ss', '2', '3', '3', 'user2', '3', '3', '3', '3', 'user1', '2010-07-08 22:30:40');
 INSERT INTO `dd_inventory` VALUES ('10', '201007091517158490', '8898', '8', '8', '88', 'user2', '8', '', '8', '', 'user1', '2010-07-09 15:17:15');
 INSERT INTO `dd_inventory` VALUES ('11', '201007101757344099', '34534', '17', '3', '33', 'user2', '3', '3', '3', '3', 'user1', '2010-07-10 17:57:34');
@@ -302,6 +303,7 @@ CREATE TABLE `dd_transaction` (
 DROP TABLE IF EXISTS `dd_upload`;
 CREATE TABLE `dd_upload` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `inventoryid` int(11) DEFAULT NULL,
   `barcode` varchar(128) NOT NULL,
   `name` varchar(10) DEFAULT NULL,
   `amount` int(11) DEFAULT NULL,
@@ -312,13 +314,18 @@ CREATE TABLE `dd_upload` (
   `date` datetime NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `Index_1` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='格子上架记录表，操作人，操作日期，上架物';
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COMMENT='格子上架记录表，操作人，操作日期，上架物';
 
 -- ----------------------------
 -- Records of dd_upload
 -- ----------------------------
-INSERT INTO `dd_upload` VALUES ('2', '201007081015305457', '2342342344', '78', '3', '2.6767', 'user2', 'user1', '2010-07-10 20:11:33');
-INSERT INTO `dd_upload` VALUES ('3', '201007082221325407', '32', '33', '3', '2', 'user2', 'user1', '2010-07-10 20:11:33');
+INSERT INTO `dd_upload` VALUES ('2', null, '201007081015305457', '2342342344', '78', '3a', '2.6767', 'user2', 'user1', '2010-07-10 20:11:33');
+INSERT INTO `dd_upload` VALUES ('3', null, '201007082221325407', '32', '33', '3', '2', 'user2', 'user1', '2010-07-10 20:11:33');
+INSERT INTO `dd_upload` VALUES ('4', null, 's', '32', '33', '', '2', 'user77', 'user1', '2010-07-13 20:36:38');
+INSERT INTO `dd_upload` VALUES ('5', null, 's', '出饿', '22', '', '2', 'user77', 'user1', '2010-07-13 20:36:38');
+INSERT INTO `dd_upload` VALUES ('7', '2', '22', '2', '2', '3', '3', '2', '2', '2009-09-09 00:00:00');
+INSERT INTO `dd_upload` VALUES ('8', null, '201007082224212206', '546456', '45', '', '5', 'user2', 'user1', '2010-07-13 21:39:17');
+INSERT INTO `dd_upload` VALUES ('9', null, '201007082224212190', '54444', '4', '', '4', 'user2', 'user1', '2010-07-13 21:39:17');
 
 -- ----------------------------
 -- Table structure for `dd_user`
