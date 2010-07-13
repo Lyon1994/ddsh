@@ -9,6 +9,7 @@
 package org.osinfo.core.webapp.action.system;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -20,6 +21,7 @@ import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
 import org.osinfo.core.webapp.model.DdInventory;
 import org.osinfo.core.webapp.model.DdTopper;
+import org.osinfo.core.webapp.util.JsonUtil;
 import org.osinfo.core.webapp.util.PageUtil;
 @Results({
 	 @Result(name="list",location = "/WEB-INF/result/system/inventory/list.ftl"),
@@ -40,6 +42,29 @@ public class InventoryAction extends CrudAction{
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
+	//单件物品上架数据加载
+	public String load() {
+		// TODO Auto-generated method stub
+		if(logger.isDebugEnabled())
+			logger.debug("加载装入页面...");
+	    String id=getParameter("id");
+	    List l=new ArrayList();
+	    if(!"".equals(id.trim())){
+	    		String sql="select * from dd_inventory where id ="+id;
+	    		l=CommonDAO.executeQuery(sql,DdInventory.class);
+	    }
+	    try
+	    {
+	    	String json = JsonUtil.list2json(l);
+	    	renderJson(json.toString());
+		    System.out.println(json.toString());
+	    }catch(Exception e)
+	    {
+	    	e.printStackTrace();
+	    }
+	    
+        return null;
+	}
 	//库存列表
 	public String list() {
 		return "list";
@@ -75,26 +100,7 @@ public class InventoryAction extends CrudAction{
 		else
 			return "error";
 	}
-	//批量上传,修改库存表的数量为0,用户可在上传记录表进行修改数量和格子编号
-	//如果数量被修改了，则要补全库存表
-	public String batchAdd() {
-		// TODO Auto-generated method stub
-	    String ids=getParameter("ids");
-	    ids=ids.substring(0,ids.length()-1);
-	    if(!"".equals(ids.trim())){
-	    		String submitdate=getCurrentTime();
 
-	    		String operator=(String) getSession().getAttribute("userid");
-		    	String sql2="insert into dd_upload (barcode,name,amount,gridid,price,userid,operator,date) " +
-		    			"select barcode,name,amount,'',price,userid,'"+operator+"','"+submitdate+"' from dd_inventory where id in ("+ids+")";
-		    	CommonDAO.executeUpdate(sql2);
-		    	
-	    		String sql="update dd_inventory set amount=0 where id in ("+ids+")";
-	    		CommonDAO.executeUpdate(sql);
-	    }
-	    renderSimpleResult(true,"ok");
-	    return null;
-	}
 	
 	@Override
 	public String del() {
