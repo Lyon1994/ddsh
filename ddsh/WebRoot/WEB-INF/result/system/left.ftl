@@ -34,7 +34,7 @@
 				<table border="0" width="217" id="table5" cellspacing="0" cellpadding="0">
 					<tr>
 						<td width="70">　</td>
-						<td><a onclick="javascript:parent.main.frame.location.href='${menu.get(name)}'" style="cursor:hand;">${name}</a></td>
+						<td><b><a onclick="javascript:parent.main.frame.location.href='${menu.get(name)}'" style="cursor:hand;">${name}</a></b></td>
 					</tr>
 				</table>
 				</td>

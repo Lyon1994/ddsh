@@ -9,10 +9,11 @@ public class DdSell implements java.io.Serializable {
 	// Fields
 
 	private Integer id;
+	private Integer inventoryid;
 	private String barcode;
 	private String name;
-	private Integer gridid;
-	private String amount;
+	private String gridid;
+	private Integer amount;
 	private Float price;
 	private String userid;
 
@@ -23,8 +24,9 @@ public class DdSell implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public DdSell(String barcode, String name, Integer gridid, String amount,
-			Float price, String userid) {
+	public DdSell(Integer inventoryid, String barcode, String name,
+			String gridid, Integer amount, Float price, String userid) {
+		this.inventoryid = inventoryid;
 		this.barcode = barcode;
 		this.name = name;
 		this.gridid = gridid;
@@ -43,6 +45,14 @@ public class DdSell implements java.io.Serializable {
 		this.id = id;
 	}
 
+	public Integer getInventoryid() {
+		return this.inventoryid;
+	}
+
+	public void setInventoryid(Integer inventoryid) {
+		this.inventoryid = inventoryid;
+	}
+
 	public String getBarcode() {
 		return this.barcode;
 	}
@@ -59,19 +69,19 @@ public class DdSell implements java.io.Serializable {
 		this.name = name;
 	}
 
-	public Integer getGridid() {
+	public String getGridid() {
 		return this.gridid;
 	}
 
-	public void setGridid(Integer gridid) {
+	public void setGridid(String gridid) {
 		this.gridid = gridid;
 	}
 
-	public String getAmount() {
+	public Integer getAmount() {
 		return this.amount;
 	}
 
-	public void setAmount(String amount) {
+	public void setAmount(Integer amount) {
 		this.amount = amount;
 	}
 

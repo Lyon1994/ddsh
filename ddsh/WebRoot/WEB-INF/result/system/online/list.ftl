@@ -10,7 +10,7 @@
         <meta http-equiv="Expires" content="0"/>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-    	<title>上传记录</title>
+    	<title>在售列表</title>
 		<link href="${css}/mainstyle.css" rel="stylesheet" type="text/css">
 		<script language="javascript" src="${jquery}/jquery-1.4.2.min.js"></script>
 		<script language="javascript" src="${jquery_lib}/jquery.cookie.min.js"></script>
@@ -20,7 +20,6 @@
 		<script language="javascript">
 			<!--
 			var b=false;
-
 			function ck()
 			{
 				if(b)
@@ -31,45 +30,46 @@
 			    for (var i=0;i<sel.length;i++ )
 		    		sel[i].checked = b;  
 			}
-			function deletes()
+			function down()
 			{
 				var str="";
+				var m=0;
 				var sel = document.getElementsByName("row");
-			    for(var i=0;i<sel.length;i++)
+				for(var i=0;i<sel.length;i++)
 			    {
 			   		if(sel[i].checked==true)
+			   		{
 			   			str+=sel[i].value+",";
+			   			m=m+1;
+			   		}
+
 			    }
-				if(str==""){
+			    if(str==""){
 					alert("请至少选择一条记录");
 					return false;
 				}
-				if(window.confirm("确定要删除这些记录吗？")){
-					$.ajax({
-					 	url: 'upload!del.zf?ids='+str+'&t='+new Date().getTime(),
-					 	type: 'POST',
-					 	dataType: 'json',
-					 	error: function(){alert('error');},
-					 	success: function(json){
-							alert(json.info); 
-							load('');
-					 	}
-					}); 
-				}
+				if(m>1)
+			    {
+			    	alert("请选择一条记录!不能多选操作");
+					return false;
+			    }
+				var returnstr;
+        		returnstr = window.showModalDialog('../html/sell_down.jsp?id='+str.replace(',',''),'',"dialogHeight: 500px; dialogWidth: 750px;center: yes; help: no;resizable: no; status: no;");
+				load('');
+
 			}
-			
 			function load(param)
 			{
-				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th width='1%'><input type='checkbox' name='select' onclick='ck()'/></th><th>条形码</th><th>物品名称</th><th>设计师</th><th>数量</th><th>价格</th><th>格子编号</th><th>日期</th><th>操作人</th></tr></thead><tbody>";
+				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th width='1%'><input type='checkbox' name='select' onclick='ck()'/></th><th>条形码</th><th>物品名称</th><th>设计师</th><th>数量</th><th>单价</th><th>格子编号</th></tr></thead><tbody>";
 				var a="</tbody></table>";
 				$.ajax({
-					 	url: 'upload!count.zf?type=0&t='+new Date().getTime(),
+					 	url: 'sell!count.zf?type=1&t='+new Date().getTime(),
 					 	type: 'POST',
 					 	dataType: 'json',
 					 	error: function(){alert('error');},
 					 	success: function(json){
 							//蓝色主题
-							$('#list').jpage({dataBefore:b,dataAfter:a,dataStore: null,themeName:'blue',totalRecord:json[0],proxyUrl:'upload!result.zf?t='+new Date().getTime()+'&type=0',openCookies:false,
+							$('#list').jpage({dataBefore:b,dataAfter:a,dataStore: null,themeName:'blue',totalRecord:json[0],proxyUrl:'sell!result.zf?t='+new Date().getTime()+'&type=1',openCookies:false,
 							showMode:'full',ajaxParam:param}); 
 					 	}
 					}); 
@@ -85,7 +85,6 @@
 			)
 			//-->
 		</script>
-
 	</head>
 
 <body>
@@ -93,7 +92,7 @@
 	<table border="0" width="100%" cellspacing="0" cellpadding=" height="25">
 	<tr class="tree_title_txt">
 	<td nowrap width="100%" class="tree_title_txt" valign="middle" id="cwCellTopTitTxt">
-	上传记录列表</td>
+	在售列表</td>
 	</tr>
 	</table>
 	<!--标题结束-->
@@ -101,7 +100,7 @@
 		<table border="0" width="100%" cellspacing="0" cellpadding=" height="30">
 			<tr>
 				<td>
-					<img src="${images}/delete.gif" onclick="deletes()" />
+					<input type="button" value="下 架" onclick="down()" alt="下 架" style="cursor:hand"/>
 					<img src="${images}/export.gif"/>
 					<img src="${images}/printer.gif"/>
 				</td>

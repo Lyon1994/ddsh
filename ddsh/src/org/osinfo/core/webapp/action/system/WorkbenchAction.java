@@ -89,13 +89,13 @@ public class WorkbenchAction extends BaseAction {
 			m.put("商品退回", "system/back!list.zf");
 			m.put("库存管理", "system/inventory!list.zf");//这里有上架
 			m.put("上架记录", "system/upload!list.zf");
-			m.put("当前在售", "user.zf");//这里有下架
-			m.put("下架记录", "user.zf");
+			m.put("当前在售", "system/sell!list.zf");//这里有下架
+			m.put("下架记录", "system/down!list.zf");
 			m.put("售货分析", "user.zf");
 			m.put("退货分析", "user.zf");
 			m.put("用户管理", "user.zf");
-			m.put("格子管理", "user.zf");
-			m.put("公告管理", "user.zf");
+			m.put("格子管理", "system/grid!list.zf");
+			m.put("公告管理", "system/notice!list.zf");
 			m.put("用户管理", "system/user!list.zf");
 			m.put("财务管理", "user.zf");
 		}else if(type.equals("2"))
@@ -106,8 +106,8 @@ public class WorkbenchAction extends BaseAction {
 			m.put("退回记录", "system/back!list2.zf");
 			m.put("库存记录", "system/inventory!list.zf");
 			m.put("上架记录", "system/upload!list.zf");
-			m.put("当前在售", "user.zf");
-			m.put("下架记录", "user.zf");
+			m.put("当前在售", "system/sell!list.zf");
+			m.put("下架记录", "system/down!list.zf");
 			m.put("售货分析", "user.zf");
 			m.put("退货分析", "user.zf");
 			m.put("电子钱包", "user.zf");
@@ -120,8 +120,8 @@ public class WorkbenchAction extends BaseAction {
 			m.put("退回记录", "system/back!list2.zf");
 			m.put("库存管理", "system/inventory!list.zf");
 			m.put("上架记录", "system/upload!list.zf");
-			m.put("当前在售", "user.zf");
-			m.put("下架记录", "user.zf");
+			m.put("当前在售", "system/sell!list.zf");
+			m.put("下架记录", "system/down!list.zf");
 			m.put("售货分析", "user.zf");
 			m.put("退货分析", "user.zf");
 		}else
