@@ -152,7 +152,7 @@ public class TopperAction extends CrudAction{
 		String tdid=getParameter("tdid");
 		String value=getParameter("value");
 		
-		String sql="update dd_topper set "+tdid+"="+value+" where id in ("+trid+")";
+		String sql="update dd_topper set "+tdid+"="+value+" where id ="+trid;
 		CommonDAO.executeUpdate(sql);
 		renderSimpleResult(true,"修改成功");
 		return null;

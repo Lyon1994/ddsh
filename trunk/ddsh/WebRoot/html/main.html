@@ -5,6 +5,25 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link href="../css/mainstyle.css" rel="stylesheet" type="text/css"/>
 <title>欢迎页面</title>
+	<script language="javascript" src="../js/jquery/jquery-1.4.2.min.js"></script>
+	<script language="javascript">
+		$(document).ready(
+			function(){
+					$.ajax({
+					 	url: '../system/notice!loadAll.zf?t='+new Date().getTime(),
+					 	type: 'POST',
+					 	dataType: 'json',
+					 	error: function(){alert('error');},
+					 	success: function(json){
+					 		for(var i=0;i<json.length;i++)
+					 		{
+					 			$("<tr id="+json[i].id+"><td background=../images/k_09.gif></td><td>'"+json[i].name+"'</td><td background='../images/k_11.gif'></td></tr>").insertBefore($("#notice"));   
+					 		}
+						}
+					});
+			}
+		)
+	</script>
 </head>
 
 <body>
@@ -26,18 +45,17 @@
 				<td width="1%">
 				<img border="0" src="../images/k_07.gif" width="10" height="34"></td>
 			</tr>
-			<tr>
-				<td background="../images/k_09.gif">　</td>
-				<td>aaa</td>
-				<td background="../images/k_11.gif">　</td>
-			</tr>
-			<tr>
-				<td valign="top">
-				<img border="0" src="../images/k_14.gif" width="10" height="9"></td>
-				<td background="../images/k_15.gif" valign="top"></td>
-				<td valign="top">
-				<img border="0" src="../images/k_16.gif" width="10" height="9"></td>
-			</tr>
+			<tbody>
+			
+			
+				<tr id="notice">
+					<td valign="top">
+					<img border="0" src="../images/k_14.gif" width="10" height="9"></td>
+					<td background="../images/k_15.gif" valign="top"></td>
+					<td valign="top">
+					<img border="0" src="../images/k_16.gif" width="10" height="9"></td>
+				</tr>
+			</tbody>
 		</table>
 		</td>
 		<td valign="top">

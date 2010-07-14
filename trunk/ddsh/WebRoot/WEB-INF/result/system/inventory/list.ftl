@@ -43,18 +43,9 @@
 					alert("请至少选择一条记录");
 					return false;
 				}
-				if(window.confirm("确定要批量上架这些记录吗？")){
-					$.ajax({
-					 	url: 'upload!batchAdd.zf?ids='+str+'&t='+new Date().getTime(),
-					 	type: 'POST',
-					 	dataType: 'json',
-					 	error: function(){alert('error');},
-					 	success: function(json){
-							alert(json.info); 
-							load('');
-					 	}
-					}); 
-				}
+				var returnstr;
+        		returnstr = window.showModalDialog('../html/inventory_upload_more.jsp?ids='+str,'',"dialogHeight: 500px; dialogWidth: 750px;center: yes; help: no;resizable: no; status: no;");
+				load('');
 			}
 
 			function upload()
@@ -127,10 +118,10 @@
 		<table border="0" width="100%" cellspacing="0" cellpadding=" height="30">
 			<tr>
 				<td>
-					<img src="${images}/mup.gif" onclick="uploadQuick()" alt="批量上架" style="cursor:hand"/>
+					<!--<img src="${images}/mup.gif" onclick="uploadQuick()" alt="批量上架" style="cursor:hand"/>-->
 					<img src="${images}/sup.gif" onclick="upload()" alt="单品上架" style="cursor:hand"/>
-					<img src="${images}/mreturn.gif" onclick="upload()" alt="批量退货" style="cursor:hand"/>
-					<img src="${images}/return.gif" onclick="upload()" alt="单品退货" style="cursor:hand"/>
+					<!--<img src="${images}/mreturn.gif" onclick="upload()" alt="批量退货" style="cursor:hand"/>
+					<img src="${images}/return.gif" onclick="upload()" alt="单品退货" style="cursor:hand"/>-->
 					<img src="${images}/export.gif"/>
 					<img src="${images}/printer.gif"/>
 				</td>

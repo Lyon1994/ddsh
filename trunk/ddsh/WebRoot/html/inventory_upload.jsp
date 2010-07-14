@@ -1,7 +1,6 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 	String id=request.getParameter("id");
-	
  %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -34,14 +33,14 @@
 						function(){	
 							var barcode=$('#barcode').attr('value');
 							var inventoryid=$('#id').attr('value');
-							var barcode=$('#barcode').attr('value');
 							var amount=$('#amount').attr('value');
 							var userid=$('#userid').attr('value');
 							var name=$('#name').attr('value');
 							var price=$('#price').attr('value');
 							var gridid=$('#gridid').attr('value');
+							var zk=$('#zk').attr('value');
 							$.ajax({
-								 	url: '../system/upload!add.zf?inventoryid='+inventoryid+'&name='+name+'&price='+price+'&gridid='+gridid+'&amount='+amount+'&barcode='+barcode+'&userid='+userid+'&t='+new Date().getTime(),
+								 	url: '../system/upload!add.zf?inventoryid='+inventoryid+'&name='+name+'&price='+price+'&gridid='+gridid+'&amount='+amount+'&barcode='+barcode+'&userid='+userid+'&zk='+zk+'&t='+new Date().getTime(),
 								 	type: 'POST',
 								 	dataType: 'json',
 								 	error: function(){alert('error');},
@@ -89,6 +88,12 @@
 					<td><input type="text" id="price" name="price" size="20" class="readonly" readonly="readonly" /></td>
 					<td>格子编号：</td>
 					<td><input type="text" id="gridid" name=""gridid"" size="20" class="text"/></td>
+				</tr>
+				<tr>
+					<td>折扣：</td>
+					<td><input type="text" id="zk" name="zk" size="20" /></td>
+					<td></td>
+					<td></td>
 				</tr>
 				<tr>
 					<td colspan="4"><hr size="1"/></td>

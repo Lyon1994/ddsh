@@ -8,6 +8,8 @@
  */
 package org.osinfo.core.webapp.action.system;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -17,20 +19,22 @@ import org.apache.struts2.convention.annotation.Results;
 import org.osinfo.core.webapp.action.CrudAction;
 import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
-import org.osinfo.core.webapp.model.DdBack;
+import org.osinfo.core.webapp.model.DdDown;
+import org.osinfo.core.webapp.model.DdInventory;
+import org.osinfo.core.webapp.model.DdSell;
 import org.osinfo.core.webapp.model.DdTopper;
+import org.osinfo.core.webapp.util.JsonUtil;
 import org.osinfo.core.webapp.util.PageUtil;
 @Results({
-	 @Result(name="list",location = "/WEB-INF/result/system/back/list.ftl"),
-	 @Result(name="list2",location = "/WEB-INF/result/system/back/list2.ftl"),
+	 @Result(name="list",location = "/WEB-INF/result/system/down/list.ftl")
 })
 /**
  * @Author Lucifer.Zhou 4:29:47 PM Jan 6, 2010
  * @Description
- * 商品退回
+ * 下架记录
  */
-public class BackAction extends CrudAction{
-	private static Logger logger = Logger.getLogger ( BackAction.class.getName () ) ;
+public class DownAction extends CrudAction{
+	private static Logger logger = Logger.getLogger ( DownAction.class.getName () ) ;
 	/**
 	 * @Author Lucifer.Zhou 4:30:01 PM Jan 6, 2010
 	 * long LoginAction.java
@@ -38,60 +42,44 @@ public class BackAction extends CrudAction{
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	//退回商品
+	
+	//下架列表
 	public String list() {
 		return "list";
 	}
-	//退回商品记录
-	public String list2() {
-		return "list2";
-	}
-	//商品退回
+
+
+	//商品递交
 	@Override
 	public String add() {
 		// TODO Auto-generated method stub
-		String userid=getParameter("userid");
 		String name=getParameter("name");
+		String image=getParameter("image");
 		String amount=getParameter("amount");
-		String reason=org.osinfo.core.webapp.util.StringUtil.convert(getRequest().getParameter("reason"));
+		
+		String price=getParameter("price");
+		String totalprice=getParameter("totalprice");
+		String spec=getParameter("spec");		
+		
+		String material=getParameter("material");
+		String grade=getParameter("grade");
+		String location=getParameter("location");		
+		
+		String memo=getParameter("memo");
 		String submitdate=getCurrentTime();
-		String topperid=getParameter("topperid");
+
 		String operator=(String) getSession().getAttribute("userid");
 
-		String sql="insert into dd_back (topperid,userid,name,amount,reason,date,operator) " +
-				"values ("+topperid+",'"+userid+"','"+name+"',"+amount+",'"+reason+"','"+submitdate+"','"+operator+"')";
+		String sql="insert into dd_topper (name,image,amount,price,totalprice,spec,material,grade,location,memo,status,submitdate,userid) " +
+				"values ('"+name+"','"+image+"',"+amount+","+price+","+totalprice+",'"+spec+"','"+material+"','"+grade+"','"+location+"','"+memo+"','0','"+submitdate+"','"+operator+"')";
 		int v=CommonDAO.executeUpdate(sql);
-		//更新商品接收表数量
-		String sql2="select * from dd_topper where id ="+topperid;
-    	List l=CommonDAO.executeQuery(sql2,DdTopper.class);
-    	for(int i=0;i<l.size();i++)
-    	{
-    		DdTopper t=(DdTopper)l.get(i);
-    		sql="update dd_topper set  amount="+(t.getAmount()-Integer.valueOf(amount))+" where id ="+topperid;
-	    	CommonDAO.executeUpdate(sql);
-    	}
-    	renderSimpleResult(true,"ok");
-	    return null;
+		if(v>0)
+			return "success";
+		else
+			return "error";
 	}
-	//批量删除
-	public String batchAdd() {
-		// TODO Auto-generated method stub
-	    String ids=getParameter("ids");
-	    ids=ids.substring(0,ids.length()-1);
-	    if(!"".equals(ids.trim())){
-	    		String submitdate=getCurrentTime();
 
-	    		String operator=(String) getSession().getAttribute("userid");
-		    	String sql2="insert into dd_back (topperid,userid,name,amount,reason,operator,date) " +
-		    			"select id,userid,name,amount,'批量退回','"+operator+"','"+submitdate+"' from dd_topper where id in ("+ids+")";
-		    	CommonDAO.executeUpdate(sql2);
-		    	
-	    		String sql="update dd_topper set amount=0 where id in ("+ids+")";
-	    		CommonDAO.executeUpdate(sql);
-	    }
-	    renderSimpleResult(true,"ok");
-	    return null;
-	}
+	
 	@Override
 	public String del() {
 		// TODO Auto-generated method stub
@@ -99,7 +87,7 @@ public class BackAction extends CrudAction{
 			logger.debug("加载删除页面...");
 	    String ids=getParameter("ids");
 	    if(!"".equals(ids.trim())){
-	    		String sql="delete from dd_back where id in ("+ids.substring(0,ids.length()-1)+")";
+	    		String sql="delete from dd_sell where id in ("+ids.substring(0,ids.length()-1)+")";
 	    		CommonDAO.executeUpdate(sql);
 	    }
 	    renderSimpleResult(true,"ok");
@@ -108,6 +96,13 @@ public class BackAction extends CrudAction{
 	@Override
 	public String edit() {
 		// TODO Auto-generated method stub
+		String trid=getParameter("trid");
+		String tdid=getParameter("tdid");
+		String value=getParameter("value");
+		
+		String sql="update dd_topper set "+tdid+"="+value+" where id ="+trid;
+		CommonDAO.executeUpdate(sql);
+		renderSimpleResult(true,"修改成功");
 		return null;
 	}
 	@Override
@@ -135,18 +130,12 @@ public class BackAction extends CrudAction{
 		String t=(String) getSession().getAttribute("type");
 		if(t.equals("2"))
 		{
-			if(type.equals("1"))
-				sql="select * from dd_back where userid='"+userid+"' and amount>0";
-			else
-				sql="select * from dd_back where userid='"+userid+"' and amount>0";
+			sql="select * from dd_down where userid='"+userid+"' and amount>0";
 		}else
 		{
-			if(type.equals("1"))
-				sql="select * from dd_back";
-			else
-				sql="select * from dd_back";
+			sql="select * from dd_down where amount>0";
 		}
-		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,DdBack.class);
+		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,DdDown.class);
 		
 		String content = "totalPage = " + p.getTotalPageCount() + ";";
 		content += "dataStore = [";
@@ -154,9 +143,9 @@ public class BackAction extends CrudAction{
 		List l=(List)p.getResult();
 		for(int i=0;i<l.size();i++)
 		{
-			DdBack d=(DdBack)l.get(i);
+			DdDown d=(DdDown)l.get(i);
 
-			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getName()+"</td><td>"+d.getUserid()+"</td><td>"+d.getAmount()+"</td><td>"+d.getReason()+"</td><td>"+d.getDate()+"</td></tr>\",";
+			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td>"+d.getUserid()+"</td><td>"+d.getAmount()+"</td><td>"+d.getPrice()+"</td><td>"+d.getGridid()+"</td><td>"+d.getReason()+"</td><td>"+d.getOperator()+"</td><td>"+d.getDate()+"</td></tr>\",";
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";
@@ -171,19 +160,11 @@ public class BackAction extends CrudAction{
 		String t=(String) getSession().getAttribute("type");
 		if(t.equals("2"))
 		{
-			if(type.equals("1"))
-				sql="select * from dd_back where userid='"+userid+"' and amount>0";
-			else
-				sql="select * from dd_back where userid='"+userid+"' and amount>0";
+			sql="select * from dd_down where userid='"+userid+"' and amount>0";
 		}else
 		{
-			if(type.equals("1"))
-				sql="select * from dd_back";
-			else
-				sql="select * from dd_back";
+			 sql="select * from dd_down where amount>0";
 		}
-		
-		
 		int count=CommonDAO.count(sql);
 		return count;
 	}

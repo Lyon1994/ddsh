@@ -11,6 +11,7 @@ public class DdDown implements java.io.Serializable {
 	// Fields
 
 	private Integer id;
+	private Integer inventoryid;
 	private String barcode;
 	private String name;
 	private String gridid;
@@ -36,9 +37,10 @@ public class DdDown implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public DdDown(String barcode, String name, String gridid, Integer amount,
-			Float price, String userid, String reason, String operator,
-			Timestamp date) {
+	public DdDown(Integer inventoryid, String barcode, String name,
+			String gridid, Integer amount, Float price, String userid,
+			String reason, String operator, Timestamp date) {
+		this.inventoryid = inventoryid;
 		this.barcode = barcode;
 		this.name = name;
 		this.gridid = gridid;
@@ -58,6 +60,14 @@ public class DdDown implements java.io.Serializable {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public Integer getInventoryid() {
+		return this.inventoryid;
+	}
+
+	public void setInventoryid(Integer inventoryid) {
+		this.inventoryid = inventoryid;
 	}
 
 	public String getBarcode() {
