@@ -49,7 +49,7 @@ public class UploadAction extends CrudAction{
 	public String add() {
 		// TODO Auto-generated method stub
 		String userid=getParameter("userid");
-		String name=getParameter("name");
+		String name=org.osinfo.core.webapp.util.StringUtil.convert(getRequest().getParameter("name"));
 		String amount=getParameter("amount");
 		String barcode=getParameter("barcode");
 		String submitdate=getCurrentTime();

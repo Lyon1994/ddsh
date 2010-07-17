@@ -51,7 +51,7 @@ public class BackAction extends CrudAction{
 	public String add() {
 		// TODO Auto-generated method stub
 		String userid=getParameter("userid");
-		String name=getParameter("name");
+		String name=org.osinfo.core.webapp.util.StringUtil.convert(getRequest().getParameter("name"));
 		String amount=getParameter("amount");
 		String reason=org.osinfo.core.webapp.util.StringUtil.convert(getRequest().getParameter("reason"));
 		String submitdate=getCurrentTime();
