@@ -129,13 +129,14 @@ public class UserAction<T> extends CrudAction{
 			throws Exception {
 		// TODO Auto-generated method stub
 		String name="用户表";
+		String name2=name;
 		if (getRequest().getHeader("User-Agent").toLowerCase().indexOf("firefox") > 0)
-			name = new String(name.getBytes("UTF-8"), "ISO8859-1");//firefox浏览器
+			name2 = new String(name.getBytes("UTF-8"), "ISO8859-1");//firefox浏览器
 		else if (getRequest().getHeader("User-Agent").toUpperCase().indexOf("MSIE") > 0)
-			name = URLEncoder.encode(name, "UTF-8");//IE浏览器 终极解决文件名乱码
+			name2 = URLEncoder.encode(name, "UTF-8");//IE浏览器 终极解决文件名乱码
 
-		getResponse().setHeader("Content-disposition","attachment;filename=" +name+"-"+getCurrentTime() + ".xls");
-		String[] headers = { "学号", "姓名", "年龄", "性别", "出生日期" };
+		getResponse().setHeader("Content-disposition","attachment;filename=" +name2+"-"+getCurrentTime() + ".xls");
+		String[] headers = { "序号", "用户编号", "名称","身份证", "性别", "地址", "手机号码","电话","传真","邮件","类型","状态","提交日期","操作者","验证日期","更新者","更新日期","密码","品牌"};
 		String sql="select * from dd_user ";
 		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,DdUser.class);
 		Collection<T> l = (Collection<T>) p.getResult();

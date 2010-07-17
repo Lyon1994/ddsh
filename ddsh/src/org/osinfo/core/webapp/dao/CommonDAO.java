@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.osinfo.core.webapp.model.DdUser;
 import org.osinfo.core.webapp.util.DBUtil;
 import org.osinfo.core.webapp.util.PageUtil;
 import org.osinfo.core.webapp.util.SQLUtil;
@@ -110,5 +109,25 @@ public class CommonDAO {
 			DBUtil.close(rs, stmt, conn);
 		}
 		return new PageUtil(start, totalCount, pageSize, list);
+	}
+	public static PageUtil findByMultiTableSQLQuery(String sql,Class c)
+	{
+		ResultSet rs = null;
+		Statement stmt = null;
+		Connection conn=DBUtil.getConnection();
+
+		List list = new ArrayList();
+		try {
+			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+			rs=stmt.executeQuery(sql);
+			System.out.println(sql);
+			list = DBUtil.populate(rs, c);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			DBUtil.close(rs, stmt, conn);
+		}
+		return new PageUtil(0, 0, 0, list);
 	}
 }

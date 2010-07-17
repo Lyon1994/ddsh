@@ -31,7 +31,8 @@ public class Constants {
 	public static final String DISABLE="0";
 	public static final String ENCODE_UTF_8="UTF-8";
 	public static final String ENCODE_ISO8859_1="ISO8859_1";
-	public static final String CONTENT_TYPE_EXCEL = "application/vnd.ms-excel";
+	public static final String CONTENT_TYPE_EXCEL = "application/vnd.ms-excel;charset=UTF-8";//application/msexcel
+	
 	public static final String CONTENT_TYPE_JSON="text/json";
 
 }

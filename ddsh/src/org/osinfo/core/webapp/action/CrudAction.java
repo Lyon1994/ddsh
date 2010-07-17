@@ -10,6 +10,7 @@ package org.osinfo.core.webapp.action;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -311,6 +312,7 @@ public abstract class CrudAction extends BaseAction {
 	    String where=getParameter("where");
 	    String sort=getParameter("sort");
 	    String dir=getParameter("dir");
+	    type="1";
 	    ServletOutputStream out = null;
 		try {
 			out = getResponse().getOutputStream();
@@ -346,8 +348,17 @@ public abstract class CrudAction extends BaseAction {
 			getResponse().reset();//清空输出流      
 			//getResponse().setContentType("application/octet-stream");
 			getResponse().setContentType(Constants.CONTENT_TYPE_EXCEL);
-			getResponse().setHeader("Content-disposition","attachment;filename=" +name + ".xls");
-			
+			/*try {
+				if (getRequest().getHeader("User-Agent").toLowerCase().indexOf("firefox") > 0)
+					name = new String(name.getBytes("UTF-8"), "ISO8859-1");//firefox浏览器
+				else if (getRequest().getHeader("User-Agent").toUpperCase().indexOf("MSIE") > 0)
+					name = URLEncoder.encode(name, "UTF-8");//IE浏览器 终极解决文件名乱码
+			} catch (UnsupportedEncodingException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}*/
+			//线上浏览的方式： response.setHeader("Content-disposition","inline; filename=test1.xls"); 
+			//下载的方式： response.setHeader("Content-disposition","attachment; filename=test2.xls"); 
 			
 			try {
 				workbook=this.exportExcel(workbook,scope,bound,where,sort,dir);
@@ -383,6 +394,7 @@ public abstract class CrudAction extends BaseAction {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 		return null;
 	}
 	public String count()
