@@ -26,7 +26,7 @@
 							$('#userid').attr('value',json[0].userid);
 							$('#amount').attr('value',json[0].amount);
 							$('#id').attr('value',json[0].id);
-							$('#price').attr('value',json[0].id);
+							$('#price').attr('value',json[0].price);
 					 	}
 					});
 					$('#ok').click( 
@@ -87,7 +87,7 @@
 					<td>价格：</td>
 					<td><input type="text" id="price" name="price" size="20" class="readonly" readonly="readonly" /></td>
 					<td>格子编号：</td>
-					<td><input type="text" id="gridid" name=""gridid"" size="20" class="text"/></td>
+					<td><input type="text" id="gridid" name="gridid" size="20" class="text"/></td>
 				</tr>
 				<tr>
 					<td>折扣：</td>

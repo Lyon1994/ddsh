@@ -134,6 +134,10 @@
 					 	}
 					}); 
 			}
+			function exports()
+			{
+				window.open('user!export.zf?t='+new Date().getTime());
+			}
 			$(document).ready(
 				function(){
 					//demo1带参数
@@ -162,7 +166,7 @@
 				<td height="30" valign="bottom">
 					<a href="${base}/html/regedit_user.html"><img src="${images}/add.gif"/></a>
 					<img src="${images}/delete.gif" onclick="deletes()" />
-					<img src="${images}/export.gif"/>
+					<img src="${images}/export.gif" onclick="exports()" />
 					<img src="${images}/printer.gif"/>
 				</td>
 			</tr>
