@@ -8,12 +8,15 @@
  */
 package org.osinfo.core.webapp.action.system;
 
+import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
@@ -21,6 +24,7 @@ import org.osinfo.core.webapp.action.CrudAction;
 import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
 import org.osinfo.core.webapp.model.DdUser;
+import org.osinfo.core.webapp.util.ExcelUtil;
 import org.osinfo.core.webapp.util.PageUtil;
 @Results({
 	 @Result(name="list",location = "/WEB-INF/result/system/user/list.ftl"),
@@ -33,7 +37,7 @@ import org.osinfo.core.webapp.util.PageUtil;
  * @Description
  * 用户管理
  */
-public class UserAction extends CrudAction{
+public class UserAction<T> extends CrudAction{
 	private static Logger logger = Logger.getLogger ( UserAction.class.getName () ) ;
 	/**
 	 * @Author Lucifer.Zhou 4:30:01 PM Jan 6, 2010
@@ -124,7 +128,18 @@ public class UserAction extends CrudAction{
 			String bound, String where, String sort, String dir)
 			throws Exception {
 		// TODO Auto-generated method stub
-		return null;
+		String name="用户表";
+		if (getRequest().getHeader("User-Agent").toLowerCase().indexOf("firefox") > 0)
+			name = new String(name.getBytes("UTF-8"), "ISO8859-1");//firefox浏览器
+		else if (getRequest().getHeader("User-Agent").toUpperCase().indexOf("MSIE") > 0)
+			name = URLEncoder.encode(name, "UTF-8");//IE浏览器 终极解决文件名乱码
+
+		getResponse().setHeader("Content-disposition","attachment;filename=" +name+"-"+getCurrentTime() + ".xls");
+		String[] headers = { "学号", "姓名", "年龄", "性别", "出生日期" };
+		String sql="select * from dd_user ";
+		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,DdUser.class);
+		Collection<T> l = (Collection<T>) p.getResult();
+		return ExcelUtil.exportExcel(workbook,name, headers, l);
 	}
 	@Override
 	public List filter(List expressions, String[] filters) {
