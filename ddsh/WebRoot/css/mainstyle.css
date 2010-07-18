@@ -1,5 +1,5 @@
 <!--
-/*¿ò¼ÜÒ³ÑùÊ½±í ÍõÏþ¶« 2010-06-29
+/*ï¿½ï¿½ï¿½Ò³ï¿½ï¿½Ê½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 2010-06-29
 
 */
 
@@ -7,7 +7,7 @@ body,tr,th,td,a,* {
 margin:0px;
 padding:0px;
 font-size:12px;
-font-family:"Arial"!important,"ËÎÌå";
+font-family:"Arial"!important,"ï¿½ï¿½ï¿½ï¿½";
 }
 
 BODY {
@@ -37,7 +37,7 @@ line-height:30px;
 font-size:25px;
 }
 
-/*-----------------¿ò¼ÜÑùÊ½ÅäÖÃ-------------------
+/*-----------------ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½-------------------
 
 */
 .myframe {
@@ -52,7 +52,7 @@ frame.fra_style_2 {
 border:1px solid #8db2e3;
 }
 
-/*------------------Ö÷ÒªÍâ¿òÌåÑùÊ½-----------------
+/*------------------ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½-----------------
 
 */
 tr.tree_title_txt{
@@ -86,7 +86,7 @@ padding:10px;
 
 
 
-/*Ñ¡Ôñ¿¨¿í¶È
+/*Ñ¡ï¿½ñ¿¨¿ï¿½ï¿½
 
 */
 #warp { 
@@ -97,7 +97,7 @@ div.jianju {
 margin-top:0px;
 }
 
-/*------±í¸ñÒ³--------
+/*------ï¿½ï¿½ï¿½Ò³--------
 
 */
 
@@ -125,7 +125,7 @@ td.tab_title_txt_b {
 
 
 
-/*-----------------Ö÷±í¸ñÏÔÊ¾Çø--------------------
+/*-----------------ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½--------------------
 
 */
 
@@ -241,7 +241,7 @@ background-image:url(images/bg_line2.gif);
 height:27px;
 }
 
-/*------------------±í¸ñ------------------
+/*------------------ï¿½ï¿½ï¿½------------------
 
 */
 table.tab_table_title {
@@ -266,7 +266,7 @@ table.tab_table_dialog tr{
 table.tab_table_dialog td{
 }
 
-/*ÕÛµþÇøÓò×Ó±í¸ñ
+/*ï¿½Ûµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó±ï¿½ï¿½
 
 */
 table.tab_subtable {
@@ -288,7 +288,7 @@ table.tab_subtable td {
 border:1px solid #8DB2E3;
 padding:0 5 0 5;
 }
-/*²Ù×÷°´Å¥ÇøÓò
+/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¥ï¿½ï¿½ï¿½ï¿½
 
 */
 img.icon1 {
@@ -304,7 +304,7 @@ height:20px;
 
 
 
-/*ÓÃÓÚdominoÆ½Ì¨
+/*ï¿½ï¿½ï¿½ï¿½dominoÆ½Ì¨
 
 */
 
@@ -314,14 +314,14 @@ padding:1px;
 
 }
 
-/*ÓÃÓÚjava
+/*ï¿½ï¿½ï¿½ï¿½java
 
 */
 td.formKeyforjava {
 border: 0px solid transparent;
 padding:1px;
 } 
-/*ÓÃÓÚjava½áÊø
+/*ï¿½ï¿½ï¿½ï¿½javaï¿½ï¿½ï¿½ï¿½
 
 */
 
@@ -336,7 +336,7 @@ border: 0px solid transparent;
 padding:1px;
 }
 
-/*°´Å¥ÑùÊ½
+/*ï¿½ï¿½Å¥ï¿½ï¿½Ê½
 
 */
 .com_button {
@@ -354,7 +354,8 @@ CURSOR:hand;
 }
 
 .com_button2 {
-height:18px;
+height:25px;
+width:100px;
 border-style:solid;
 border-color:#FFFFFF #c0c0c0 #c0c0c0 #FFFFFF;
 border-width: 1px;
@@ -431,7 +432,7 @@ width:1%;
 white-space:nowrap;
 }
 
-/*ËµÃ÷ºÍ×¢ÊÍÑùÊ½
+/*Ëµï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½ï¿½ï¿½Ê½
 
 */
 .note_txt {
@@ -467,7 +468,7 @@ margin:12px;
 padding:12px;
 }
 
-/*×ó²à²Ëµ¥·´°×ÑùÊ½
+/*ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½
 
 */
 a.menu_rootlink {
@@ -484,7 +485,7 @@ highLightColor:#154288;
 
 } 
 
-/*Ñ¡Ôñ¿¨ÑùÊ½£¬´Ópublicevent.jsµ÷ÓÃ
+/*Ñ¡ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½publicevent.jsï¿½ï¿½ï¿½ï¿½
 
 */
 .seltab_s1 {
@@ -531,7 +532,7 @@ left:expression(this.parentElement.offsetWidth-1);
 cursor:e-resize;
 }
 
-/*Ïß¿òÑùÊ½
+/*ï¿½ß¿ï¿½ï¿½ï¿½Ê½
 
 */
 fieldset {
@@ -552,7 +553,7 @@ background:#D6E3F2;
 cursor:default; 
 }
  
-/*-------------Ê÷ÐÎ²Ëµ¥ÑùÊ½±í----------------
+/*-------------ï¿½ï¿½ï¿½Î²Ëµï¿½ï¿½ï¿½Ê½ï¿½ï¿½----------------
 
 */ 
 .dtree {
@@ -574,7 +575,7 @@ background-color:#154288;color:#FFFFFF;
 overflow: hidden;
 }
 
-/*Ö÷²Ëµ¥µ¼º½ÑùÊ½
+/*ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½
 
 */
 table.mainpage_top{
@@ -594,7 +595,7 @@ background:#D6E2F3 url(images/bg_line2b.gif) repeat-x;
 .menuhome_main_select {color:#15428B;font-weight:bold}
 }
  
-/*±¨±í×Ó±í¸ñÑùÊ½
+/*ï¿½ï¿½ï¿½ï¿½ï¿½Ó±ï¿½ï¿½ï¿½ï¿½Ê½
 
 */
 table.View_Title {
@@ -632,7 +633,7 @@ background-color: #ffffff;
 border: 1px solid #8DB2E3;       
 } 
 
-/*------------±íµ¥²Ù×÷-------------
+/*------------ï¿½?ï¿½ï¿½ï¿½ï¿½-------------
 
 */
 
@@ -655,7 +656,7 @@ padding:3px;
 border-bottom:1 solid #c3c3c3
 } 
 
-/* ÈÈ¼ü
+/* ï¿½È¼ï¿½
  
 */ 
 
@@ -678,12 +679,12 @@ height:20px;
 CURSOR: hand;
 }
 
-/*¹¦ÄÜ±íµ¥
+/*ï¿½ï¿½ï¿½Ü±?
 
 */
 input.search { 
 height:18; width:120 ;
-font-size:12px ; font-family:ËÎÌå; color:#000000 ;
+font-size:12px ; font-family:ï¿½ï¿½ï¿½ï¿½; color:#000000 ;
 border:1px solid #7F9DB9;
 background-color: #ffffff    
 }
@@ -696,7 +697,7 @@ width:100%;
 height:300
 }
 
-/*----------------ÊäÈë±íµ¥-----------------
+/*----------------ï¿½ï¿½ï¿½ï¿½?-----------------
 
 */
 input {
@@ -822,7 +823,7 @@ color:#FF0000;
 
 .icon0{margin-right:2px}
 
-/*¿É±à¼­ÊäÈë¿ò
+/*ï¿½É±à¼­ï¿½ï¿½ï¿½ï¿½ï¿½
 
 */
 
@@ -831,7 +832,7 @@ color:#3669A3;
 cursor:hand;
 }
 
-/*´ø±ß¿òÏß¡¢½»»»É«µÄ±í¸ñ
+/*ï¿½ï¿½ß¿ï¿½ï¿½ß¡ï¿½ï¿½ï¿½ï¿½ï¿½É«ï¿½Ä±ï¿½ï¿½
 
 */
 table.tab_table tr{
@@ -842,7 +843,7 @@ table.tab_table td{
   padding:2px,4px;color:expression(this.cellIndex%2==1?"#666666":"#000000");
 }
 
-/*×Ó±í(Ñ¡Ôñ¿¨)
+/*ï¿½Ó±ï¿½(Ñ¡ï¿½ï¿½)
 
 */
 
@@ -886,7 +887,7 @@ tr.subtab td,td.subtab {
 	padding-top:3px;
 }
 
-/* 2¼¶Ñ¡Ôñ¿¨ÑùÊ½(¶à¼¶Ç¶Ì×Ñ¡Ôñ¿¨)
+/* 2ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½Ê½(ï¿½à¼¶Ç¶ï¿½ï¿½Ñ¡ï¿½ï¿½)
 
 */ 
 
@@ -944,7 +945,7 @@ ul.domtabs li.active a:hover {
     text-decoration: none; 
 } 
 
-/*ÕÛµþ±êÌâ
+/*ï¿½Ûµï¿½ï¿½ï¿½ï¿½ï¿½
 
 */
 .bbs_th {
@@ -966,7 +967,7 @@ td.subtab_title {
 	vertical-align: middle;
 }
 
-/*Á÷³ÌÐÅÏ¢
+/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
 
 */
 .subTabbox{

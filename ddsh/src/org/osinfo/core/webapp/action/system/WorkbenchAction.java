@@ -113,8 +113,8 @@ public class WorkbenchAction extends BaseAction {
 			m.put("电子钱包", "user.zf");
 		}else if(type.equals("3"))
 		{
-			m.put("售货管理", "user.zf");
-			m.put("退货管理", "user.zf");
+			m.put("售货管理", "system/sale!list.zf");
+			m.put("退货管理", "system/rsale!list.zf");
 			m.put("待批记录", "system/topper!list3.zf");
 			m.put("已批记录", "system/topper!list2.zf");
 			m.put("退回记录", "system/back!list2.zf");

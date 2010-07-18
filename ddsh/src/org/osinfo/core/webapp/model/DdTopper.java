@@ -11,6 +11,7 @@ public class DdTopper implements java.io.Serializable {
 	// Fields
 
 	private Integer id;
+	private String barcode;
 	private String name;
 	private String image;
 	private Integer amount;
@@ -26,7 +27,6 @@ public class DdTopper implements java.io.Serializable {
 	private Timestamp submitdate;
 	private Timestamp date;
 	private String operator;
-	private String barcode;
 
 	// Constructors
 
@@ -48,11 +48,11 @@ public class DdTopper implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public DdTopper(String name, String image, Integer amount, Float price,
-			Float totalprice, String userid, String spec, String material,
-			String grade, String location, String status, String memo,
-			Timestamp submitdate, Timestamp date, String operator,
-			String barcode) {
+	public DdTopper(String barcode, String name, String image, Integer amount,
+			Float price, Float totalprice, String userid, String spec,
+			String material, String grade, String location, String status,
+			String memo, Timestamp submitdate, Timestamp date, String operator) {
+		this.barcode = barcode;
 		this.name = name;
 		this.image = image;
 		this.amount = amount;
@@ -68,7 +68,6 @@ public class DdTopper implements java.io.Serializable {
 		this.submitdate = submitdate;
 		this.date = date;
 		this.operator = operator;
-		this.barcode = barcode;
 	}
 
 	// Property accessors
@@ -79,6 +78,14 @@ public class DdTopper implements java.io.Serializable {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public String getBarcode() {
+		return this.barcode;
+	}
+
+	public void setBarcode(String barcode) {
+		this.barcode = barcode;
 	}
 
 	public String getName() {
@@ -199,14 +206,6 @@ public class DdTopper implements java.io.Serializable {
 
 	public void setOperator(String operator) {
 		this.operator = operator;
-	}
-
-	public String getBarcode() {
-		return this.barcode;
-	}
-
-	public void setBarcode(String barcode) {
-		this.barcode = barcode;
 	}
 
 }

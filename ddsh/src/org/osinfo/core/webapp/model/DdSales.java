@@ -19,7 +19,7 @@ public class DdSales implements java.io.Serializable {
 	private Float totalprice;
 	private String userid;
 	private String operator;
-	private Timestamp data;
+	private Timestamp date;
 
 	// Constructors
 
@@ -30,7 +30,7 @@ public class DdSales implements java.io.Serializable {
 	/** full constructor */
 	public DdSales(String barcode, String name, Float discount, Integer amount,
 			Float price, Float totalprice, String userid, String operator,
-			Timestamp data) {
+			Timestamp date) {
 		this.barcode = barcode;
 		this.name = name;
 		this.discount = discount;
@@ -39,7 +39,7 @@ public class DdSales implements java.io.Serializable {
 		this.totalprice = totalprice;
 		this.userid = userid;
 		this.operator = operator;
-		this.data = data;
+		this.date = date;
 	}
 
 	// Property accessors
@@ -116,12 +116,12 @@ public class DdSales implements java.io.Serializable {
 		this.operator = operator;
 	}
 
-	public Timestamp getData() {
-		return this.data;
+	public Timestamp getDate() {
+		return this.date;
 	}
 
-	public void setData(Timestamp data) {
-		this.data = data;
+	public void setDate(Timestamp date) {
+		this.date = date;
 	}
 
 }

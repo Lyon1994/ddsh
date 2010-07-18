@@ -101,8 +101,8 @@
 			<tr>
 				<td>
 					<input type="button" value="下 架" onclick="down()" alt="下 架" style="cursor:hand"/>
-					<img src="${images}/export.gif"/>
-					<img src="${images}/printer.gif"/>
+					<img src="${images}/export.gif" onclick="exports()" style="cursor:hand" />
+					<img src="${images}/printer.gif" style="cursor:hand" />
 				</td>
 			</tr>
 		</table>

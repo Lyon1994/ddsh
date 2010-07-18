@@ -130,10 +130,10 @@ public class DownAction extends CrudAction{
 		String t=(String) getSession().getAttribute("type");
 		if(t.equals("2"))
 		{
-			sql="select * from dd_down where userid='"+userid+"' and amount>0";
+			sql="select * from dd_down where userid='"+userid+"' and amount>0 order by date desc";
 		}else
 		{
-			sql="select * from dd_down where amount>0";
+			sql="select * from dd_down where amount>0 order by date desc";
 		}
 		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,DdDown.class);
 		

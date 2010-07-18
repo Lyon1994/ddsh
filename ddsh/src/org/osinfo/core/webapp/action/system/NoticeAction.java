@@ -135,7 +135,7 @@ public class NoticeAction extends CrudAction{
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
 
-			sql="select * from dd_notice";
+			sql="select * from dd_notice order by date desc";
 		
 		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,DdNotice.class);
 		
