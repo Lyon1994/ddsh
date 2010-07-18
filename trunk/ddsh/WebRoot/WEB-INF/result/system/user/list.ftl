@@ -136,7 +136,7 @@
 			}
 			function exports()
 			{
-				window.open('user!export.zf?t='+new Date().getTime());
+				window.open('user!export.zf?type=1&t='+new Date().getTime());
 			}
 			$(document).ready(
 				function(){
@@ -164,10 +164,10 @@
 		<table border="0" width="100%" cellspacing="0" cellpadding=" height="30">
 			<tr>
 				<td height="30" valign="bottom">
-					<a href="${base}/html/regedit_user.html"><img src="${images}/add.gif"/></a>
-					<img src="${images}/delete.gif" onclick="deletes()" />
-					<img src="${images}/export.gif" onclick="exports()" />
-					<img src="${images}/printer.gif"/>
+					<a href="${base}/html/regedit_user.html"><img src="${images}/add.gif" style="cursor:hand"/></a>
+					<img src="${images}/delete.gif" onclick="deletes()"  style="cursor:hand"/>
+					<img src="${images}/export.gif" onclick="exports()"  style="cursor:hand"/>
+					<img src="${images}/printer.gif" style="cursor:hand"/>
 				</td>
 			</tr>
 		</table>

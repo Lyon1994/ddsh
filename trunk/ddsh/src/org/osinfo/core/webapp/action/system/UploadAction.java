@@ -8,7 +8,9 @@
  */
 package org.osinfo.core.webapp.action.system;
 
+import java.net.URLEncoder;
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -20,6 +22,8 @@ import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
 import org.osinfo.core.webapp.model.DdInventory;
 import org.osinfo.core.webapp.model.DdUpload;
+import org.osinfo.core.webapp.model.DdUser;
+import org.osinfo.core.webapp.util.ExcelUtil;
 import org.osinfo.core.webapp.util.PageUtil;
 @Results({
 	 @Result(name="list",location = "/WEB-INF/result/system/upload/list.ftl"),
@@ -29,7 +33,7 @@ import org.osinfo.core.webapp.util.PageUtil;
  * @Description
  * 上架记录
  */
-public class UploadAction extends CrudAction{
+public class UploadAction<T> extends CrudAction{
 	private static Logger logger = Logger.getLogger ( UploadAction.class.getName () ) ;
 	/**
 	 * @Author Lucifer.Zhou 4:30:01 PM Jan 6, 2010
@@ -148,7 +152,19 @@ public class UploadAction extends CrudAction{
 			String bound, String where, String sort, String dir)
 			throws Exception {
 		// TODO Auto-generated method stub
-		return null;
+		String name="上传记录表";
+		String name2=name;
+		if (getRequest().getHeader("User-Agent").toLowerCase().indexOf("firefox") > 0)
+			name2 = new String(name.getBytes("UTF-8"), "ISO8859-1");//firefox浏览器
+		else if (getRequest().getHeader("User-Agent").toUpperCase().indexOf("MSIE") > 0)
+			name2 = URLEncoder.encode(name, "UTF-8");//IE浏览器 终极解决文件名乱码
+
+		getResponse().setHeader("Content-disposition","attachment;filename=" +name2+"-"+getCurrentTime() + ".xls");
+		String[] headers = { "序号", "商品ID", "条形码","名称", "数量", "格子编号", "价格","用户编号","操作者","提交日期"};
+		String sql="select * from dd_upload";
+		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,DdInventory.class);
+		Collection<T> l = (Collection<T>) p.getResult();
+		return ExcelUtil.exportExcel(workbook,name, headers, l);
 	}
 	@Override
 	public List filter(List expressions, String[] filters) {
@@ -168,10 +184,10 @@ public class UploadAction extends CrudAction{
 		String t=(String) getSession().getAttribute("type");
 		if(t.equals("2"))
 		{
-			sql="select * from dd_upload where userid='"+userid+"' and amount>0";
+			sql="select * from dd_upload where userid='"+userid+"' and amount>0 order by date desc";
 		}else
 		{
-			sql="select * from dd_upload where amount>0";
+			sql="select * from dd_upload where amount>0 order by date desc";
 		}
 		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,DdUpload.class);
 		

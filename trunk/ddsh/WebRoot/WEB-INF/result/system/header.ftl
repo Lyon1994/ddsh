@@ -12,7 +12,6 @@
     	<title></title>
 		<link href="${css}/mainstyle.css" rel="stylesheet" type="text/css">
 	</head>
-	
 
 <body topmargin="0" leftmargin="0" rightmargin="0" bottommargin="0">
 
@@ -35,7 +34,7 @@
 					<td background="images/banner_2.jpg">
 					<table border="0" width="100%" id="table5">
 						<tr>
-							<td align="right">欢迎你：<#if Session.userid?exists>${Session.typename} ${Session.name}(${Session.userid})</#if></td>
+							<td align="right">欢迎你：<#if Session.userid?exists>${Session.typename} ${Session.name}(${Session.userid})</#if>&nbsp;&nbsp;&nbsp;&nbsp;*提示：使用[F11]键全屏显示</td>
 						</tr>
 						<tr>
 							<td align="right"><br>【<a href="javascript:parent.location='logout.zf'">退出系统</a>】<!--【<a href="网站菜单.htm" target="contents">设计师界面</a>】【<a href="管理员菜单.htm" target="contents">管理员界面</a>】--></td>

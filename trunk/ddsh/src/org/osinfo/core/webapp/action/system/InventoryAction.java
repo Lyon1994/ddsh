@@ -47,10 +47,15 @@ public class InventoryAction extends CrudAction{
 		if(logger.isDebugEnabled())
 			logger.debug("加载装入页面...");
 	    String id=getParameter("id");
+	    String barcode=getParameter("barcode");
 	    List l=new ArrayList();
-	    if(!"".equals(id.trim())){
+	    if(id!=null){
 	    		String sql="select * from dd_inventory where id ="+id;
 	    		l=CommonDAO.executeQuery(sql,DdInventory.class);
+	    }
+	    if(barcode!=null){
+    		String sql="select * from dd_inventory where barcode ='"+barcode+"'";
+    		l=CommonDAO.executeQuery(sql,DdInventory.class);
 	    }
 	    try
 	    {
@@ -174,10 +179,10 @@ public class InventoryAction extends CrudAction{
 		String t=(String) getSession().getAttribute("type");
 		if(t.equals("2"))
 		{
-			sql="select * from dd_inventory where userid='"+userid+"' and amount>0";
+			sql="select * from dd_inventory where userid='"+userid+"' and amount>0 order by date desc";
 		}else
 		{
-			sql="select * from dd_inventory where amount>0";
+			sql="select * from dd_inventory where amount>0 order by date desc";
 		}
 		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,DdInventory.class);
 		

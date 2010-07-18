@@ -8,8 +8,10 @@
  */
 package org.osinfo.core.webapp.action.system;
 
+import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import net.sf.json.JSONObject;
@@ -22,6 +24,8 @@ import org.osinfo.core.webapp.action.CrudAction;
 import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
 import org.osinfo.core.webapp.model.DdTopper;
+import org.osinfo.core.webapp.model.DdUser;
+import org.osinfo.core.webapp.util.ExcelUtil;
 import org.osinfo.core.webapp.util.JsonUtil;
 import org.osinfo.core.webapp.util.PageUtil;
 @Results({
@@ -34,7 +38,7 @@ import org.osinfo.core.webapp.util.PageUtil;
  * @Description
  * 上货审批
  */
-public class TopperAction extends CrudAction{
+public class TopperAction<T> extends CrudAction{
 	private static Logger logger = Logger.getLogger ( TopperAction.class.getName () ) ;
 	/**
 	 * @Author Lucifer.Zhou 4:30:01 PM Jan 6, 2010
@@ -162,7 +166,34 @@ public class TopperAction extends CrudAction{
 			String bound, String where, String sort, String dir)
 			throws Exception {
 		// TODO Auto-generated method stub
-		return null;
+		String name="上货审批表";
+		String name2=name;
+		if (getRequest().getHeader("User-Agent").toLowerCase().indexOf("firefox") > 0)
+			name2 = new String(name.getBytes("UTF-8"), "ISO8859-1");//firefox浏览器
+		else if (getRequest().getHeader("User-Agent").toUpperCase().indexOf("MSIE") > 0)
+			name2 = URLEncoder.encode(name, "UTF-8");//IE浏览器 终极解决文件名乱码
+
+		getResponse().setHeader("Content-disposition","attachment;filename=" +name2+"-"+getCurrentTime() + ".xls");
+		String[] headers = { "序号","条形码", "名称", "图片","数量", "价格", "总计", "设计师","规格","材料","尺寸","产地","状态","备注","提交日期","验证日期","操作者"};
+		String userid=(String) getSession().getAttribute("userid");
+		String t=(String) getSession().getAttribute("type");
+		String sql;
+		if(t.equals("2"))
+		{
+			if(type.equals("1"))
+				sql="select * from dd_topper where status='1' and amount>0 and userid='"+userid+"' order by date desc";
+			else
+				sql="select * from dd_topper where status='0' and amount>0 and userid='"+userid+"' order by date desc";
+		}else
+		{
+			if(type.equals("1"))
+				sql="select * from dd_topper where status='1' and amount>0 order by date desc";
+			else
+				sql="select * from dd_topper where status='0' and amount>0 order by date desc";
+		}
+		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,DdTopper.class);
+		Collection<T> l = (Collection<T>) p.getResult();
+		return ExcelUtil.exportExcel(workbook,name, headers, l);
 	}
 	@Override
 	public List filter(List expressions, String[] filters) {
@@ -183,15 +214,15 @@ public class TopperAction extends CrudAction{
 		if(t.equals("2"))
 		{
 			if(type.equals("1"))
-				sql="select * from dd_topper where status='1' and amount>0 and userid='"+userid+"'";
+				sql="select * from dd_topper where status='1' and amount>0 and userid='"+userid+"' order by date desc";
 			else
-				sql="select * from dd_topper where status='0' and amount>0 and userid='"+userid+"'";
+				sql="select * from dd_topper where status='0' and amount>0 and userid='"+userid+"' order by date desc";
 		}else
 		{
 			if(type.equals("1"))
-				sql="select * from dd_topper where status='1' and amount>0";
+				sql="select * from dd_topper where status='1' and amount>0 order by date desc";
 			else
-				sql="select * from dd_topper where status='0' and amount>0";
+				sql="select * from dd_topper where status='0' and amount>0 order by date desc";
 		}
 		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,DdTopper.class);
 		

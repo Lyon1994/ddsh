@@ -157,9 +157,9 @@ public class UserAction<T> extends CrudAction{
 		// TODO Auto-generated method stub
 		String sql;
 		if(type.equals("1"))
-			sql="select * from dd_user where status='1'";
+			sql="select * from dd_user where status='1' order by verifydate desc";
 		else
-			sql="select * from dd_user where status='0'";
+			sql="select * from dd_user where status='0' order by verifydate desc";
 		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,DdUser.class);
 		
 		String content = "totalPage = " + p.getTotalPageCount() + ";";

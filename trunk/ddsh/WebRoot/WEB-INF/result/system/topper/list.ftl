@@ -218,6 +218,10 @@
 					 	}
 					}); 
 			}
+			function exports()
+			{
+				window.open('topper!export.zf?type=0&t='+new Date().getTime());
+			}
 			$(document).ready(
 				function(){
 					//demo1带参数
@@ -248,8 +252,8 @@
 					<img src="${images}/return.gif" onclick="back()" alt="单件退回" style="cursor:hand"/>
 					<img src="${images}/pass.gif" onclick="apply()" style="cursor:hand"/>
 					<img src="${images}/delete.gif" onclick="deletes()" style="cursor:hand" />
-					<img src="${images}/export.gif"/>
-					<img src="${images}/printer.gif"/>
+					<img src="${images}/export.gif" onclick="exports()" style="cursor:hand" />
+					<img src="${images}/printer.gif" style="cursor:hand" />
 				</td>
 			</tr>
 		</table>
