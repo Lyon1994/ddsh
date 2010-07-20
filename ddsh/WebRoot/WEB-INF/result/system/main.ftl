@@ -15,7 +15,7 @@
 	function autoResize()
 	{try{document.all["frame"].style.height=document.body.offsetHeight;}catch(e){}}
 	</script>
-	<iframe name="frame" src="${base}/html/main.html" style="funny:expression(autoResize())" align="left" height="550" width="100%" marginwidth="0" marginheight="0" scrolling="auto" FRAMEBORDER="0"></iframe> 
+	<iframe name="frame" src="${base}/html/<#if Request.page?exists>${Request.page}</#if>.html" style="funny:expression(autoResize())" align="left" height="550" width="100%" marginwidth="0" marginheight="0" scrolling="auto" FRAMEBORDER="0"></iframe> 
 </body>
 
 

@@ -6,6 +6,21 @@
     
     <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
 	<link href="../css/mainstyle.css" rel="stylesheet" type="text/css"/>
+	<script language="javascript" src="../js/jquery/jquery-1.4.2.min.js"></script>
+	<script language="javascript">
+		$(document).ready(
+			function(){
+				$("#amount").change(function(){
+					var totalQuantity = $("#amount").val()*$("#price").val();
+					$("#totalprice").attr('value',totalQuantity);
+				});
+				$("#price").change(function(){
+					var totalQuantity = $("#amount").val()*$("#price").val();
+					$("#totalprice").attr('value',totalQuantity);
+				});
+			}
+		)
+	</script>
   </head>
   
   <body>
@@ -35,13 +50,13 @@
 				</tr>
 				<tr>
 					<td>数量：</td>
-					<td><input type="text" name="amount" size="20" class="text"/></td>
+					<td><input type="text" id="amount" name="amount" size="20" class="text" value='1'/></td>
 					<td>单价：</td>
-					<td><input type="text" name="price" size="20" class="text"/></td>
+					<td><input type="text" id="price" name="price" size="20" class="text" value='1.00'/></td>
 				</tr>
 				<tr>
 					<td>总价：</td>
-					<td><input type="text" name="totalprice" size="20" class="text"/></td>
+					<td><input type="text" id="totalprice" name="totalprice" size="20" class="text" value='1.00' readonly/></td>
 					<td></td>
 					<td></td>
 				</tr>

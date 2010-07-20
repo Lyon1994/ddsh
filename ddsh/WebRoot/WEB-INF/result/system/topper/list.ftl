@@ -250,7 +250,7 @@
 				<td height="30" valign="bottom">
 					<img src="${images}/mreturn.gif" onclick="backQuick()" alt="批量退回" style="cursor:hand"/>
 					<img src="${images}/return.gif" onclick="back()" alt="单件退回" style="cursor:hand"/>
-					<img src="${images}/pass.gif" onclick="apply()" style="cursor:hand"/>
+					<img src="${images}/pass.gif" onclick="apply()" alt="通过" style="cursor:hand"/>
 					<img src="${images}/delete.gif" onclick="deletes()" style="cursor:hand" />
 					<img src="${images}/export.gif" onclick="exports()" style="cursor:hand" />
 					<img src="${images}/printer.gif" style="cursor:hand" />

@@ -8,8 +8,10 @@
  */
 package org.osinfo.core.webapp.action.system;
 
+import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -22,8 +24,10 @@ import org.osinfo.core.webapp.dao.CommonDAO;
 import org.osinfo.core.webapp.model.DdGrid;
 import org.osinfo.core.webapp.model.DdInventory;
 import org.osinfo.core.webapp.model.DdNotice;
+import org.osinfo.core.webapp.model.DdRsales;
 import org.osinfo.core.webapp.model.DdSell;
 import org.osinfo.core.webapp.model.DdTopper;
+import org.osinfo.core.webapp.util.ExcelUtil;
 import org.osinfo.core.webapp.util.JsonUtil;
 import org.osinfo.core.webapp.util.PageUtil;
 @Results({
@@ -34,7 +38,7 @@ import org.osinfo.core.webapp.util.PageUtil;
  * @Description
  * 公告管理
  */
-public class NoticeAction extends CrudAction{
+public class NoticeAction<T> extends CrudAction{
 	private static Logger logger = Logger.getLogger ( NoticeAction.class.getName () ) ;
 	/**
 	 * @Author Lucifer.Zhou 4:30:01 PM Jan 6, 2010
@@ -116,7 +120,22 @@ public class NoticeAction extends CrudAction{
 			String bound, String where, String sort, String dir)
 			throws Exception {
 		// TODO Auto-generated method stub
-		return null;
+		String name="退货记录表";
+		String name2=name;
+		if (getRequest().getHeader("User-Agent").toLowerCase().indexOf("firefox") > 0)
+			name2 = new String(name.getBytes("UTF-8"), "ISO8859-1");//firefox浏览器
+		else if (getRequest().getHeader("User-Agent").toUpperCase().indexOf("MSIE") > 0)
+			name2 = URLEncoder.encode(name, "UTF-8");//IE浏览器 终极解决文件名乱码
+
+		getResponse().setHeader("Content-disposition","attachment;filename=" +name2+"-"+getCurrentTime() + ".xls");
+		String[] headers = { "序号", "名称","内容", "操作者","日期"};
+		String userid=(String) getSession().getAttribute("userid");
+		String t=(String) getSession().getAttribute("type");
+		String sql;
+		sql="select * from dd_notice order by date desc";
+		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,DdNotice.class);
+		Collection<T> l = (Collection<T>) p.getResult();
+		return ExcelUtil.exportExcel(workbook,name, headers, l);
 	}
 	@Override
 	public List filter(List expressions, String[] filters) {

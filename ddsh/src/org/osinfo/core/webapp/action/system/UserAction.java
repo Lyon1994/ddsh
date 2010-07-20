@@ -137,7 +137,11 @@ public class UserAction<T> extends CrudAction{
 
 		getResponse().setHeader("Content-disposition","attachment;filename=" +name2+"-"+getCurrentTime() + ".xls");
 		String[] headers = { "序号", "用户编号", "名称","身份证", "性别", "地址", "手机号码","电话","传真","邮件","类型","状态","提交日期","操作者","验证日期","更新者","更新日期","密码","品牌"};
-		String sql="select * from dd_user ";
+		String sql;
+		if(type.equals("1"))
+			sql="select * from dd_user where status='1' order by verifydate desc";
+		else
+			sql="select * from dd_user where status='0' order by verifydate desc";
 		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,DdUser.class);
 		Collection<T> l = (Collection<T>) p.getResult();
 		return ExcelUtil.exportExcel(workbook,name, headers, l);

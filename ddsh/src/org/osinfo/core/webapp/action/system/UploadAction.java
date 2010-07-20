@@ -53,7 +53,7 @@ public class UploadAction<T> extends CrudAction{
 	public String add() {
 		// TODO Auto-generated method stub
 		String userid=getParameter("userid");
-		String name=org.osinfo.core.webapp.util.StringUtil.convert(getRequest().getParameter("name"));
+		String name=getParameter("name");
 		String amount=getParameter("amount");
 		String barcode=getParameter("barcode");
 		String submitdate=getCurrentTime();
@@ -61,14 +61,14 @@ public class UploadAction<T> extends CrudAction{
 		String operator=(String) getSession().getAttribute("userid");
 		String price=getParameter("price");
 		String gridid=getParameter("gridid");
-		String zk=getParameter("zk");//折扣
+		String discount=getParameter("discount");//折扣
 
-		String sql="insert into dd_upload (inventoryid,barcode,name,amount,gridid,price,userid,operator,date) " +
-				"values ("+inventoryid+",'"+barcode+"','"+name+"',"+amount+",'"+gridid+"',"+price+",'"+userid+"','"+operator+"','"+submitdate+"')";
+		String sql="insert into dd_upload (inventoryid,barcode,name,amount,gridid,price,discount,userid,operator,date) " +
+				"values ("+inventoryid+",'"+barcode+"','"+name+"',"+amount+",'"+gridid+"',"+price+","+discount+",'"+userid+"','"+operator+"','"+submitdate+"')";
 		CommonDAO.executeUpdate(sql);
 
-		sql="insert into dd_sell (inventoryid,barcode,name,amount,gridid,price,userid) " +
-				"values ("+inventoryid+",'"+barcode+"','"+name+"',"+amount+",'"+gridid+"',"+price+",'"+userid+"')";
+		sql="insert into dd_sell (inventoryid,barcode,name,amount,gridid,price,discount,userid) " +
+				"values ("+inventoryid+",'"+barcode+"','"+name+"',"+amount+",'"+gridid+"',"+price+","+discount+",'"+userid+"')";
 		CommonDAO.executeUpdate(sql);
 		sql="select * from dd_inventory where id="+inventoryid;//获取库存数量
 		List l2=CommonDAO.executeQuery(sql, DdInventory.class);
@@ -93,8 +93,8 @@ public class UploadAction<T> extends CrudAction{
 	    		String submitdate=getCurrentTime();
 
 	    		String operator=(String) getSession().getAttribute("userid");
-		    	String sql2="insert into dd_upload (inventoryid,barcode,name,amount,gridid,price,userid,operator,date) " +
-		    			"select id,barcode,name,amount,'',price,userid,'"+operator+"','"+submitdate+"' from dd_inventory where id in ("+ids+")";
+		    	String sql2="insert into dd_upload (inventoryid,barcode,name,amount,gridid,price,discount,userid,operator,date) " +
+		    			"select id,barcode,name,amount,'',price,discount,userid,'"+operator+"','"+submitdate+"' from dd_inventory where id in ("+ids+")";
 		    	CommonDAO.executeUpdate(sql2);
 		    	
 	    		String sql="update dd_inventory set amount=0 where id in ("+ids+")";
@@ -160,7 +160,7 @@ public class UploadAction<T> extends CrudAction{
 			name2 = URLEncoder.encode(name, "UTF-8");//IE浏览器 终极解决文件名乱码
 
 		getResponse().setHeader("Content-disposition","attachment;filename=" +name2+"-"+getCurrentTime() + ".xls");
-		String[] headers = { "序号", "商品ID", "条形码","名称", "数量", "格子编号", "价格","用户编号","操作者","提交日期"};
+		String[] headers = { "序号", "商品ID", "条形码","名称", "数量", "格子编号", "价格","折扣","用户编号","操作者","提交日期"};
 		String sql="select * from dd_upload";
 		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,DdInventory.class);
 		Collection<T> l = (Collection<T>) p.getResult();
@@ -200,7 +200,7 @@ public class UploadAction<T> extends CrudAction{
 			DdUpload d=(DdUpload)l.get(i);
 			Timestamp date=d.getDate();
 
-			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td>"+d.getUserid()+"</td><td class='editbox' id='amount'>"+d.getAmount()+"</td><td>"+d.getPrice()+"</td><td class='editbox' id='gridid'>"+d.getGridid()+"</td><td>"+date+"</td><td>"+d.getOperator()+"</td></tr>\",";
+			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td>"+d.getUserid()+"</td><td>"+d.getAmount()+"</td><td>"+d.getPrice()+"</td><td>"+d.getDiscount()+"</td><td>"+d.getGridid()+"</td><td>"+date+"</td><td>"+d.getOperator()+"</td></tr>\",";
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";

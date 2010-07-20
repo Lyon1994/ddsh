@@ -18,10 +18,13 @@
 							var id=$('#id').attr('value');
 							var amount=$('#amount').attr('value');
 							var reason=$('#reason').attr('value');
+							var para='id='+id+'&amount='+amount+'&barcode='+barcode+'&reason='+reason+'&t='+new Date().getTime();
+							
 							$.ajax({
-								 	url: '../system/sell!down.zf?id='+id+'&amount='+amount+'&barcode='+barcode+'&reason='+reason+'&t='+new Date().getTime(),
+								 	url: '../system/sell!down.zf',
 								 	type: 'POST',
 								 	dataType: 'json',
+								 	data:para,//参数设置
 								 	error: function(){alert('error');},
 								 	success: function(json){
 										alert(json.info);
@@ -37,7 +40,7 @@
   
     <body>
 	<form name="regedit" action="#" method="post">
-	<intput type="hidden" id="id" name="id"/>
+	<input type="hidden" id="id" name="id"/>
 	<table border="0" width="100%" cellspacing="0" cellpadding="0" height="25">
 	<tr class="tree_title_txt">
 	<td nowrap width="100%" class="tree_title_txt" valign="middle" id="cwCellTopTitTxt">

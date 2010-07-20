@@ -24,10 +24,15 @@
 								 	dataType: 'json',
 								 	error: function(){alert('error');},
 								 	success: function(json){
-										$('#name').attr('value',json[0].name);
-										$('#userid').attr('value',json[0].userid);
-										$('#id').attr('value',json[0].id);
-										$('#price').attr('value',json[0].price);
+								 		if(json.length>0)
+								 		{
+								 			$('#name').attr('value',json[0].name);
+											$('#userid').attr('value',json[0].userid);
+											$('#id').attr('value',json[0].id);
+											$('#price').attr('value',json[0].price);
+								 		}else
+								 			alert('商品不存在！');
+										
 								 	}
 								});
 							}
@@ -36,18 +41,13 @@
 					$('#ok').click( 
 						function(){	
 							var barcode=$('#barcode').attr('value');
-							var id=$('#id').attr('value');
 							var amount=$('#amount').attr('value');
-							var reason=$('#reason').attr('value');
-							$.ajax({
-								 	url: '../system/sell!down.zf?id='+id+'&amount='+amount+'&barcode='+barcode+'&reason='+reason+'&t='+new Date().getTime(),
-								 	type: 'POST',
-								 	dataType: 'json',
-								 	error: function(){alert('error');},
-								 	success: function(json){
-										alert(json.info);
-								 	}
-								});
+							var price=$('#price').attr('value');
+							var zk=$('#zk').attr('value');
+							var totalprice=amount*(price*zk);
+							var returnstr;
+			        		returnstr = window.showModalDialog('../html/sale_ok.jsp?barcode='+barcode+'&amount='+amount+'&zk='+zk+'&totalprice='+totalprice,'',"dialogHeight: 400px; dialogWidth: 550px;center: yes; help: no;resizable: no; status: no;");
+							
 							return false;
 						}
 					);
@@ -85,7 +85,7 @@
 				</tr>
 				<tr>
 					<td>折扣：</td>
-					<td><input type="text" id="zk" name="amount" size="20" class="text"/></td>
+					<td><input type="text" id="zk" name="zk" size="20" class="text" value='1'/></td>
 					<td>设计师</td>
 					<td><input type="text" id="userid" name="userid" size="20" class="text" readonly/></td>
 				</tr>
@@ -103,7 +103,8 @@
 		
 	<table border="0" cellspacing="0" cellpadding="0">
 	<tr>
-	<td nowrap><input type="button" value="确定" id="ok" class="com_button2"/>
+	添加，删除
+	<td nowrap><input type="button" value="结账" id="ok" class="com_button2"/>
 	&nbsp;&nbsp;<input type="button" value="关闭" class="com_button2" onclick="javascript:self.close()"/>
 	 	</td>
 	</tr>

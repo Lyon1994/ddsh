@@ -15,6 +15,7 @@ public class DdInventory implements java.io.Serializable {
 	private String name;
 	private Integer amount;
 	private Float price;
+	private Float discount;
 	private Float totalprice;
 	private String userid;
 	private String spec;
@@ -43,13 +44,14 @@ public class DdInventory implements java.io.Serializable {
 
 	/** full constructor */
 	public DdInventory(String barcode, String name, Integer amount,
-			Float price, Float totalprice, String userid, String spec,
-			String material, String grade, String location, String operator,
-			Timestamp date) {
+			Float price, Float discount, Float totalprice, String userid,
+			String spec, String material, String grade, String location,
+			String operator, Timestamp date) {
 		this.barcode = barcode;
 		this.name = name;
 		this.amount = amount;
 		this.price = price;
+		this.discount = discount;
 		this.totalprice = totalprice;
 		this.userid = userid;
 		this.spec = spec;
@@ -100,6 +102,14 @@ public class DdInventory implements java.io.Serializable {
 
 	public void setPrice(Float price) {
 		this.price = price;
+	}
+
+	public Float getDiscount() {
+		return this.discount;
+	}
+
+	public void setDiscount(Float discount) {
+		this.discount = discount;
 	}
 
 	public Float getTotalprice() {
