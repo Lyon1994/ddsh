@@ -8,8 +8,10 @@
  */
 package org.osinfo.core.webapp.action.system;
 
+import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -23,6 +25,7 @@ import org.osinfo.core.webapp.model.DdGrid;
 import org.osinfo.core.webapp.model.DdInventory;
 import org.osinfo.core.webapp.model.DdSell;
 import org.osinfo.core.webapp.model.DdTopper;
+import org.osinfo.core.webapp.util.ExcelUtil;
 import org.osinfo.core.webapp.util.JsonUtil;
 import org.osinfo.core.webapp.util.PageUtil;
 @Results({
@@ -33,7 +36,7 @@ import org.osinfo.core.webapp.util.PageUtil;
  * @Description
  * 格子管理
  */
-public class GridAction extends CrudAction{
+public class GridAction<T> extends CrudAction{
 	private static Logger logger = Logger.getLogger ( GridAction.class.getName () ) ;
 	/**
 	 * @Author Lucifer.Zhou 4:30:01 PM Jan 6, 2010
@@ -56,9 +59,9 @@ public class GridAction extends CrudAction{
 		String name=getParameter("name");
 		String gridid=getParameter("gridid");
 		String location=getParameter("location");
-
-		String sql="insert into dd_grid (gridid,name,location) " +
-				"values ('"+gridid+"','"+name+"','"+location+"')";
+		String userid=getParameter("userid");
+		String sql="insert into dd_grid (gridid,name,location,userid) " +
+				"values ('"+gridid+"','"+name+"','"+location+"','"+userid+"')";
 		CommonDAO.executeUpdate(sql);
 		return "success";
 	}
@@ -94,7 +97,22 @@ public class GridAction extends CrudAction{
 			String bound, String where, String sort, String dir)
 			throws Exception {
 		// TODO Auto-generated method stub
-		return null;
+		String name="格子表";
+		String name2=name;
+		if (getRequest().getHeader("User-Agent").toLowerCase().indexOf("firefox") > 0)
+			name2 = new String(name.getBytes("UTF-8"), "ISO8859-1");//firefox浏览器
+		else if (getRequest().getHeader("User-Agent").toUpperCase().indexOf("MSIE") > 0)
+			name2 = URLEncoder.encode(name, "UTF-8");//IE浏览器 终极解决文件名乱码
+
+		getResponse().setHeader("Content-disposition","attachment;filename=" +name2+"-"+getCurrentTime() + ".xls");
+		String[] headers = { "序号","格子编号","名称","位置","负责人"};
+		String userid=(String) getSession().getAttribute("userid");
+		String t=(String) getSession().getAttribute("type");
+		String sql;
+		sql="select * from dd_grid";
+		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,DdGrid.class);
+		Collection<T> l = (Collection<T>) p.getResult();
+		return ExcelUtil.exportExcel(workbook,name, headers, l);
 	}
 	@Override
 	public List filter(List expressions, String[] filters) {
@@ -125,7 +143,7 @@ public class GridAction extends CrudAction{
 		{
 			DdGrid d=(DdGrid)l.get(i);
 
-			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getGridid()+"</td><td>"+d.getName()+"</td><td>"+d.getLocation()+"</td></tr>\",";
+			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getGridid()+"</td><td>"+d.getName()+"</td><td>"+d.getLocation()+"</td><td>"+d.getUserid()+"</td></tr>\",";
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";

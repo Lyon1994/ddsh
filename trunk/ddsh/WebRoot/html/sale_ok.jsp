@@ -1,11 +1,14 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-	String id=request.getParameter("id");
+	String bd=request.getParameter("barcode");
+	String totalprice=request.getParameter("totalprice");
+	String zk=request.getParameter("zk");
+	String amount=request.getParameter("amount");
  %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <title>商品上架</title>
+    <title>结账确认</title>
 
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
     
@@ -15,45 +18,34 @@
 	<script language="javascript">
 		$(document).ready(
 			function(){
+				var bd='<%=bd%>';
+				var totalprice='<%=totalprice%>';
+				var amount='<%=amount%>';
+				var zk='<%=zk%>';
 					$.ajax({
-					 	url: '../system/inventory!load.zf?id='+<%=id%>+'&t='+new Date().getTime(),
+					 	url: '../system/inventory!load.zf?barcode='+bd+'&t='+new Date().getTime(),
 					 	type: 'POST',
 					 	dataType: 'json',
 					 	error: function(){alert('error');},
 					 	success: function(json){
 					 		$('#barcode').attr('value',json[0].barcode);
 							$('#name').attr('value',json[0].name);
-							$('#userid').attr('value',json[0].userid);
-							$('#amount').attr('value',json[0].amount);
+							$('#totalprice').attr('value',totalprice);
+							$('#amount').attr('value',amount);
 							$('#id').attr('value',json[0].id);
 							$('#price').attr('value',json[0].price);
-							$('#discount').attr('value',json[0].discount);
+							$('#zk').attr('value',zk);
 					 	}
 					});
 					$('#ok').click( 
 						function(){	
 							var barcode=$('#barcode').attr('value');
-							var inventoryid=$('#id').attr('value');
 							var amount=$('#amount').attr('value');
-							var userid=$('#userid').attr('value');
-							var name=$('#name').attr('value');
-							var price=$('#price').attr('value');
-							var gridid=$('#gridid').attr('value');
-							var discount=$('#discount').attr('value');
-							var para='inventoryid='+inventoryid+'&name='+name+'&price='+price+'&gridid='+gridid+'&amount='+amount+'&barcode='+barcode+'&userid='+userid+'&discount='+discount+'&t='+new Date().getTime();
-							$('#LoadingStatus').show();//显示进度条
+							var zk=$('#zk').attr('value');
+							var totalprice=amount*zk;
+							var returnstr;
+			        		returnstr = window.showModalDialog('../html/sale_ok.jsp?barcode='+barcode+'&totalprice='+totalprice,'',"dialogHeight: 500px; dialogWidth: 750px;center: yes; help: no;resizable: no; status: no;");
 							
-							$.ajax({
-								 	url: '../system/upload!add.zf',
-								 	type: 'POST',
-								 	dataType: 'json',
-								 	data:para,//参数设置
-								 	error: function(){$('#LoadingStatus').hide(2000);alert('处理错误！');},
-								 	success: function(json){
-								 		$('#LoadingStatus').hide(2000);
-										alert(json.info);
-								 	}
-								});
 							return false;
 						}
 					);
@@ -63,43 +55,37 @@
   </head>
   
   <body>
-  <div id="LoadingStatus" style="background:red;color:#fff;float:right;width:100px;display:none;border:1px solid #000;z-index:1000;">正在处理...</div>
-  
 	<form name="regedit" action="#" method="post">
 	<input type="hidden" id="id" name="id"/>
 	<table border="0" width="100%" cellspacing="0" cellpadding="0" height="25">
 	<tr class="tree_title_txt">
 	<td nowrap width="100%" class="tree_title_txt" valign="middle" id="cwCellTopTitTxt">
-	商品上架</td>
+	结账确认</td>
 	</tr>
 	</table>
 
 	<div>
+	物品列表
 	<table border="0" width="100%" cellspacing="0" cellpadding="0">
 		<tr>
 			<td class="maintab_kuang">
 			<table border="0" width="100%" cellspacing="0" cellpadding="0" class="tab_table_title">
 				<tr>
-					<td>条形码：</td>
-					<td><input type="text" id="barcode" name="barcode" size="20" class="readonly" readonly="readonly" /></td>
-					<td>用户ID：</td>
-					<td><input type="text" id="userid" name="userid" size="20" class="readonly" readonly="readonly" /></td>
+					<td>收取：</td>
+					<td><input type="text" id="barcode" name="barcode" size="20" class="text" readonly/></td>
+					<td>总计：</td>
+					<td><input type="text" id="name" name="name" size="20" class="text" readonly/></td>
 				</tr>
 				<tr>
-					<td>商品名称：</td>
-					<td><input type="text" id="name" name="name" size="20" class="readonly" readonly="readonly" /></td>
-					<td>数量：</td>
-					<td><input type="text" id="amount" name="amount" size="20" class="text"/></td>
+					<td>找零：</td>
+					<td><input type="text" id="amount" name="amount" size="20" class="text" readonly/></td>
+					<td></td>
+					<td></td>
 				</tr>
+
 				<tr>
-					<td>价格：</td>
-					<td><input type="text" id="price" name="price" size="20" class="readonly" readonly="readonly" /></td>
-					<td>格子编号：</td>
-					<td><input type="text" id="gridid" name="gridid" size="20" class="text"/></td>
-				</tr>
-				<tr>
-					<td>折扣：</td>
-					<td><input type="text" id="discount" name="discount" size="20" /></td>
+					<td>是否打印小票：</td>
+					<td><input type="checkbox" id="print" name="print" checked/></td>
 					<td></td>
 					<td></td>
 				</tr>

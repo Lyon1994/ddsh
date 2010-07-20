@@ -8,8 +8,9 @@
  */
 package org.osinfo.core.webapp.action.system;
 
-import java.sql.Timestamp;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -21,7 +22,7 @@ import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
 import org.osinfo.core.webapp.model.DdInventory;
 import org.osinfo.core.webapp.model.DdSell;
-import org.osinfo.core.webapp.model.DdTopper;
+import org.osinfo.core.webapp.util.ExcelUtil;
 import org.osinfo.core.webapp.util.JsonUtil;
 import org.osinfo.core.webapp.util.PageUtil;
 @Results({
@@ -32,7 +33,7 @@ import org.osinfo.core.webapp.util.PageUtil;
  * @Description
  * 商品在售情况
  */
-public class SellAction extends CrudAction{
+public class SellAction<T> extends CrudAction{
 	private static Logger logger = Logger.getLogger ( SellAction.class.getName () ) ;
 	/**
 	 * @Author Lucifer.Zhou 4:30:01 PM Jan 6, 2010
@@ -95,7 +96,7 @@ public class SellAction extends CrudAction{
 	    String id=getParameter("id");
 	    String barcode=getParameter("barcode");
 	    String amount=getParameter("amount");
-	    String reason=org.osinfo.core.webapp.util.StringUtil.convert(getParameter("reason"));
+	    String reason=getParameter("reason");
 	    String sql="select * from dd_sell where id="+id;
 	    List l=CommonDAO.executeQuery(sql,DdSell.class);
 	    for(int i=0;i<l.size();i++)
@@ -120,7 +121,6 @@ public class SellAction extends CrudAction{
 	    sql="insert into dd_down (inventoryid,barcode,name,gridid,amount,price,userid,reason,operator,date) " +
 		"select inventoryid,barcode,name,gridid,'"+amount+"',price,userid,'"+reason+"','"+operator+"','"+submitdate+"' from dd_sell where id ="+id;
 	    CommonDAO.executeUpdate(sql);
-	    
 	    renderSimpleResult(true,"处理成功");
         return null;
 	}
@@ -137,18 +137,14 @@ public class SellAction extends CrudAction{
 		String name=getParameter("name");
 		String image=getParameter("image");
 		String amount=getParameter("amount");
-		
 		String price=getParameter("price");
 		String totalprice=getParameter("totalprice");
-		String spec=getParameter("spec");		
-		
+		String spec=getParameter("spec");
 		String material=getParameter("material");
 		String grade=getParameter("grade");
-		String location=getParameter("location");		
-		
+		String location=getParameter("location");
 		String memo=getParameter("memo");
 		String submitdate=getCurrentTime();
-
 		String operator=(String) getSession().getAttribute("userid");
 
 		String sql="insert into dd_topper (name,image,amount,price,totalprice,spec,material,grade,location,memo,status,submitdate,userid) " +
@@ -191,7 +187,21 @@ public class SellAction extends CrudAction{
 			String bound, String where, String sort, String dir)
 			throws Exception {
 		// TODO Auto-generated method stub
-		return null;
+		String name="在线销售表";
+		String name2=name;
+		if (getRequest().getHeader("User-Agent").toLowerCase().indexOf("firefox") > 0)
+			name2 = new String(name.getBytes("UTF-8"), "ISO8859-1");//firefox浏览器
+		else if (getRequest().getHeader("User-Agent").toUpperCase().indexOf("MSIE") > 0)
+			name2 = URLEncoder.encode(name, "UTF-8");//IE浏览器 终极解决文件名乱码
+		getResponse().setHeader("Content-disposition","attachment;filename=" +name2+"-"+getCurrentTime() + ".xls");
+		String[] headers = { "序号","商品ID","条形码", "名称", "格子编号","数量", "价格","折扣", "设计师"};
+		String userid=(String) getSession().getAttribute("userid");
+		String t=(String) getSession().getAttribute("type");
+		String sql;
+		sql="select * from dd_sell where  amount>0";
+		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,DdSell.class);
+		Collection<T> l = (Collection<T>) p.getResult();
+		return ExcelUtil.exportExcel(workbook,name, headers, l);
 	}
 	@Override
 	public List filter(List expressions, String[] filters) {
@@ -209,20 +219,15 @@ public class SellAction extends CrudAction{
 		String sql;
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
-
-			sql="select * from dd_sell where  amount>0";
-		
+		sql="select * from dd_sell where  amount>0";
 		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,DdSell.class);
-		
 		String content = "totalPage = " + p.getTotalPageCount() + ";";
 		content += "dataStore = [";
-
 		List l=(List)p.getResult();
 		for(int i=0;i<l.size();i++)
 		{
 			DdSell d=(DdSell)l.get(i);
-
-			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td>"+d.getUserid()+"</td><td class='editbox' id='amount'>"+d.getAmount()+"</td><td class='editbox' id='price'>"+d.getPrice()+"</td><td>"+d.getGridid()+"</td></tr>\",";
+			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td>"+d.getUserid()+"</td><td>"+d.getGridid()+"</td><td>"+d.getAmount()+"</td><td>"+d.getPrice()+"</td><td>"+d.getDiscount()+"</td><td>"+d.getUserid()+"</td></tr>\",";
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";
@@ -235,9 +240,7 @@ public class SellAction extends CrudAction{
 		String sql;
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
-
-			 sql="select * from dd_sell where amount>0";
-		
+		sql="select * from dd_sell where amount>0";
 		int count=CommonDAO.count(sql);
 		return count;
 	}

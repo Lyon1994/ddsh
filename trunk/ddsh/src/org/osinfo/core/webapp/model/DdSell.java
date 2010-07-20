@@ -15,6 +15,7 @@ public class DdSell implements java.io.Serializable {
 	private String gridid;
 	private Integer amount;
 	private Float price;
+	private Float discount;
 	private String userid;
 
 	// Constructors
@@ -25,13 +26,15 @@ public class DdSell implements java.io.Serializable {
 
 	/** full constructor */
 	public DdSell(Integer inventoryid, String barcode, String name,
-			String gridid, Integer amount, Float price, String userid) {
+			String gridid, Integer amount, Float price, Float discount,
+			String userid) {
 		this.inventoryid = inventoryid;
 		this.barcode = barcode;
 		this.name = name;
 		this.gridid = gridid;
 		this.amount = amount;
 		this.price = price;
+		this.discount = discount;
 		this.userid = userid;
 	}
 
@@ -91,6 +94,14 @@ public class DdSell implements java.io.Serializable {
 
 	public void setPrice(Float price) {
 		this.price = price;
+	}
+
+	public Float getDiscount() {
+		return this.discount;
+	}
+
+	public void setDiscount(Float discount) {
+		this.discount = discount;
 	}
 
 	public String getUserid() {

@@ -58,7 +58,7 @@
 			}
 			function load(param)
 			{
-				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th width='1%'><input type='checkbox' name='select' onclick='ck()'/></th><th>格子编号</th><th>名称</th><th>具体位置</th></tr></thead><tbody>";
+				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th width='1%'><input type='checkbox' name='select' onclick='ck()'/></th><th>格子编号</th><th>名称</th><th>具体位置</th><th>负责人</th></tr></thead><tbody>";
 				var a="</tbody></table>";
 				$.ajax({
 					 	url: 'grid!count.zf?type=1&t='+new Date().getTime(),
@@ -71,6 +71,10 @@
 							showMode:'full',ajaxParam:param}); 
 					 	}
 					}); 
+			}
+			function exports()
+			{
+				window.open('grid!export.zf?type=1&t='+new Date().getTime());
 			}
 			$(document).ready(
 				function(){

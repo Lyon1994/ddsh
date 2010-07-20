@@ -47,6 +47,10 @@
 					 	}
 					}); 
 			}
+			function exports()
+			{
+				window.open('down!export.zf?type=1&t='+new Date().getTime());
+			}
 			$(document).ready(
 				function(){
 					//demo1带参数

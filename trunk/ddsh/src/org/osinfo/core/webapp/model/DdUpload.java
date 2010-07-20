@@ -17,6 +17,7 @@ public class DdUpload implements java.io.Serializable {
 	private Integer amount;
 	private String gridid;
 	private Float price;
+	private Float discount;
 	private String userid;
 	private String operator;
 	private Timestamp date;
@@ -37,14 +38,15 @@ public class DdUpload implements java.io.Serializable {
 
 	/** full constructor */
 	public DdUpload(Integer inventoryid, String barcode, String name,
-			Integer amount, String gridid, Float price, String userid,
-			String operator, Timestamp date) {
+			Integer amount, String gridid, Float price, Float discount,
+			String userid, String operator, Timestamp date) {
 		this.inventoryid = inventoryid;
 		this.barcode = barcode;
 		this.name = name;
 		this.amount = amount;
 		this.gridid = gridid;
 		this.price = price;
+		this.discount = discount;
 		this.userid = userid;
 		this.operator = operator;
 		this.date = date;
@@ -106,6 +108,14 @@ public class DdUpload implements java.io.Serializable {
 
 	public void setPrice(Float price) {
 		this.price = price;
+	}
+
+	public Float getDiscount() {
+		return this.discount;
+	}
+
+	public void setDiscount(Float discount) {
+		this.discount = discount;
 	}
 
 	public String getUserid() {

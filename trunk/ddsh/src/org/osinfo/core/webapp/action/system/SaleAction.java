@@ -8,6 +8,8 @@
  */
 package org.osinfo.core.webapp.action.system;
 
+import java.net.URLEncoder;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -19,7 +21,9 @@ import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
 import org.osinfo.core.webapp.model.DdBack;
 import org.osinfo.core.webapp.model.DdSales;
+import org.osinfo.core.webapp.model.DdSell;
 import org.osinfo.core.webapp.model.DdTopper;
+import org.osinfo.core.webapp.util.ExcelUtil;
 import org.osinfo.core.webapp.util.PageUtil;
 @Results({
 	 @Result(name="list",location = "/WEB-INF/result/system/sale/list.ftl"),
@@ -30,7 +34,7 @@ import org.osinfo.core.webapp.util.PageUtil;
  * @Description
  * 销售记录
  */
-public class SaleAction extends CrudAction{
+public class SaleAction<T> extends CrudAction{
 	private static Logger logger = Logger.getLogger ( SaleAction.class.getName () ) ;
 	/**
 	 * @Author Lucifer.Zhou 4:30:01 PM Jan 6, 2010
@@ -49,9 +53,9 @@ public class SaleAction extends CrudAction{
 	public String add() {
 		// TODO Auto-generated method stub
 		String userid=getParameter("userid");
-		String name=org.osinfo.core.webapp.util.StringUtil.convert(getRequest().getParameter("name"));
+		String name=getParameter("name");
 		String amount=getParameter("amount");
-		String reason=org.osinfo.core.webapp.util.StringUtil.convert(getRequest().getParameter("reason"));
+		String reason=getParameter("reason");
 		String submitdate=getCurrentTime();
 		String topperid=getParameter("topperid");
 		String operator=(String) getSession().getAttribute("userid");
@@ -95,7 +99,22 @@ public class SaleAction extends CrudAction{
 			String bound, String where, String sort, String dir)
 			throws Exception {
 		// TODO Auto-generated method stub
-		return null;
+		String name="销售记录表";
+		String name2=name;
+		if (getRequest().getHeader("User-Agent").toLowerCase().indexOf("firefox") > 0)
+			name2 = new String(name.getBytes("UTF-8"), "ISO8859-1");//firefox浏览器
+		else if (getRequest().getHeader("User-Agent").toUpperCase().indexOf("MSIE") > 0)
+			name2 = URLEncoder.encode(name, "UTF-8");//IE浏览器 终极解决文件名乱码
+
+		getResponse().setHeader("Content-disposition","attachment;filename=" +name2+"-"+getCurrentTime() + ".xls");
+		String[] headers = { "序号","条形码", "名称","折扣", "数量", "价格", "总计","设计师","操作者","日期"};
+		String userid=(String) getSession().getAttribute("userid");
+		String t=(String) getSession().getAttribute("type");
+		String sql;
+		sql="select * from dd_sales where amount>0 order by date desc";
+		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,DdSales.class);
+		Collection<T> l = (Collection<T>) p.getResult();
+		return ExcelUtil.exportExcel(workbook,name, headers, l);
 	}
 	@Override
 	public List filter(List expressions, String[] filters) {

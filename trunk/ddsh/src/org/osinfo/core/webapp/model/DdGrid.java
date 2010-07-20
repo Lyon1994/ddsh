@@ -12,6 +12,7 @@ public class DdGrid implements java.io.Serializable {
 	private String gridid;
 	private String name;
 	private String location;
+	private String userid;
 
 	// Constructors
 
@@ -26,10 +27,11 @@ public class DdGrid implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public DdGrid(String gridid, String name, String location) {
+	public DdGrid(String gridid, String name, String location, String userid) {
 		this.gridid = gridid;
 		this.name = name;
 		this.location = location;
+		this.userid = userid;
 	}
 
 	// Property accessors
@@ -64,6 +66,14 @@ public class DdGrid implements java.io.Serializable {
 
 	public void setLocation(String location) {
 		this.location = location;
+	}
+
+	public String getUserid() {
+		return this.userid;
+	}
+
+	public void setUserid(String userid) {
+		this.userid = userid;
 	}
 
 }

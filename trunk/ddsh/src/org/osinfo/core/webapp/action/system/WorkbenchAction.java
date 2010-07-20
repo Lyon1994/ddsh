@@ -75,6 +75,15 @@ public class WorkbenchAction extends BaseAction {
 	{
 		if(logger.isDebugEnabled())
 			logger.debug("获取正文...");
+		String t=(String) getSession().getAttribute("type");
+		if(t.equals("1"))
+			getRequest().setAttribute("page", "workbench_admin");
+		else if(t.equals("2"))
+			getRequest().setAttribute("page", "workbench_design");
+		else if(t.equals("3"))
+			getRequest().setAttribute("page", "workbench_shop");
+		else if(t.equals("4"))
+			getRequest().setAttribute("page", "workbench_test");
 		return "main";
 	}
 	public static Map getTree(String type)
@@ -122,8 +131,6 @@ public class WorkbenchAction extends BaseAction {
 			m.put("上架记录", "system/upload!list.zf");
 			m.put("当前在售", "system/sell!list.zf");
 			m.put("下架记录", "system/down!list.zf");
-			m.put("售货分析", "user.zf");
-			m.put("退货分析", "user.zf");
 		}else
 		{
 			m.put("当前在售", "user.zf");

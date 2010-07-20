@@ -34,10 +34,13 @@
 							var amount=$('#amount').attr('value');
 							var userid=$('#userid').attr('value');
 							var name=$('#name').attr('value');
+							var para='topperid='+topperid+'&name='+name+'&amount='+amount+'&reason='+reason+'&userid='+userid+'&t='+new Date().getTime();
+							
 							$.ajax({
-								 	url: '../system/back!add.zf?topperid='+topperid+'&name='+name+'&amount='+amount+'&reason='+reason+'&userid='+userid+'&t='+new Date().getTime(),
+								 	url: '../system/back!add.zf',
 								 	type: 'POST',
 								 	dataType: 'json',
+								 	data:para,//参数设置
 								 	error: function(){alert('error');},
 								 	success: function(json){
 										alert(json.info);
@@ -53,7 +56,7 @@
   
   <body>
 	<form name="regedit" action="#" method="post">
-	<intput type="hidden" id="id" name="id"/>
+	<input type="hidden" id="id" name="id"/>
 	<table border="0" width="100%" cellspacing="0" cellpadding="0" height="25">
 	<tr class="tree_title_txt">
 	<td nowrap width="100%" class="tree_title_txt" valign="middle" id="cwCellTopTitTxt">

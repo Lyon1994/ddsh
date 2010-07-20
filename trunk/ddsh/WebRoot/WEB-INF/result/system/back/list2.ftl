@@ -48,6 +48,10 @@
 					 	}
 					}); 
 			}
+			function exports()
+			{
+				window.open('back!export.zf?type=0&t='+new Date().getTime());
+			}
 			$(document).ready(
 				function(){
 					//demo1带参数
@@ -75,8 +79,8 @@
 		<table border="0" width="100%" cellspacing="0" cellpadding=" height="30">
 			<tr>
 				<td>
-					<img src="${images}/export.gif"/>
-					<img src="${images}/printer.gif"/>
+					<img src="${images}/export.gif" onclick="exports()" style="cursor:hand" />
+					<img src="${images}/printer.gif" style="cursor:hand" />
 				</td>
 			</tr>
 		</table>

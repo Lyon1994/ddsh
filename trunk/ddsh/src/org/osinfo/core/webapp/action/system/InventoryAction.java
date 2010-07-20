@@ -8,8 +8,10 @@
  */
 package org.osinfo.core.webapp.action.system;
 
+import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -20,6 +22,9 @@ import org.osinfo.core.webapp.action.CrudAction;
 import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
 import org.osinfo.core.webapp.model.DdInventory;
+import org.osinfo.core.webapp.model.DdNotice;
+import org.osinfo.core.webapp.util.ExcelUtil;
+import org.osinfo.core.webapp.util.FloatUtil;
 import org.osinfo.core.webapp.util.JsonUtil;
 import org.osinfo.core.webapp.util.PageUtil;
 @Results({
@@ -32,7 +37,7 @@ import org.osinfo.core.webapp.util.PageUtil;
  * @Description
  * 库存管理
  */
-public class InventoryAction extends CrudAction{
+public class InventoryAction<T> extends CrudAction{
 	private static Logger logger = Logger.getLogger ( InventoryAction.class.getName () ) ;
 	/**
 	 * @Author Lucifer.Zhou 4:30:01 PM Jan 6, 2010
@@ -136,7 +141,7 @@ public class InventoryAction extends CrudAction{
 			logger.debug("加载删除页面...");
 	    String ids=getParameter("ids");
 	    if(!"".equals(ids.trim())){
-	    		String sql="delete from dd_topper where id in ("+ids.substring(0,ids.length()-1)+")";
+	    		String sql="delete from dd_inventory where id in ("+ids.substring(0,ids.length()-1)+")";
 	    		CommonDAO.executeUpdate(sql);
 	    }
 	    renderSimpleResult(true,"ok");
@@ -149,7 +154,7 @@ public class InventoryAction extends CrudAction{
 		String tdid=getParameter("tdid");
 		String value=getParameter("value");
 		
-		String sql="update dd_topper set "+tdid+"="+value+" where id ="+trid;
+		String sql="update dd_inventory set "+tdid+"="+value+" where id ="+trid;
 		CommonDAO.executeUpdate(sql);
 		renderSimpleResult(true,"修改成功");
 		return null;
@@ -159,7 +164,28 @@ public class InventoryAction extends CrudAction{
 			String bound, String where, String sort, String dir)
 			throws Exception {
 		// TODO Auto-generated method stub
-		return null;
+		String name="库存记录表";
+		String name2=name;
+		if (getRequest().getHeader("User-Agent").toLowerCase().indexOf("firefox") > 0)
+			name2 = new String(name.getBytes("UTF-8"), "ISO8859-1");//firefox浏览器
+		else if (getRequest().getHeader("User-Agent").toUpperCase().indexOf("MSIE") > 0)
+			name2 = URLEncoder.encode(name, "UTF-8");//IE浏览器 终极解决文件名乱码
+
+		getResponse().setHeader("Content-disposition","attachment;filename=" +name2+"-"+getCurrentTime() + ".xls");
+		String[] headers = { "序号","条形码","名称","数量","价格","折扣","总价","设计师","规格","材料","尺寸","产地", "操作者","日期"};
+		String userid=(String) getSession().getAttribute("userid");
+		String t=(String) getSession().getAttribute("type");
+		String sql;
+		if(t.equals("2"))
+		{
+			sql="select * from dd_inventory where userid='"+userid+"' and amount>0 order by date desc";
+		}else
+		{
+			sql="select * from dd_inventory where amount>0 order by date desc";
+		}
+		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,DdInventory.class);
+		Collection<T> l = (Collection<T>) p.getResult();
+		return ExcelUtil.exportExcel(workbook,name, headers, l);
 	}
 	@Override
 	public List filter(List expressions, String[] filters) {
@@ -195,7 +221,7 @@ public class InventoryAction extends CrudAction{
 			DdInventory d=(DdInventory)l.get(i);
 			Timestamp date=d.getDate();
 
-			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td>"+d.getUserid()+"</td><td class='editbox' id='amount'>"+d.getAmount()+"</td><td class='editbox' id='price'>"+d.getPrice()+"</td><td class='editbox' id='totalprice'>"+d.getTotalprice()+"</td><td>"+d.getSpec()+"</td><td>"+d.getGrade()+"</td><td>"+d.getMaterial()+"</td><td>"+d.getLocation()+"</td><td>"+date+"</td><td>"+d.getOperator()+"</td></tr>\",";
+			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td class='editbox' id='amount'>"+d.getAmount()+"</td><td class='editbox' id='price'>"+d.getPrice()+"</td><td class='editbox' id='discount'>"+d.getDiscount()+"</td><td>"+FloatUtil.round((d.getPrice()*d.getDiscount())*d.getAmount(), 2)+"</td><td>"+d.getUserid()+"</td><td>"+d.getSpec()+"</td><td>"+d.getGrade()+"</td><td>"+d.getMaterial()+"</td><td>"+d.getLocation()+"</td><td>"+date+"</td><td>"+d.getOperator()+"</td></tr>\",";
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";

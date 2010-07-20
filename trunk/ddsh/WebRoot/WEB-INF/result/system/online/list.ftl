@@ -60,7 +60,7 @@
 			}
 			function load(param)
 			{
-				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th width='1%'><input type='checkbox' name='select' onclick='ck()'/></th><th>条形码</th><th>物品名称</th><th>设计师</th><th>数量</th><th>单价</th><th>格子编号</th></tr></thead><tbody>";
+				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th width='1%'><input type='checkbox' name='select' onclick='ck()'/></th><th>物品ID</th><th>条形码</th><th>物品名称</th><th>格子编号</th><th>数量</th><th>单价</th><th>折扣</th><th>设计师</th></tr></thead><tbody>";
 				var a="</tbody></table>";
 				$.ajax({
 					 	url: 'sell!count.zf?type=1&t='+new Date().getTime(),
@@ -73,6 +73,10 @@
 							showMode:'full',ajaxParam:param}); 
 					 	}
 					}); 
+			}
+			function exports()
+			{
+				window.open('sell!export.zf?type=1&t='+new Date().getTime());
 			}
 			$(document).ready(
 				function(){
@@ -100,7 +104,7 @@
 		<table border="0" width="100%" cellspacing="0" cellpadding=" height="30">
 			<tr>
 				<td>
-					<input type="button" value="下 架" onclick="down()" alt="下 架" style="cursor:hand"/>
+					<img src="${images}/sdown.gif" onclick="down()" style="cursor:hand" />
 					<img src="${images}/export.gif" onclick="exports()" style="cursor:hand" />
 					<img src="${images}/printer.gif" style="cursor:hand" />
 				</td>

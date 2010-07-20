@@ -12,7 +12,12 @@
     <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
 	<link href="../css/mainstyle.css" rel="stylesheet" type="text/css" />
 	<script language="javascript" src="../js/jquery/jquery-1.4.2.min.js"></script>
+	<script language="javascript" src="../js/jquery/jquery-plugins/field/jquery.field.js"></script>
 	<script language="javascript">
+		function delete_(obj){
+			$(obj).parent().parent().remove(); 
+		}
+				
 		$(document).ready(
 			function(){
 				var ids='<%=ids%>';
@@ -24,23 +29,28 @@
 					 	success: function(json){
 					 		for(var i=0;i<json.length;i++)
 					 		{
-					 			$("#begin").append("<tr id="+json[i].id+"><td align=\'center\'><input type='text' name='barcode' value='"+json[i].barcode+"' readonly/></td><td align=\'center\'><input type='text' name='name' value='"+json[i].name+"' readonly/></td><td align=\'center\'><input type='text' name='amount' value='"+json[i].amount+"'/></td><td align=\'center\'><input type='text' name='gridid'/></td></tr>");   
+					 			$("#begin").append("<tr id="+json[i].id+"><td align=\'center\'><img src='../images/delete.gif' onclick='delete_(this)' style='cursor:hand' /></td><td align=\'center\'><input type='text' name='barcode' value='"+json[i].barcode+"' readonly/></td><td align=\'center\'><input type='text' name='amount' value='"+json[i].amount+"'/></td><td align=\'center\'><input type='text' name='discount' value='"+json[i].discount+"'/></td><td align=\'center\'><input type='text' name='gridid'/></td></tr>");   
 					 		}
 						}
 					});
 					$('#ok').click( 
 						function(){	
-							var barcode=$('#barcode').attr('value');
-							var inventoryid=$('#id').attr('value');
-							var amount=$('#amount').attr('value');
-							var userid=$('#userid').attr('value');
-							var name=$('#name').attr('value');
-							var price=$('#price').attr('value');
-							var gridid=$('#gridid').attr('value');
+							var rows=$('#begin').find('tr').length;//提取表格数据行
+						    var rowsvalue='';
+						   	$.each($('#begin').find('tr'), function(i,item){ 
+						    	rowsvalue=rowsvalue+$('input:text',this).fieldArray();
+						    	if(rows>1)
+						    		rowsvalue=rowsvalue+'|';
+						    	rows--;
+						    });
+						   	alert(rowsvalue);
+							var para='&t='+new Date().getTime();
+							
 							$.ajax({
-								 	url: '../system/upload!add.zf?inventoryid='+inventoryid+'&name='+name+'&price='+price+'&gridid='+gridid+'&amount='+amount+'&barcode='+barcode+'&userid='+userid+'&t='+new Date().getTime(),
+								 	url: '../system/upload!add.zf',
 								 	type: 'POST',
 								 	dataType: 'json',
+								 	data:para,//参数设置
 								 	error: function(){alert('error');},
 								 	success: function(json){
 										alert(json.info);
@@ -70,9 +80,10 @@
 				<table border="0" width="100%" cellspacing="0" cellpadding="0" class="tab_table_title">
 					<THEAD>
 					    <TR>
+							<TH></TH>
 					      <TH>条形码</TH>
-					      <TH>名称</TH>
 					      <TH>数量</TH>
+					      <TH>折扣</TH>
 					      <TH>格子编号</TH>
 					    </TR>
 					  </THEAD>
