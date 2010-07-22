@@ -72,14 +72,13 @@ public class UploadAction<T> extends CrudAction{
 		CommonDAO.executeUpdate(sql);
 		sql="select * from dd_inventory where id="+inventoryid;//获取库存数量
 		List l2=CommonDAO.executeQuery(sql, DdInventory.class);
-		for(int j=0;j<l2.size();j++)
+		if(l2!=null)
 		{
-			DdInventory v=(DdInventory)l2.get(j);
+			DdInventory v=(DdInventory)l2.get(0);
 			sql="update dd_inventory set amount="+(v.getAmount()-Integer.valueOf(amount))+" where id ="+v.getId();
 			CommonDAO.executeUpdate(sql);
 		}
 
-		
     	renderSimpleResult(true,"ok");
     	return null;
 	}
@@ -87,20 +86,38 @@ public class UploadAction<T> extends CrudAction{
 	//如果数量被修改了，则要补全库存表
 	public String batchAdd() {
 		// TODO Auto-generated method stub
-	    String ids=getParameter("ids");
-	    ids=ids.substring(0,ids.length()-1);
-	    if(!"".equals(ids.trim())){
-	    		String submitdate=getCurrentTime();
+	    String value=getParameter("value");
+	    String[] tmp=value.split("\\|");
+		String submitdate=getCurrentTime();
+		String operator=(String) getSession().getAttribute("userid");
+	    for(int i=0;i<tmp.length;i++)
+	    {
+	    	String[] t=tmp[i].split("\\,");
+		    	String barcode=t[0];
+		    	String amount=t[1];
+		    	String discount=t[2];
+		    	String gridid=t[3];
+		    	String sql="select * from dd_inventory where barcode='"+barcode+"'";
+		    	List l=CommonDAO.executeQuery(sql, DdInventory.class);
+		    	if(l!=null)
+		    	{
+		    		DdInventory in=(DdInventory) l.get(0);
+		    		
+		    		sql="insert into dd_upload (inventoryid,barcode,name,amount,gridid,price,discount,userid,operator,date) " +
+					"values ("+in.getId()+",'"+barcode+"','"+in.getName()+"',"+amount+",'"+gridid+"',"+in.getPrice()+","+discount+",'"+in.getUserid()+"','"+operator+"','"+submitdate+"')";
+					CommonDAO.executeUpdate(sql);
+				
+					sql="insert into dd_sell (inventoryid,barcode,name,amount,gridid,price,discount,userid) " +
+							"values ("+in.getId()+",'"+barcode+"','"+in.getName()+"',"+amount+",'"+gridid+"',"+in.getPrice()+","+discount+",'"+in.getUserid()+"')";
+					CommonDAO.executeUpdate(sql);
+					
+					sql="update dd_inventory set amount="+(in.getAmount()-Integer.valueOf(amount))+" where id ="+in.getId();
+					CommonDAO.executeUpdate(sql);
 
-	    		String operator=(String) getSession().getAttribute("userid");
-		    	String sql2="insert into dd_upload (inventoryid,barcode,name,amount,gridid,price,discount,userid,operator,date) " +
-		    			"select id,barcode,name,amount,'',price,discount,userid,'"+operator+"','"+submitdate+"' from dd_inventory where id in ("+ids+")";
-		    	CommonDAO.executeUpdate(sql2);
-		    	
-	    		String sql="update dd_inventory set amount=0 where id in ("+ids+")";
-	    		CommonDAO.executeUpdate(sql);
+		    	}
 	    }
-	    renderSimpleResult(true,"ok");
+
+	    renderSimpleResult(true,"处理完成");
 	    return null;
 	}
 	@Override

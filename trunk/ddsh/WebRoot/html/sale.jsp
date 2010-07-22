@@ -10,6 +10,9 @@
 	<link href="../css/mainstyle.css" rel="stylesheet" type="text/css" />
 	<script language="javascript" src="../js/jquery/jquery-1.4.2.min.js"></script>
 	<script language="javascript">
+		function delete_(obj){
+			$(obj).parent().parent().remove(); 
+		}
 		$(document).ready(
 			function(){
 					$("#barcode").focus();
@@ -26,10 +29,7 @@
 								 	success: function(json){
 								 		if(json.length>0)
 								 		{
-								 			$('#name').attr('value',json[0].name);
-											$('#userid').attr('value',json[0].userid);
-											$('#id').attr('value',json[0].id);
-											$('#price').attr('value',json[0].price);
+								 			$("#begin").append("<tr id="+json[0].id+"><td align=\'center\'><img src='../images/delete.gif' onclick='delete_(this)' style='cursor:hand' /></td><td align=\'center\'><input type='text' name='barcode' value='"+json[0].barcode+"' readonly/></td><td align=\'center\'><input type='text' name='name' value='"+json[0].name+"' readonly/></td><td align=\'center\'><input type='text' name='price' value='"+json[0].price+"' readonly style='width:60px'/></td><td align=\'center\'><input type='text' name='amount' value='"+json[0].amount+"' style='width:60px'/></td><td align=\'center\'><input type='text' name='discount' value='"+json[0].discount+"' style='width:60px'/></td><td align=\'center\'><input type='text' name='totalprice' value='"+(json[0].amount*(json[0].price*json[0].discount))+"' style='width:60px'/></td></tr>");   
 								 		}else
 								 			alert('商品不存在！');
 										
@@ -74,20 +74,8 @@
 				<tr>
 					<td>条形码：</td>
 					<td><input type="text" id="barcode" name="barcode" size="20" class="text"/></td>
-					<td>商品名称：</td>
+					<td>名称：</td>
 					<td><input type="text" id="name" name="name" size="20" class="text" readonly/></td>
-				</tr>
-				<tr>
-					<td>数量：</td>
-					<td><input type="text" id="amount" name="amount" size="20" class="text" value="1"/></td>
-					<td>价格：</td>
-					<td><input type="text" id="price" name="price" size="20" class="text" readonly/></td>
-				</tr>
-				<tr>
-					<td>折扣：</td>
-					<td><input type="text" id="zk" name="zk" size="20" class="text" value='1'/></td>
-					<td>设计师</td>
-					<td><input type="text" id="userid" name="userid" size="20" class="text" readonly/></td>
 				</tr>
 				<tr>
 					<td colspan="4"><hr size="1"/></td>
@@ -103,7 +91,6 @@
 		
 	<table border="0" cellspacing="0" cellpadding="0">
 	<tr>
-	添加，删除
 	<td nowrap><input type="button" value="结账" id="ok" class="com_button2"/>
 	&nbsp;&nbsp;<input type="button" value="关闭" class="com_button2" onclick="javascript:self.close()"/>
 	 	</td>
@@ -111,7 +98,28 @@
 	</table>	
 	</td>
 	</tr>
-	</table>	 
+	</table>	
+	<table border="0" width="100%" cellspacing="0" cellpadding="0">
+		<tr>
+			<td class="maintab_kuang">
+				<table border="0" width="100%" cellspacing="0" cellpadding="0" class="tab_table_title">
+					<THEAD>
+					    <TR>
+							<TH></TH>
+					      	<TH>条形码</TH>
+					      	<TH>名称</TH>
+					      	<TH>单价</TH>
+					     	<TH>数量</TH>
+					     	<TH>折扣</TH>
+					       	<TH>总价</TH>
+					    </TR>
+					  </THEAD>
+				  	<TBODY id="begin">
+					</TBODY>
+				</table>
+			</td>
+		</tr>
+	</table>
 	</div>
 	</form>
   </body>

@@ -34,7 +34,7 @@
 			function sale()
 			{
 				var returnstr;
-        		returnstr = window.showModalDialog('../html/sale.jsp','',"dialogHeight: 500px; dialogWidth: 750px;center: yes; help: no;resizable: no; status: no;");
+        		returnstr = window.showModalDialog('../html/sale.jsp','',"dialogHeight: 300px; dialogWidth: 750px;center: yes; help: no;resizable: no; status: no;");
 				load('');
 			}
 			
