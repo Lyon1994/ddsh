@@ -220,8 +220,14 @@ public class InventoryAction<T> extends CrudAction{
 		{
 			DdInventory d=(DdInventory)l.get(i);
 			Timestamp date=d.getDate();
-
-			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td class='editbox' id='amount'>"+d.getAmount()+"</td><td class='editbox' id='price'>"+d.getPrice()+"</td><td class='editbox' id='discount'>"+d.getDiscount()+"</td><td>"+FloatUtil.round((d.getPrice()*d.getDiscount())*d.getAmount(), 2)+"</td><td>"+d.getUserid()+"</td><td>"+d.getSpec()+"</td><td>"+d.getGrade()+"</td><td>"+d.getMaterial()+"</td><td>"+d.getLocation()+"</td><td>"+date+"</td><td>"+d.getOperator()+"</td></tr>\",";
+			if(t.equals("1"))
+			{
+				content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td class='editbox' id='amount'>"+d.getAmount()+"</td><td class='editbox' id='price'>"+d.getPrice()+"</td><td class='editbox' id='discount'>"+d.getDiscount()+"</td><td>"+FloatUtil.round((d.getPrice()*d.getDiscount())*d.getAmount(), 2)+"</td><td>"+d.getUserid()+"</td><td>"+d.getSpec()+"</td><td>"+d.getGrade()+"</td><td>"+d.getMaterial()+"</td><td>"+d.getLocation()+"</td><td>"+date+"</td><td>"+d.getOperator()+"</td></tr>\",";
+			}else
+			{
+				content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td>"+d.getAmount()+"</td><td>"+d.getPrice()+"</td><td>"+d.getDiscount()+"</td><td>"+FloatUtil.round((d.getPrice()*d.getDiscount())*d.getAmount(), 2)+"</td><td>"+d.getUserid()+"</td><td>"+d.getSpec()+"</td><td>"+d.getGrade()+"</td><td>"+d.getMaterial()+"</td><td>"+d.getLocation()+"</td><td>"+date+"</td><td>"+d.getOperator()+"</td></tr>\",";
+			}
+			
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";
