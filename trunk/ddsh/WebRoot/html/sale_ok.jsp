@@ -1,9 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-	String bd=request.getParameter("barcode");
+	String rowsvalue=request.getParameter("rowsvalue");
+	rowsvalue= new String(rowsvalue.getBytes("iso-8859-1"),"UTF-8");         
 	String totalprice=request.getParameter("totalprice");
-	String zk=request.getParameter("zk");
-	String amount=request.getParameter("amount");
  %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -15,37 +14,50 @@
     <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
 	<link href="../css/mainstyle.css" rel="stylesheet" type="text/css" />
 	<script language="javascript" src="../js/jquery/jquery-1.4.2.min.js"></script>
+	<script language="javascript" src="../js/CheckActivX.js"></script>
+	<object id="LODOP" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width=0 height=0> 
+	</object> 
+
 	<script language="javascript">
+		var LODOP=document.getElementById("LODOP");//这行语句是为了符合DTD规范
+		CheckLodop();
+		function CreatePrintPage(rowsvalue,totalprice,receive,change) {
+			LODOP.PRINT_INIT("东东设会");
+			LODOP.SET_PRINT_PAGESIZE(3,600,5,"");//
+			LODOP.ADD_PRINT_TBURL(10,10,500,300,encodeURI('print_list.jsp?rowsvalue='+rowsvalue+'&totalprice='+totalprice+'&receive='+receive+'&change='+change));
+
+		};
+		/*  
+		*    ForDight(Dight,How):数值格式化函数，Dight要  
+		*    格式化的  数字，How要保留的小数位数。  
+		*/  
+		function  ForDight(Dight,How)  
+		{  
+			Dight  =  Math.round  (Dight*Math.pow(10,How))/Math.pow(10,How);  
+		    return  Dight;  
+		}  
 		$(document).ready(
 			function(){
-				var bd='<%=bd%>';
-				var totalprice='<%=totalprice%>';
-				var amount='<%=amount%>';
-				var zk='<%=zk%>';
-					$.ajax({
-					 	url: '../system/inventory!load.zf?barcode='+bd+'&t='+new Date().getTime(),
-					 	type: 'POST',
-					 	dataType: 'json',
-					 	error: function(){alert('error');},
-					 	success: function(json){
-					 		$('#barcode').attr('value',json[0].barcode);
-							$('#name').attr('value',json[0].name);
-							$('#totalprice').attr('value',totalprice);
-							$('#amount').attr('value',amount);
-							$('#id').attr('value',json[0].id);
-							$('#price').attr('value',json[0].price);
-							$('#zk').attr('value',zk);
-					 	}
-					});
+					$("#receive").focus();
+					$('#receive').keydown(function(event){
+							//alert(event.keyCode);
+							//return false;
+							if(event.keyCode==13){//扫描枪,回车
+								var v = $("#receive").val()-$("#totalprice").val();
+								$("#change").attr('value',ForDight(v,2));
+							}
+						}
+					);
+					$('#totalprice').attr('value','<%=totalprice%>');
 					$('#ok').click( 
 						function(){	
-							var barcode=$('#barcode').attr('value');
-							var amount=$('#amount').attr('value');
-							var zk=$('#zk').attr('value');
-							var totalprice=amount*zk;
-							var returnstr;
-			        		returnstr = window.showModalDialog('../html/sale_ok.jsp?barcode='+barcode+'&totalprice='+totalprice,'',"dialogHeight: 500px; dialogWidth: 750px;center: yes; help: no;resizable: no; status: no;");
+							var rowsvalue='<%=rowsvalue%>';
+							var totalprice='<%=totalprice%>';
+							var receive=$('#receive').attr('value');
+							var change=$('#change').attr('value');
 							
+							CreatePrintPage(rowsvalue,totalprice,receive,change);
+							LODOP.PRINT();	
 							return false;
 						}
 					);
@@ -65,20 +77,19 @@
 	</table>
 
 	<div>
-	物品列表
 	<table border="0" width="100%" cellspacing="0" cellpadding="0">
 		<tr>
 			<td class="maintab_kuang">
 			<table border="0" width="100%" cellspacing="0" cellpadding="0" class="tab_table_title">
 				<tr>
-					<td>收取：</td>
-					<td><input type="text" id="barcode" name="barcode" size="20" class="text" readonly/></td>
-					<td>总计：</td>
-					<td><input type="text" id="name" name="name" size="20" class="text" readonly/></td>
+					<td>实收：</td>
+					<td><input type="text" id="receive" name="receive" size="20" class="text" style='width:80px'/></td>
+					<td>找零：</td>
+					<td><input type="text" id="change" name="change" size="20" class="text" readonly style='width:80px'/></td>
 				</tr>
 				<tr>
-					<td>找零：</td>
-					<td><input type="text" id="amount" name="amount" size="20" class="text" readonly/></td>
+					<td>总计：</td>
+					<td><input type="text" id="totalprice" name="totalprice" size="20" class="text" readonly style='width:80px'/></td>
 					<td></td>
 					<td></td>
 				</tr>

@@ -9,10 +9,21 @@
     <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
 	<link href="../css/mainstyle.css" rel="stylesheet" type="text/css" />
 	<script language="javascript" src="../js/jquery/jquery-1.4.2.min.js"></script>
+	<script language="javascript" src="../js/jquery/jquery-plugins/field/jquery.field.js"></script>
 	<script language="javascript">
 		function delete_(obj){
 			$(obj).parent().parent().remove(); 
 		}
+		/*  
+		*    ForDight(Dight,How):数值格式化函数，Dight要  
+		*    格式化的  数字，How要保留的小数位数。  
+		*/  
+		function  ForDight(Dight,How)  
+		{  
+			Dight  =  Math.round  (Dight*Math.pow(10,How))/Math.pow(10,How);  
+		    return  Dight;  
+		}  
+
 		$(document).ready(
 			function(){
 					$("#barcode").focus();
@@ -29,7 +40,7 @@
 								 	success: function(json){
 								 		if(json.length>0)
 								 		{
-								 			$("#begin").append("<tr id="+json[0].id+"><td align=\'center\'><img src='../images/delete.gif' onclick='delete_(this)' style='cursor:hand' /></td><td align=\'center\'><input type='text' name='barcode' value='"+json[0].barcode+"' readonly/></td><td align=\'center\'><input type='text' name='name' value='"+json[0].name+"' readonly/></td><td align=\'center\'><input type='text' name='price' value='"+json[0].price+"' readonly style='width:60px'/></td><td align=\'center\'><input type='text' name='amount' value='"+json[0].amount+"' style='width:60px'/></td><td align=\'center\'><input type='text' name='discount' value='"+json[0].discount+"' style='width:60px'/></td><td align=\'center\'><input type='text' name='totalprice' value='"+(json[0].amount*(json[0].price*json[0].discount))+"' style='width:60px'/></td></tr>");   
+								 			$("#begin").append("<tr id="+json[0].id+"><td align=\'center\'><img src='../images/delete.gif' onclick='delete_(this)' style='cursor:hand' /></td><td align=\'center\'><input type='text' name='barcode' value='"+json[0].barcode+"' readonly/></td><td align=\'center\'><input type='text' name='name' value='"+json[0].name+"' readonly/></td><td align=\'center\'><input type='text' name='price' value='"+json[0].price+"' readonly style='width:60px'/></td><td align=\'center\'><input type='text' name='amount' value='1' style='width:60px'/></td><td align=\'center\'><input type='text' name='discount' value='"+json[0].discount+"' style='width:60px'/></td></tr>");   
 								 		}else
 								 			alert('商品不存在！');
 										
@@ -40,13 +51,27 @@
 					);
 					$('#ok').click( 
 						function(){	
-							var barcode=$('#barcode').attr('value');
-							var amount=$('#amount').attr('value');
-							var price=$('#price').attr('value');
-							var zk=$('#zk').attr('value');
-							var totalprice=amount*(price*zk);
-							var returnstr;
-			        		returnstr = window.showModalDialog('../html/sale_ok.jsp?barcode='+barcode+'&amount='+amount+'&zk='+zk+'&totalprice='+totalprice,'',"dialogHeight: 400px; dialogWidth: 550px;center: yes; help: no;resizable: no; status: no;");
+							var rows=$('#begin').find('tr').length;//提取表格数据行
+						    var rowsvalue='';
+						   	$.each($('#begin').find('tr'), function(i,item){ 
+						    	rowsvalue=rowsvalue+$('input:text',this).fieldArray();
+						    	if(rows>1)
+						    		rowsvalue=rowsvalue+'|';
+						    	rows--;
+						    });
+						   	if(rowsvalue!='')
+						   	{
+						   		var t=rowsvalue.split('|');
+						   		var totalprice=0;
+						   		for(var m=0;m<t.length;m++)
+						   		{
+						   			var n=t[m].split(',');;
+						   			totalprice=totalprice+(n[2]*n[3]*n[4]);
+						   		}
+								var returnstr;
+			        			returnstr = window.showModalDialog(encodeURI('../html/sale_ok.jsp?rowsvalue='+rowsvalue+'&totalprice='+ForDight(totalprice,2)),'',"dialogHeight: 250px; dialogWidth: 500px;center: yes; help: no;resizable: no; status: no;");
+						   	}else
+						   		alert('请先扫描结账物品！');
 							
 							return false;
 						}
@@ -111,7 +136,6 @@
 					      	<TH>单价</TH>
 					     	<TH>数量</TH>
 					     	<TH>折扣</TH>
-					       	<TH>总价</TH>
 					    </TR>
 					  </THEAD>
 				  	<TBODY id="begin">

@@ -105,7 +105,7 @@
 					return false;
 				}
 				var returnstr;
-        		returnstr = window.showModalDialog('../html/inventory_upload_more.jsp?ids='+str,'',"dialogHeight: 300px; dialogWidth:750px;center: yes; help: no;resizable: no; status: no;");
+        		returnstr = window.showModalDialog('../html/inventory_upload_more.jsp?ids='+str,'',"dialogHeight: 350px; dialogWidth:650px;center: yes; help: no;resizable: no; status: no;");
 				load('');
 			}
 
