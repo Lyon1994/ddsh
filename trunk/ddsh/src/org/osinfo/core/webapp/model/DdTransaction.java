@@ -12,6 +12,7 @@ public class DdTransaction implements java.io.Serializable {
 
 	private Integer id;
 	private String userid;
+	private String shop;
 	private String fromAccount;
 	private String toAccount;
 	private String transactionType;
@@ -27,10 +28,11 @@ public class DdTransaction implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public DdTransaction(String userid, String fromAccount, String toAccount,
-			String transactionType, Float transactionMoney, String memo,
-			String operator, Timestamp date) {
+	public DdTransaction(String userid, String shop, String fromAccount,
+			String toAccount, String transactionType, Float transactionMoney,
+			String memo, String operator, Timestamp date) {
 		this.userid = userid;
+		this.shop = shop;
 		this.fromAccount = fromAccount;
 		this.toAccount = toAccount;
 		this.transactionType = transactionType;
@@ -56,6 +58,14 @@ public class DdTransaction implements java.io.Serializable {
 
 	public void setUserid(String userid) {
 		this.userid = userid;
+	}
+
+	public String getShop() {
+		return this.shop;
+	}
+
+	public void setShop(String shop) {
+		this.shop = shop;
 	}
 
 	public String getFromAccount() {

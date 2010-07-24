@@ -5,6 +5,7 @@
 	String totalprice=request.getParameter("totalprice");
 	String receive=request.getParameter("receive");
 	String change=request.getParameter("change");
+	String transaction=request.getParameter("transaction");
  %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -39,11 +40,13 @@
 					
 					var rowsvalue='<%=rowsvalue%>';
 					var receive='<%=receive%>';
+					var transaction='<%=transaction%>';
 					$('#receive').append(receive);
 					var change='<%=change%>';
 					$('#change').append(change);
 					var totalprice='<%=totalprice%>';
 					$('#totalprice').append(totalprice);
+					$('#transaction').append(transaction);
 					var t=rowsvalue.split('|');
 					
 					for(var m=0;m<t.length;m++)
@@ -53,7 +56,7 @@
 						var totalprice=0;
 						totalprice=totalprice+(n[2]*n[3]*n[4]);
 						totalprice=ForDight(totalprice,2);
-						$("#begin").append("<tr><td align=\'center\' style='width:100px'>"+n[1]+"</td><td align=\'center\' style='width:25px'>"+n[2]+"</td><td align=\'center\' style='width:15px'>"+n[3]+"</td><td align=\'center\' style='width:15px'>"+n[4]+"</td><td align=\'center\' style='width:25px'>"+totalprice+"</td></tr>");   
+						$("#begin").append("<tr><td align=\'center\' style='width:80px'>"+n[1]+"</td><td align=\'center\' style='width:30px'>"+n[2]+"</td><td align=\'center\' style='width:30px'>"+n[3]+"</td><td align=\'center\' style='width:30px'>"+n[4]+"</td></tr>");   
 					}
 			}
 		)
@@ -61,30 +64,29 @@
   </head>
   
   <body>
-				<table border="0" width="180px" cellspacing="0" cellpadding="0">
+				<table border="0" width="170px" cellspacing="0" cellpadding="0">
 					<thead>
 					    <tr>
 					      	<th colspan='5' align='left'>欢迎光临 - 东东社会</th>
 					    </tr>
 						<tr>
-							<th colspan='5' align='left'>---------------------------------------------</th>
+							<th colspan='5' align='left'>------------------------------------------</th>
 						</tr>
 					    <tr>
-					      	<th align='center' style='width:100px'>名称</th>
-					      	<th align='center' style='width:25px'>单价</th>
-					     	<th align='center' style='width:15px'>数量</th>
-					     	<th align='center' style='width:15px'>折扣</th>
-					     	<th align='center' style='width:25px'>小计</th>
+					      	<th align='center' style='width:80px'>名称</th>
+					      	<th align='center' style='width:30px'>单价</th>
+					     	<th align='center' style='width:30px'>数量</th>
+					     	<th align='center' style='width:30px'>折扣</th>
 					    </tr>
 						<tr>
-							<th colspan='5' align='left'>---------------------------------------------</th>
+							<th colspan='5' align='left'>------------------------------------------</th>
 						</tr>
 					  </thead>
 				  	<tbody id="begin">
 					</tbody>
 					<tfoot>
 						<tr>
-							<th colspan='5' align='left'>---------------------------------------------</th>
+							<th colspan='5' align='left'>------------------------------------------</th>
 						</tr>
 						<tr>
 							<th colspan='1' style='width:40px'>合计：</th>
@@ -102,16 +104,24 @@
 							<th colspan='3'>&nbsp;</th>
 						</tr>
 						<tr>
+							<th colspan='3' style='width:60px'>交易号：</th>
+							<th colspan='2'>&nbsp;</th>
+						</tr>
+						<tr>
+							<th colspan='5' style='width:80px' id='transaction'></th>
+							
+						</tr>
+						<tr>
 							<th colspan='5' align='left' id='time'></th>
 						</tr>
 						<tr>
-							<th colspan='5' align='left'>---------------------------------------------</th>
+							<th colspan='5' align='left'>------------------------------------------</th>
 						</tr>
 						<tr>
 							<th colspan='5' align='left'>最近暂无任何活动</th>
 						</tr>
 						<tr>
-							<th colspan='5' align='left'>---------------------------------------------</th>
+							<th colspan='5' align='left'>------------------------------------------</th>
 						</tr>
 					</tfoot>
 

@@ -43,7 +43,6 @@
 								 			$("#begin").append("<tr id="+json[0].id+"><td align=\'center\'><img src='../images/delete.gif' onclick='delete_(this)' style='cursor:hand' /></td><td align=\'center\'><input type='text' name='barcode' value='"+json[0].barcode+"' readonly/></td><td align=\'center\'><input type='text' name='name' value='"+json[0].name+"' readonly/></td><td align=\'center\'><input type='text' name='price' value='"+json[0].price+"' readonly style='width:60px'/></td><td align=\'center\'><input type='text' name='amount' value='1' style='width:60px'/></td><td align=\'center\'><input type='text' name='discount' value='"+json[0].discount+"' style='width:60px'/></td></tr>");   
 								 		}else
 								 			alert('商品不存在！');
-										
 								 	}
 								});
 							}

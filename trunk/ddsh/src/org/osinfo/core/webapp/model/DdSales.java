@@ -11,13 +11,12 @@ public class DdSales implements java.io.Serializable {
 	// Fields
 
 	private Integer id;
+	private String transaction;
 	private String barcode;
 	private String name;
 	private Float discount;
 	private Integer amount;
 	private Float price;
-	private Float totalprice;
-	private String userid;
 	private String operator;
 	private Timestamp date;
 
@@ -27,17 +26,28 @@ public class DdSales implements java.io.Serializable {
 	public DdSales() {
 	}
 
-	/** full constructor */
+	/** minimal constructor */
 	public DdSales(String barcode, String name, Float discount, Integer amount,
-			Float price, Float totalprice, String userid, String operator,
-			Timestamp date) {
+			Float price, String operator, Timestamp date) {
 		this.barcode = barcode;
 		this.name = name;
 		this.discount = discount;
 		this.amount = amount;
 		this.price = price;
-		this.totalprice = totalprice;
-		this.userid = userid;
+		this.operator = operator;
+		this.date = date;
+	}
+
+	/** full constructor */
+	public DdSales(String transaction, String barcode, String name,
+			Float discount, Integer amount, Float price, String operator,
+			Timestamp date) {
+		this.transaction = transaction;
+		this.barcode = barcode;
+		this.name = name;
+		this.discount = discount;
+		this.amount = amount;
+		this.price = price;
 		this.operator = operator;
 		this.date = date;
 	}
@@ -50,6 +60,14 @@ public class DdSales implements java.io.Serializable {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public String getTransaction() {
+		return this.transaction;
+	}
+
+	public void setTransaction(String transaction) {
+		this.transaction = transaction;
 	}
 
 	public String getBarcode() {
@@ -90,22 +108,6 @@ public class DdSales implements java.io.Serializable {
 
 	public void setPrice(Float price) {
 		this.price = price;
-	}
-
-	public Float getTotalprice() {
-		return this.totalprice;
-	}
-
-	public void setTotalprice(Float totalprice) {
-		this.totalprice = totalprice;
-	}
-
-	public String getUserid() {
-		return this.userid;
-	}
-
-	public void setUserid(String userid) {
-		this.userid = userid;
 	}
 
 	public String getOperator() {
