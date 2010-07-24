@@ -21,10 +21,10 @@
 	<script language="javascript">
 		var LODOP=document.getElementById("LODOP");//这行语句是为了符合DTD规范
 		CheckLodop();
-		function CreatePrintPage(rowsvalue,totalprice,receive,change) {
+		function CreatePrintPage(rowsvalue,totalprice,receive,change,transaction) {
 			LODOP.PRINT_INIT("东东设会");
 			LODOP.SET_PRINT_PAGESIZE(3,600,5,"");//
-			LODOP.ADD_PRINT_TBURL(10,10,500,300,encodeURI('print_list.jsp?rowsvalue='+rowsvalue+'&totalprice='+totalprice+'&receive='+receive+'&change='+change));
+			LODOP.ADD_PRINT_TBURL(10,10,500,300,encodeURI('print_list.jsp?rowsvalue='+rowsvalue+'&totalprice='+totalprice+'&receive='+receive+'&change='+change+'&transaction='+transaction));
 
 		};
 		/*  
@@ -36,6 +36,15 @@
 			Dight  =  Math.round  (Dight*Math.pow(10,How))/Math.pow(10,How);  
 		    return  Dight;  
 		}  
+		var jschars = ['0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
+		function generateMixed(n) {
+		    var res = "";
+		    for(var i = 0; i < n ; i ++) {
+		        var id = Math.ceil(Math.random()*35);
+		        res += jschars[id];
+		    }
+		    return res;
+		}
 		$(document).ready(
 			function(){
 					$("#receive").focus();
@@ -55,9 +64,33 @@
 							var totalprice='<%=totalprice%>';
 							var receive=$('#receive').attr('value');
 							var change=$('#change').attr('value');
+							var now= new Date();
+							var year=now.getYear();
+							var month=now.getMonth()+1;
+							var day=now.getDate();
+							var hour=now.getHours();
+							var minute=now.getMinutes();
+							var second=now.getSeconds();
+							var transaction="dd"+year+month+day+hour+minute+second+generateMixed(5);
+							var para='rowsvalue='+rowsvalue+'&totalprice='+totalprice+'&receive='+receive+'&change='+change+'&transaction='+transaction+'&t='+new Date().getTime();
+
+							$.ajax({
+								 	url: '../system/sale!add.zf',
+								 	type: 'POST',
+								 	dataType: 'json',
+								 	data:para,//参数设置
+								 	error: function(){alert('处理错误！');},
+								 	success: function(json){
+										alert(json.info);
+										if($("#print").attr('checked')==true)
+										{
+											CreatePrintPage(rowsvalue,totalprice,receive,change,transaction);
+											LODOP.PRINT();	
+										}
+								 	}
+								});
+
 							
-							CreatePrintPage(rowsvalue,totalprice,receive,change);
-							LODOP.PRINT();	
 							return false;
 						}
 					);
@@ -96,7 +129,7 @@
 
 				<tr>
 					<td>是否打印小票：</td>
-					<td><input type="checkbox" id="print" name="print" checked/></td>
+					<td><input type="checkbox" id="print" name="print" value='1' checked/></td>
 					<td></td>
 					<td></td>
 				</tr>

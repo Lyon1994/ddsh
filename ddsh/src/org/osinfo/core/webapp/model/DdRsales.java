@@ -11,13 +11,10 @@ public class DdRsales implements java.io.Serializable {
 	// Fields
 
 	private Integer id;
+	private String transaction;
 	private String barcode;
 	private String name;
-	private Float discount;
 	private Integer amount;
-	private Float price;
-	private Float totalprice;
-	private String userid;
 	private String reason;
 	private String operator;
 	private Timestamp date;
@@ -29,28 +26,21 @@ public class DdRsales implements java.io.Serializable {
 	}
 
 	/** minimal constructor */
-	public DdRsales(String barcode, Float discount, Integer amount,
-			Float price, Float totalprice, String operator, Timestamp date) {
+	public DdRsales(String barcode, Integer amount, String operator,
+			Timestamp date) {
 		this.barcode = barcode;
-		this.discount = discount;
 		this.amount = amount;
-		this.price = price;
-		this.totalprice = totalprice;
 		this.operator = operator;
 		this.date = date;
 	}
 
 	/** full constructor */
-	public DdRsales(String barcode, String name, Float discount,
-			Integer amount, Float price, Float totalprice, String userid,
-			String reason, String operator, Timestamp date) {
+	public DdRsales(String transaction, String barcode, String name,
+			Integer amount, String reason, String operator, Timestamp date) {
+		this.transaction = transaction;
 		this.barcode = barcode;
 		this.name = name;
-		this.discount = discount;
 		this.amount = amount;
-		this.price = price;
-		this.totalprice = totalprice;
-		this.userid = userid;
 		this.reason = reason;
 		this.operator = operator;
 		this.date = date;
@@ -64,6 +54,14 @@ public class DdRsales implements java.io.Serializable {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public String getTransaction() {
+		return this.transaction;
+	}
+
+	public void setTransaction(String transaction) {
+		this.transaction = transaction;
 	}
 
 	public String getBarcode() {
@@ -82,44 +80,12 @@ public class DdRsales implements java.io.Serializable {
 		this.name = name;
 	}
 
-	public Float getDiscount() {
-		return this.discount;
-	}
-
-	public void setDiscount(Float discount) {
-		this.discount = discount;
-	}
-
 	public Integer getAmount() {
 		return this.amount;
 	}
 
 	public void setAmount(Integer amount) {
 		this.amount = amount;
-	}
-
-	public Float getPrice() {
-		return this.price;
-	}
-
-	public void setPrice(Float price) {
-		this.price = price;
-	}
-
-	public Float getTotalprice() {
-		return this.totalprice;
-	}
-
-	public void setTotalprice(Float totalprice) {
-		this.totalprice = totalprice;
-	}
-
-	public String getUserid() {
-		return this.userid;
-	}
-
-	public void setUserid(String userid) {
-		this.userid = userid;
 	}
 
 	public String getReason() {

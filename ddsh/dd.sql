@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50130
 File Encoding         : 65001
 
-Date: 2010-07-20 20:47:29
+Date: 2010-07-24 21:36:41
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -71,6 +71,40 @@ INSERT INTO `dd_back` VALUES ('39', '25', 'user2', '测试产品1', '1', '身上
 INSERT INTO `dd_back` VALUES ('40', '19', 'user2', '5hgg', '1', '有问题啊', 'user1', '2010-07-20 19:34:40');
 
 -- ----------------------------
+-- Table structure for `dd_bill`
+-- ----------------------------
+DROP TABLE IF EXISTS `dd_bill`;
+CREATE TABLE `dd_bill` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `transaction` varchar(64) DEFAULT NULL,
+  `receive` float DEFAULT NULL,
+  `changes` float DEFAULT NULL,
+  `totalprice` float DEFAULT NULL,
+  `operator` varchar(30) DEFAULT NULL,
+  `date` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `Index_1` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8 COMMENT='电子钱包交易记录表';
+
+-- ----------------------------
+-- Records of dd_bill
+-- ----------------------------
+INSERT INTO `dd_bill` VALUES ('1', 'dd2010724181445KP766', '2233', '2221.69', '11.31', 'user3', '2010-07-24 18:14:45');
+INSERT INTO `dd_bill` VALUES ('2', 'dd2010724183631QVB26', '2233', '2221.69', '11.31', 'user3', '2010-07-24 18:36:31');
+INSERT INTO `dd_bill` VALUES ('3', 'dd2010724183738XV9O1', '23', '11.69', '11.31', 'user3', '2010-07-24 18:37:38');
+INSERT INTO `dd_bill` VALUES ('4', 'dd2010724183840WBBU5', '32', '20.69', '11.31', 'user3', '2010-07-24 18:38:40');
+INSERT INTO `dd_bill` VALUES ('5', 'dd2010724185239MGEHT', '223', '215.32', '7.68', 'user3', '2010-07-24 18:52:39');
+INSERT INTO `dd_bill` VALUES ('6', 'dd2010724185585SBQX', '2323', '2312.5', '10.5', 'user3', '2010-07-24 18:55:08');
+INSERT INTO `dd_bill` VALUES ('7', 'dd2010724185525XYWC2', '2323', '2312.5', '10.5', 'user3', '2010-07-24 18:55:25');
+INSERT INTO `dd_bill` VALUES ('8', 'dd2010724191457QGUFQ', '45', '36.52', '8.48', 'user3', '2010-07-24 19:13:53');
+INSERT INTO `dd_bill` VALUES ('9', 'dd2010724191833A9IU2', '56', '50.34', '5.66', 'user3', '2010-07-24 19:17:30');
+INSERT INTO `dd_bill` VALUES ('10', 'dd20107241921234TT3M', '898', '889.52', '8.48', 'user3', '2010-07-24 19:20:20');
+INSERT INTO `dd_bill` VALUES ('11', 'dd2010724192647SQ33V', '898', '889.52', '8.48', 'user3', '2010-07-24 19:25:44');
+INSERT INTO `dd_bill` VALUES ('12', 'dd2010724192914ECGS5', '898', '889.52', '8.48', 'user3', '2010-07-24 19:28:10');
+INSERT INTO `dd_bill` VALUES ('13', 'dd2010724193054R9L34', '898', '889.52', '8.48', 'user3', '2010-07-24 19:29:51');
+INSERT INTO `dd_bill` VALUES ('14', 'dd2010724193352D1FQX', '898', '889.52', '8.48', 'user3', '2010-07-24 19:32:49');
+
+-- ----------------------------
 -- Table structure for `dd_down`
 -- ----------------------------
 DROP TABLE IF EXISTS `dd_down`;
@@ -88,7 +122,7 @@ CREATE TABLE `dd_down` (
   `date` datetime NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `Index_1` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COMMENT='格子下架记录表，操作人，操作日期，下架物';
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COMMENT='格子下架记录表，操作人，操作日期，下架物';
 
 -- ----------------------------
 -- Records of dd_down
@@ -101,6 +135,7 @@ INSERT INTO `dd_down` VALUES ('5', '13', '201007141729306212', 'ooi', '33', '1',
 INSERT INTO `dd_down` VALUES ('6', '17', '010343604636', '测试产品1', 'a98', '1', '4.04', 'user2', '有点问题', 'user1', '2010-07-17 14:59:48');
 INSERT INTO `dd_down` VALUES ('7', '13', '201007141729306212', 'ooi', '12123', '1', '13', 'user2', '卖不掉那啊', 'user1', '2010-07-20 19:35:47');
 INSERT INTO `dd_down` VALUES ('8', '18', '201007201934562515', '456456', '', '1', '4', 'user2', '', 'user1', '2010-07-20 19:36:28');
+INSERT INTO `dd_down` VALUES ('9', '15', '201007150055313076', '3333', '3333', '2', '15', '3333', '', 'user3', '2010-07-24 20:18:25');
 
 -- ----------------------------
 -- Table structure for `dd_grid`
@@ -177,10 +212,10 @@ INSERT INTO `dd_inventory` VALUES ('11', '201007101757344099', '34534', '17', '3
 INSERT INTO `dd_inventory` VALUES ('12', '201007141729298718', '678', '5', '6', '0.56', '6', 'user2', '6', '6', '6', '6', 'user1', '2010-07-14 17:29:29');
 INSERT INTO `dd_inventory` VALUES ('13', '201007141729306212', 'ooi', '37', '4', '1', '44', 'user2', '4', '4', '4', '4', 'user1', '2010-07-14 17:29:29');
 INSERT INTO `dd_inventory` VALUES ('14', '201007141729309528', '456456', '0', '4', '1', '4', 'user2', '4', '44', '4', '4', 'user1', '2010-07-14 17:29:29');
-INSERT INTO `dd_inventory` VALUES ('15', '201007150055313076', '3333', '34', '3', '1', '3', '3333', '3', '3', '3', '3', 'user1', '2010-07-15 00:55:31');
+INSERT INTO `dd_inventory` VALUES ('15', '201007150055313076', '3333', '36', '3', '1', '3', '3333', '3', '3', '3', '3', 'user1', '2010-07-15 00:55:31');
 INSERT INTO `dd_inventory` VALUES ('16', '201007150055318560', '23234', '0', '3', '1', '3', '3333', '3', '3', '3', '3', 'user1', '2010-07-15 00:55:31');
-INSERT INTO `dd_inventory` VALUES ('17', '010343604636', '测试产品1', '9', '4.04', '0.7', '34.56', 'user2', '规格一', '材料一', '等级一', '场地已', 'user1', '2010-07-17 14:49:39');
-INSERT INTO `dd_inventory` VALUES ('18', '201007201934562515', '456456', '32', '4', '1', '44', 'user2', '4', '4', '4', '4', 'user1', '2010-07-20 19:34:56');
+INSERT INTO `dd_inventory` VALUES ('17', '010343604636', '测试产品1', '999953', '4.04', '0.7', '34.56', 'user2', '规格一', '材料一', '等级一', '场地已', 'user1', '2010-07-17 14:49:39');
+INSERT INTO `dd_inventory` VALUES ('18', '201007201934562515', '456456', '-456424', '4', '1', '44', 'user2', '4', '4', '4', '4', 'user1', '2010-07-20 19:34:56');
 
 -- ----------------------------
 -- Table structure for `dd_notice`
@@ -208,23 +243,21 @@ INSERT INTO `dd_notice` VALUES ('2', '测试公告', '3333', 'user1', '2010-07-1
 DROP TABLE IF EXISTS `dd_rsales`;
 CREATE TABLE `dd_rsales` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `transaction` varchar(64) DEFAULT NULL,
   `barcode` varchar(128) NOT NULL,
   `name` varchar(10) DEFAULT NULL,
-  `discount` float NOT NULL,
   `amount` int(11) NOT NULL,
-  `price` float NOT NULL,
-  `totalprice` float NOT NULL,
-  `userid` varchar(30) DEFAULT NULL,
   `reason` varchar(128) DEFAULT NULL,
   `operator` varchar(30) NOT NULL,
   `date` datetime NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `Index_1` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='退货记录表';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='退货记录表';
 
 -- ----------------------------
 -- Records of dd_rsales
 -- ----------------------------
+INSERT INTO `dd_rsales` VALUES ('2', 'sss', 'ss', '是', '23', '士大夫', 'user3', '2010-07-24 20:09:53');
 
 -- ----------------------------
 -- Table structure for `dd_sales`
@@ -232,22 +265,71 @@ CREATE TABLE `dd_rsales` (
 DROP TABLE IF EXISTS `dd_sales`;
 CREATE TABLE `dd_sales` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `transaction` varchar(64) DEFAULT NULL,
   `barcode` varchar(128) NOT NULL,
   `name` varchar(10) NOT NULL,
   `discount` float NOT NULL,
   `amount` int(11) NOT NULL,
   `price` float NOT NULL,
-  `totalprice` float NOT NULL,
-  `userid` varchar(30) NOT NULL,
   `operator` varchar(30) NOT NULL,
   `date` datetime NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `Index_1` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='售货记录表,卖出的数量要相应的从库存减去';
+) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=utf8 COMMENT='售货记录表,卖出的数量要相应的从库存减去';
 
 -- ----------------------------
 -- Records of dd_sales
 -- ----------------------------
+INSERT INTO `dd_sales` VALUES ('1', 'dd201072418148ROWZW', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 18:14:08');
+INSERT INTO `dd_sales` VALUES ('2', 'dd201072418148ROWZW', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 18:14:08');
+INSERT INTO `dd_sales` VALUES ('3', 'dd201072418148ROWZW', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 18:14:08');
+INSERT INTO `dd_sales` VALUES ('4', 'dd201072418148ROWZW', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 18:14:08');
+INSERT INTO `dd_sales` VALUES ('5', 'dd2010724181445KP766', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 18:14:45');
+INSERT INTO `dd_sales` VALUES ('6', 'dd2010724181445KP766', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 18:14:45');
+INSERT INTO `dd_sales` VALUES ('7', 'dd2010724181445KP766', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 18:14:45');
+INSERT INTO `dd_sales` VALUES ('8', 'dd2010724181445KP766', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 18:14:45');
+INSERT INTO `dd_sales` VALUES ('9', 'dd2010724182612C95FU', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 18:26:12');
+INSERT INTO `dd_sales` VALUES ('10', 'dd2010724182612C95FU', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 18:26:12');
+INSERT INTO `dd_sales` VALUES ('11', 'dd2010724182612C95FU', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 18:26:12');
+INSERT INTO `dd_sales` VALUES ('12', 'dd2010724182612C95FU', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 18:26:12');
+INSERT INTO `dd_sales` VALUES ('13', 'dd2010724183631QVB26', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 18:36:31');
+INSERT INTO `dd_sales` VALUES ('14', 'dd2010724183631QVB26', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 18:36:31');
+INSERT INTO `dd_sales` VALUES ('15', 'dd2010724183631QVB26', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 18:36:31');
+INSERT INTO `dd_sales` VALUES ('16', 'dd2010724183631QVB26', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 18:36:31');
+INSERT INTO `dd_sales` VALUES ('17', 'dd2010724183738XV9O1', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 18:37:38');
+INSERT INTO `dd_sales` VALUES ('18', 'dd2010724183738XV9O1', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 18:37:38');
+INSERT INTO `dd_sales` VALUES ('19', 'dd2010724183738XV9O1', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 18:37:38');
+INSERT INTO `dd_sales` VALUES ('20', 'dd2010724183738XV9O1', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 18:37:38');
+INSERT INTO `dd_sales` VALUES ('21', 'dd2010724183840WBBU5', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 18:38:40');
+INSERT INTO `dd_sales` VALUES ('22', 'dd2010724183840WBBU5', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 18:38:40');
+INSERT INTO `dd_sales` VALUES ('25', 'dd2010724185239MGEHT', '010343604636', '测试产品1', '0.7', '2', '4.04', 'user3', '2010-07-24 18:52:39');
+INSERT INTO `dd_sales` VALUES ('26', 'dd2010724185239MGEHT', '010343604636', '测试产品1', '0.5', '1', '4.04', 'user3', '2010-07-24 18:52:39');
+INSERT INTO `dd_sales` VALUES ('27', 'dd2010724185585SBQX', '010343604636', '测试产品1', '0.5', '1', '4.04', 'user3', '2010-07-24 18:55:08');
+INSERT INTO `dd_sales` VALUES ('28', 'dd2010724185585SBQX', '010343604636', '测试产品1', '0.7', '2', '4.04', 'user3', '2010-07-24 18:55:08');
+INSERT INTO `dd_sales` VALUES ('29', 'dd2010724185585SBQX', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 18:55:08');
+INSERT INTO `dd_sales` VALUES ('30', 'dd2010724185525XYWC2', '010343604636', '测试产品1', '0.5', '1', '4.04', 'user3', '2010-07-24 18:55:25');
+INSERT INTO `dd_sales` VALUES ('31', 'dd2010724185525XYWC2', '010343604636', '测试产品1', '0.7', '2', '4.04', 'user3', '2010-07-24 18:55:25');
+INSERT INTO `dd_sales` VALUES ('32', 'dd2010724185525XYWC2', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 18:55:25');
+INSERT INTO `dd_sales` VALUES ('33', 'dd2010724191457QGUFQ', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 19:13:53');
+INSERT INTO `dd_sales` VALUES ('34', 'dd2010724191457QGUFQ', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 19:13:53');
+INSERT INTO `dd_sales` VALUES ('35', 'dd2010724191457QGUFQ', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 19:13:53');
+INSERT INTO `dd_sales` VALUES ('36', 'dd2010724191833A9IU2', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 19:17:30');
+INSERT INTO `dd_sales` VALUES ('37', 'dd2010724191833A9IU2', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 19:17:30');
+INSERT INTO `dd_sales` VALUES ('38', 'dd20107241921234TT3M', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 19:20:20');
+INSERT INTO `dd_sales` VALUES ('39', 'dd20107241921234TT3M', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 19:20:20');
+INSERT INTO `dd_sales` VALUES ('40', 'dd20107241921234TT3M', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 19:20:20');
+INSERT INTO `dd_sales` VALUES ('41', 'dd2010724192647SQ33V', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 19:25:44');
+INSERT INTO `dd_sales` VALUES ('42', 'dd2010724192647SQ33V', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 19:25:44');
+INSERT INTO `dd_sales` VALUES ('43', 'dd2010724192647SQ33V', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 19:25:44');
+INSERT INTO `dd_sales` VALUES ('44', 'dd2010724192914ECGS5', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 19:28:10');
+INSERT INTO `dd_sales` VALUES ('45', 'dd2010724192914ECGS5', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 19:28:10');
+INSERT INTO `dd_sales` VALUES ('46', 'dd2010724192914ECGS5', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 19:28:10');
+INSERT INTO `dd_sales` VALUES ('47', 'dd2010724193054R9L34', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 19:29:51');
+INSERT INTO `dd_sales` VALUES ('48', 'dd2010724193054R9L34', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 19:29:51');
+INSERT INTO `dd_sales` VALUES ('49', 'dd2010724193054R9L34', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 19:29:51');
+INSERT INTO `dd_sales` VALUES ('50', 'dd2010724193352D1FQX', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 19:32:49');
+INSERT INTO `dd_sales` VALUES ('51', 'dd2010724193352D1FQX', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 19:32:49');
+INSERT INTO `dd_sales` VALUES ('52', 'dd2010724193352D1FQX', '010343604636', '测试产品1', '0.7', '1', '4.04', 'user3', '2010-07-24 19:32:49');
 
 -- ----------------------------
 -- Table structure for `dd_sell`
@@ -265,14 +347,14 @@ CREATE TABLE `dd_sell` (
   `userid` varchar(30) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `Index_1` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8 COMMENT='当前格子在售状态表，格子编号，物品编号，';
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8 COMMENT='当前格子在售状态表，格子编号，物品编号，';
 
 -- ----------------------------
 -- Records of dd_sell
 -- ----------------------------
 INSERT INTO `dd_sell` VALUES ('1', '13', '201007141729306212', 'ooi', '33', '0', '13', null, 'user2');
 INSERT INTO `dd_sell` VALUES ('2', '13', '201007141729306212', 'ooi', '12123', '0', '13', null, 'user2');
-INSERT INTO `dd_sell` VALUES ('3', '15', '201007150055313076', '3333', '3333', '2', '15', null, '3333');
+INSERT INTO `dd_sell` VALUES ('3', '15', '201007150055313076', '3333', '3333', '0', '15', null, '3333');
 INSERT INTO `dd_sell` VALUES ('4', '16', '201007150055318560', '23234', '333', '2', '16', null, '3333');
 INSERT INTO `dd_sell` VALUES ('5', '15', '201007150055313076', '3333', '', '0', '15', null, '3333');
 INSERT INTO `dd_sell` VALUES ('6', '17', '201007171449391207', '²âÊÔ²úÆ·1', 'a01', '1', '4.04', null, 'user2');
@@ -299,6 +381,7 @@ INSERT INTO `dd_sell` VALUES ('26', null, 'null', 'null', 'null', null, null, nu
 INSERT INTO `dd_sell` VALUES ('27', null, 'null', 'null', 'null', null, null, null, 'null');
 INSERT INTO `dd_sell` VALUES ('28', null, 'null', 'null', 'null', null, null, null, 'null');
 INSERT INTO `dd_sell` VALUES ('29', null, 'null', 'null', 'null', null, null, null, 'null');
+INSERT INTO `dd_sell` VALUES ('30', '18', '201007201934562515', '456456', '1.0', '456456', '4', '1', 'user2');
 
 -- ----------------------------
 -- Table structure for `dd_topper`
@@ -363,6 +446,7 @@ DROP TABLE IF EXISTS `dd_transaction`;
 CREATE TABLE `dd_transaction` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `userid` varchar(30) DEFAULT NULL,
+  `shop` varchar(10) DEFAULT NULL,
   `from_account` varchar(128) DEFAULT NULL,
   `to_account` varchar(128) DEFAULT NULL,
   `transaction_type` char(1) DEFAULT NULL,
@@ -396,7 +480,7 @@ CREATE TABLE `dd_upload` (
   `date` datetime NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `Index_1` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8 COMMENT='格子上架记录表，操作人，操作日期，上架物';
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8 COMMENT='格子上架记录表，操作人，操作日期，上架物';
 
 -- ----------------------------
 -- Records of dd_upload
@@ -444,6 +528,7 @@ INSERT INTO `dd_upload` VALUES ('44', null, 'null', 'null', null, 'null', null, 
 INSERT INTO `dd_upload` VALUES ('45', null, 'null', 'null', null, 'null', null, null, 'null', 'user1', '2010-07-20 20:16:40');
 INSERT INTO `dd_upload` VALUES ('46', null, 'null', 'null', null, 'null', null, null, 'null', 'user1', '2010-07-20 20:38:54');
 INSERT INTO `dd_upload` VALUES ('47', null, 'null', 'null', null, 'null', null, null, 'null', 'user1', '2010-07-20 20:39:19');
+INSERT INTO `dd_upload` VALUES ('48', '18', '201007201934562515', '456456', '456456', '1.0', '4', '1', 'user2', 'user3', '2010-07-24 20:15:13');
 
 -- ----------------------------
 -- Table structure for `dd_user`
@@ -495,15 +580,16 @@ DROP TABLE IF EXISTS `dd_wallet`;
 CREATE TABLE `dd_wallet` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `userid` varchar(30) DEFAULT NULL,
-  `bankname` varchar(128) DEFAULT NULL,
-  `location` varchar(300) DEFAULT NULL,
-  `accounter` varchar(10) DEFAULT NULL,
-  `money` int(11) DEFAULT NULL,
   `account` varchar(128) DEFAULT NULL,
+  `bankname` varchar(128) DEFAULT NULL,
+  `accounter` varchar(128) DEFAULT NULL,
+  `location` varchar(300) DEFAULT NULL,
+  `money` float DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `Index_1` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='设计师、商家电子钱包';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='设计师、商家电子钱包';
 
 -- ----------------------------
 -- Records of dd_wallet
 -- ----------------------------
+INSERT INTO `dd_wallet` VALUES ('1', 'user2', '2342232', '广州银行', '周建国', '上海', '2342.22');

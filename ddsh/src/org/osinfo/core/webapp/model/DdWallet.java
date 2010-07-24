@@ -10,11 +10,11 @@ public class DdWallet implements java.io.Serializable {
 
 	private Integer id;
 	private String userid;
-	private String bankname;
-	private String location;
-	private String accounter;
-	private Integer money;
 	private String account;
+	private String bankname;
+	private String accounter;
+	private String location;
+	private Float money;
 
 	// Constructors
 
@@ -23,14 +23,14 @@ public class DdWallet implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public DdWallet(String userid, String bankname, String location,
-			String accounter, Integer money, String account) {
+	public DdWallet(String userid, String account, String bankname,
+			String accounter, String location, Float money) {
 		this.userid = userid;
-		this.bankname = bankname;
-		this.location = location;
-		this.accounter = accounter;
-		this.money = money;
 		this.account = account;
+		this.bankname = bankname;
+		this.accounter = accounter;
+		this.location = location;
+		this.money = money;
 	}
 
 	// Property accessors
@@ -51,20 +51,20 @@ public class DdWallet implements java.io.Serializable {
 		this.userid = userid;
 	}
 
+	public String getAccount() {
+		return this.account;
+	}
+
+	public void setAccount(String account) {
+		this.account = account;
+	}
+
 	public String getBankname() {
 		return this.bankname;
 	}
 
 	public void setBankname(String bankname) {
 		this.bankname = bankname;
-	}
-
-	public String getLocation() {
-		return this.location;
-	}
-
-	public void setLocation(String location) {
-		this.location = location;
 	}
 
 	public String getAccounter() {
@@ -75,20 +75,20 @@ public class DdWallet implements java.io.Serializable {
 		this.accounter = accounter;
 	}
 
-	public Integer getMoney() {
+	public String getLocation() {
+		return this.location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
+	}
+
+	public Float getMoney() {
 		return this.money;
 	}
 
-	public void setMoney(Integer money) {
+	public void setMoney(Float money) {
 		this.money = money;
-	}
-
-	public String getAccount() {
-		return this.account;
-	}
-
-	public void setAccount(String account) {
-		this.account = account;
 	}
 
 }

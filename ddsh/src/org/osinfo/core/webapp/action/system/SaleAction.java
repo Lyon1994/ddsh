@@ -20,6 +20,7 @@ import org.osinfo.core.webapp.action.CrudAction;
 import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
 import org.osinfo.core.webapp.model.DdBack;
+import org.osinfo.core.webapp.model.DdInventory;
 import org.osinfo.core.webapp.model.DdSales;
 import org.osinfo.core.webapp.model.DdSell;
 import org.osinfo.core.webapp.model.DdTopper;
@@ -43,36 +44,45 @@ public class SaleAction<T> extends CrudAction{
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	//退回商品
 	public String list() {
 		return "list";
 	}
 
-	//商品退回
+	//售货,插入销售明细，同时也记录销售交易记录表
+	//出售的时候要注意物品时从货架上拿的话，要先走下架，放入库存，再出售
+	//如果是从库存拿的话不需要走下架
 	@Override
 	public String add() {
 		// TODO Auto-generated method stub
-		String userid=getParameter("userid");
-		String name=getParameter("name");
-		String amount=getParameter("amount");
-		String reason=getParameter("reason");
+		String rowsvalue=getParameter("rowsvalue");
+		String totalprice=getParameter("totalprice");
+		String receive=getParameter("receive");
+		String change=getParameter("change");
+		String transaction=getParameter("transaction");
 		String submitdate=getCurrentTime();
-		String topperid=getParameter("topperid");
 		String operator=(String) getSession().getAttribute("userid");
-
-		String sql="insert into dd_back (topperid,userid,name,amount,reason,date,operator) " +
-				"values ("+topperid+",'"+userid+"','"+name+"',"+amount+",'"+reason+"','"+submitdate+"','"+operator+"')";
-		int v=CommonDAO.executeUpdate(sql);
-		//更新商品接收表数量
-		String sql2="select * from dd_topper where id ="+topperid;
-    	List l=CommonDAO.executeQuery(sql2,DdTopper.class);
-    	for(int i=0;i<l.size();i++)
-    	{
-    		DdTopper t=(DdTopper)l.get(i);
-    		sql="update dd_topper set  amount="+(t.getAmount()-Integer.valueOf(amount))+" where id ="+topperid;
-	    	CommonDAO.executeUpdate(sql);
-    	}
-    	renderSimpleResult(true,"ok");
+		//记录明细表
+		String[] v=rowsvalue.split("\\|");
+		for(int i=0;i<v.length;i++)
+		{
+			String[] b=v[i].split("\\,");
+			String sql="insert into dd_sales (transaction,barcode,name,discount,amount,price,operator,date) " +
+			"values ('"+transaction+"','"+b[0]+"','"+b[1]+"',"+b[4]+","+b[3]+","+b[2]+",'"+operator+"','"+submitdate+"')";
+			CommonDAO.executeUpdate(sql);
+			sql="select * from dd_inventory where barcode='"+b[0]+"'";//获取库存数量
+			List l2=CommonDAO.executeQuery(sql, DdInventory.class);
+			if(l2!=null)
+			{
+				DdInventory vs=(DdInventory)l2.get(0);//更新库存数量
+				sql="update dd_inventory set amount="+(vs.getAmount()-Integer.valueOf(b[3]))+" where id ="+vs.getId();
+				CommonDAO.executeUpdate(sql);
+			}
+		}
+		//记录交易记录表 
+		String sql="insert into dd_bill (transaction,receive,changes,totalprice,operator,date) " +
+		"values ('"+transaction+"',"+receive+","+change+","+totalprice+",'"+operator+"','"+submitdate+"')";
+		CommonDAO.executeUpdate(sql);
+    	renderSimpleResult(true,"操作成功,交易号:"+transaction);
 	    return null;
 	}
 
@@ -107,7 +117,7 @@ public class SaleAction<T> extends CrudAction{
 			name2 = URLEncoder.encode(name, "UTF-8");//IE浏览器 终极解决文件名乱码
 
 		getResponse().setHeader("Content-disposition","attachment;filename=" +name2+"-"+getCurrentTime() + ".xls");
-		String[] headers = { "序号","条形码", "名称","折扣", "数量", "价格", "总计","设计师","操作者","日期"};
+		String[] headers = { "序号","交易号","条形码", "名称","折扣", "数量", "价格","操作者","日期"};
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
 		String sql;
@@ -143,7 +153,7 @@ public class SaleAction<T> extends CrudAction{
 		{
 			DdSales d=(DdSales)l.get(i);
 
-			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td>"+d.getDiscount()+"</td><td>"+d.getAmount()+"</td><td>"+d.getPrice()+"</td><td>"+d.getTotalprice()+"</td><td>"+d.getUserid()+"</td><td>"+d.getOperator()+"</td><td>"+d.getDate()+"</td></tr>\",";
+			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getTransaction()+"</td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td>"+d.getDiscount()+"</td><td>"+d.getAmount()+"</td><td>"+d.getPrice()+"</td><td>"+d.getOperator()+"</td><td>"+d.getDate()+"</td></tr>\",";
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";

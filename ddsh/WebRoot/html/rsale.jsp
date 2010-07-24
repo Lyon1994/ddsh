@@ -14,14 +14,15 @@
 			function(){
 					$('#ok').click( 
 						function(){	
+							var transaction=$('#transaction').attr('value');
 							var barcode=$('#barcode').attr('value');
-							var id=$('#id').attr('value');
+							var name=$('#name').attr('value');
 							var amount=$('#amount').attr('value');
 							var reason=$('#reason').attr('value');
-							var para='id='+id+'&amount='+amount+'&barcode='+barcode+'&reason='+reason+'&t='+new Date().getTime();
+							var para='transaction='+transaction+'&name='+name+'&amount='+amount+'&barcode='+barcode+'&reason='+reason+'&t='+new Date().getTime();
 							
 							$.ajax({
-								 	url: '../system/sell!down.zf',
+								 	url: '../system/rsale!add.zf',
 								 	type: 'POST',
 								 	dataType: 'json',
 								 	data:para,//参数设置
@@ -54,22 +55,27 @@
 			<td class="maintab_kuang">
 			<table border="0" width="100%" cellspacing="0" cellpadding="0" class="tab_table_title">
 				<tr>
+					<td>交易号：</td>
+					<td><input type="text" id="transaction" name="transaction" size="20" class="text"/></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
 					<td>条形码：</td>
-					<td><input type="text" id="barcode" name="barcode" size="20" readonly="readonly" /></td>
+					<td><input type="text" id="barcode" name="barcode" size="20" class="text"/></td>
 					<td>商品名称：</td>
-					<td><input type="text" id="name" name="name" size="20" class="readonly" readonly="readonly" /></td>
+					<td><input type="text" id="name" name="name" size="20" class="text"/></td>
 				</tr>
 				<tr>
 					<td>数量：</td>
 					<td><input type="text" id="amount" name="amount" size="20" class="text"/></td>
-					<td>价格：</td>
-					<td><input type="text" id="price" name="price" size="20" class="text"/></td>
+					<td></td>
+					<td></td>
 				</tr>
 				<tr>
-					<td>折扣：</td>
-					<td><input type="text" id="zk" name="amount" size="20" class="text"/></td>
-					<td></td>
-					<td></td>
+					<td>退回原因：</td>
+					<td colspan="3"><textarea rows="6" id="reason" name="reason" cols="100" class="text"></textarea></td>
+
 				</tr>
 				<tr>
 					<td colspan="4"><hr size="1"/></td>

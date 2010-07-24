@@ -10,7 +10,7 @@
         <meta http-equiv="Expires" content="0"/>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-    	<title>退货记录</title>
+    	<title>交易记录</title>
 		<link href="${css}/mainstyle.css" rel="stylesheet" type="text/css">
 		<script language="javascript" src="${jquery}/jquery-1.4.2.min.js"></script>
 		<script language="javascript" src="${jquery_lib}/jquery.cookie.min.js"></script>
@@ -20,7 +20,6 @@
 		<script language="javascript">
 			<!--
 			var b=false;
-			
 			function ck()
 			{
 				if(b)
@@ -30,12 +29,6 @@
 				var sel = document.getElementsByName("row");
 			    for (var i=0;i<sel.length;i++ )
 		    		sel[i].checked = b;  
-			}
-			function rsale()
-			{
-				var returnstr;
-        		returnstr = window.showModalDialog('../html/rsale.jsp','',"dialogHeight: 300px; dialogWidth: 700px;center: yes; help: no;resizable: no; status: no;");
-				load('');
 			}
 			function deletes()
 			{
@@ -52,7 +45,7 @@
 				}
 				if(window.confirm("确定要删除这些记录吗？")){
 					$.ajax({
-					 	url: 'rsale!del.zf?ids='+str+'&t='+new Date().getTime(),
+					 	url: 'transa!del.zf?ids='+str+'&t='+new Date().getTime(),
 					 	type: 'POST',
 					 	dataType: 'json',
 					 	error: function(){alert('error');},
@@ -66,23 +59,23 @@
 			
 			function load(param)
 			{
-				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th width='1%'><input type='checkbox' name='select' onclick='ck()'/></th><th>交易号</th><th>条形码</th><th>物品名称</th><th>数量</th><th>退回原因</th><th>操作人</th><th>操作日期</th></tr></thead><tbody>";
+				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th width='1%'><input type='checkbox' name='select' onclick='ck()'/></th><th>用户编号</th><th>门店名称</th><th>门店账号</th><th>客户账号</th><th>交易类型</th><th>金额</th><th>备注</th><th>操作人</th><th>日期</th></tr></thead><tbody>";
 				var a="</tbody></table>";
 				$.ajax({
-					 	url: 'rsale!count.zf?type=0&t='+new Date().getTime(),
+					 	url: 'transa!count.zf?type=1&t='+new Date().getTime(),
 					 	type: 'POST',
 					 	dataType: 'json',
 					 	error: function(){alert('error');},
 					 	success: function(json){
 							//蓝色主题
-							$('#list').jpage({dataBefore:b,dataAfter:a,dataStore: null,themeName:'blue',totalRecord:json[0],proxyUrl:'rsale!result.zf?t='+new Date().getTime()+'&type=0',openCookies:false,
+							$('#list').jpage({dataBefore:b,dataAfter:a,dataStore: null,themeName:'blue',totalRecord:json[0],proxyUrl:'transa!result.zf?t='+new Date().getTime()+'&type=1',openCookies:false,
 							showMode:'full',ajaxParam:param}); 
 					 	}
 					}); 
 			}
 			function exports()
 			{
-				window.open('rsale!export.zf?type=0&t='+new Date().getTime());
+				window.open('sell!export.zf?type=1&t='+new Date().getTime());
 			}
 			$(document).ready(
 				function(){
@@ -95,7 +88,6 @@
 			)
 			//-->
 		</script>
-
 	</head>
 
 <body>
@@ -103,18 +95,18 @@
 	<table border="0" width="100%" cellspacing="0" cellpadding=" height="25">
 	<tr class="tree_title_txt">
 	<td nowrap width="100%" class="tree_title_txt" valign="middle" id="cwCellTopTitTxt">
-	退货记录列表</td>
+	交易列表</td>
 	</tr>
 	</table>
 	<!--标题结束-->
 	<div style="width:50%;padding:0px;marging:0px">
 		<table border="0" width="100%" cellspacing="0" cellpadding=" height="30">
 			<tr>
-				<td height="30" valign="bottom">
-					<img src="${images}/rsale.gif" onclick="rsale()" style="cursor:hand" />
-					<img src="${images}/delete.gif" onclick="deletes()" style="cursor:hand" />
+				<td>
+					<a href="${base}/html/regedit_transa.html"><img src="${images}/add.gif" style="cursor:hand"/></a>
+					<img src="${images}/delete.gif" onclick="deletes()"  style="cursor:hand"/>
 					<img src="${images}/export.gif" onclick="exports()" style="cursor:hand" />
-					<img src="${images}/printer.gif" style="cursor:hand"/>
+					<img src="${images}/printer.gif" style="cursor:hand" />
 				</td>
 			</tr>
 		</table>

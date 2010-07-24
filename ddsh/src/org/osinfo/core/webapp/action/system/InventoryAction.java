@@ -22,7 +22,7 @@ import org.osinfo.core.webapp.action.CrudAction;
 import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
 import org.osinfo.core.webapp.model.DdInventory;
-import org.osinfo.core.webapp.model.DdNotice;
+import org.osinfo.core.webapp.model.DdSell;
 import org.osinfo.core.webapp.util.ExcelUtil;
 import org.osinfo.core.webapp.util.FloatUtil;
 import org.osinfo.core.webapp.util.JsonUtil;
@@ -59,8 +59,13 @@ public class InventoryAction<T> extends CrudAction{
 	    		l=CommonDAO.executeQuery(sql,DdInventory.class);
 	    }
 	    if(barcode!=null){
-    		String sql="select * from dd_inventory where barcode ='"+barcode+"'";
+    		String sql="select * from dd_inventory where amount>0 and barcode ='"+barcode+"'";
     		l=CommonDAO.executeQuery(sql,DdInventory.class);
+    		if(l.size()<=0)//库存不够，尝试查找在线销售表（即货架上的物品数量）
+    		{
+    			sql="select * from dd_sell where amount>0 and barcode ='"+barcode+"'";
+        		l=CommonDAO.executeQuery(sql,DdSell.class);
+    		}
 	    }
 	    try
 	    {
@@ -99,6 +104,11 @@ public class InventoryAction<T> extends CrudAction{
 	}
 	//库存列表
 	public String list() {
+		String t=(String) getSession().getAttribute("type");
+		if(t.equals("2"))
+		{
+			return "list2";
+		}
 		return "list";
 	}
 

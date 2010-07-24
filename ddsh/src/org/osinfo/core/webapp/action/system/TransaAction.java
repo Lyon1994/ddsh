@@ -19,23 +19,21 @@ import org.apache.struts2.convention.annotation.Results;
 import org.osinfo.core.webapp.action.CrudAction;
 import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
-import org.osinfo.core.webapp.model.DdBack;
-import org.osinfo.core.webapp.model.DdRsales;
-import org.osinfo.core.webapp.model.DdSales;
-import org.osinfo.core.webapp.model.DdTopper;
+import org.osinfo.core.webapp.model.DdTransaction;
+import org.osinfo.core.webapp.model.DdWallet;
 import org.osinfo.core.webapp.util.ExcelUtil;
 import org.osinfo.core.webapp.util.PageUtil;
 @Results({
-	 @Result(name="list",location = "/WEB-INF/result/system/rsale/list.ftl"),
-	 @Result(name="list2",location = "/WEB-INF/result/system/rsale/list2.ftl"),
+	 @Result(name="list",location = "/WEB-INF/result/system/transa/list.ftl"),
+	 @Result(name="list2",location = "/WEB-INF/result/system/transa/list2.ftl"),
 })
 /**
  * @Author Lucifer.Zhou 4:29:47 PM Jan 6, 2010
  * @Description
- * 商品退回
+ * 电子钱包/财务
  */
-public class RsaleAction<T> extends CrudAction{
-	private static Logger logger = Logger.getLogger ( RsaleAction.class.getName () ) ;
+public class TransaAction<T> extends CrudAction{
+	private static Logger logger = Logger.getLogger ( TransaAction.class.getName () ) ;
 	/**
 	 * @Author Lucifer.Zhou 4:30:01 PM Jan 6, 2010
 	 * long LoginAction.java
@@ -45,6 +43,11 @@ public class RsaleAction<T> extends CrudAction{
 	private static final long serialVersionUID = 1L;
 	//退回商品
 	public String list() {
+		String t=(String) getSession().getAttribute("type");
+		if(t.equals("2"))
+		{
+			return "list2";
+		}
 		return "list";
 	}
 
@@ -52,19 +55,27 @@ public class RsaleAction<T> extends CrudAction{
 	@Override
 	public String add() {
 		// TODO Auto-generated method stub
-		String transaction=getParameter("transaction");
-		String name=getParameter("name");
-		String amount=getParameter("amount");
-		String reason=getParameter("reason");
+		String userid=getParameter("userid");
+		String account=getParameter("account");
+		String bankname=getParameter("bankname");
+		
+		String accounter=getParameter("accounter");
+		String location=getParameter("location");
+		String money=getParameter("money");		
+		
+
 		String submitdate=getCurrentTime();
-		String barcode=getParameter("barcode");
+
 		String operator=(String) getSession().getAttribute("userid");
 
-		String sql="insert into dd_rsales (transaction,barcode,name,amount,reason,operator,date) " +
-		"values ('"+transaction+"','"+barcode+"','"+name+"',"+amount+",'"+reason+"','"+operator+"','"+submitdate+"')";
-		CommonDAO.executeUpdate(sql);
-    	renderSimpleResult(true,"处理成功");
-	    return null;
+		String sql="insert into dd_transaction (userid,account,bankname,accounter,location,money) " +
+				"values ('"+userid+"','"+account+"','"+bankname+"','"+accounter+"','"+location+"',"+money+")";
+
+		int v=CommonDAO.executeUpdate(sql);
+		if(v>0)
+			return "success";
+		else
+			return "error";
 	}
 
 	@Override
@@ -74,7 +85,7 @@ public class RsaleAction<T> extends CrudAction{
 			logger.debug("加载删除页面...");
 	    String ids=getParameter("ids");
 	    if(!"".equals(ids.trim())){
-	    		String sql="delete from dd_rsales where id in ("+ids.substring(0,ids.length()-1)+")";
+	    		String sql="delete from dd_transaction where id in ("+ids.substring(0,ids.length()-1)+")";
 	    		CommonDAO.executeUpdate(sql);
 	    }
 	    renderSimpleResult(true,"ok");
@@ -98,12 +109,12 @@ public class RsaleAction<T> extends CrudAction{
 			name2 = URLEncoder.encode(name, "UTF-8");//IE浏览器 终极解决文件名乱码
 
 		getResponse().setHeader("Content-disposition","attachment;filename=" +name2+"-"+getCurrentTime() + ".xls");
-		String[] headers = { "序号","交易号","条形码", "名称", "数量", "退回原因","操作者","日期"};
+		String[] headers = { "序号","用户编号","门店名称", "门店账号", "用户账号", "交易类型","金额","备注","操作人","日期"};
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
 		String sql;
-		sql="select * from dd_rsales where amount>0 order by date desc";
-		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,DdRsales.class);
+		sql="select * from dd_transaction";
+		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,DdTransaction.class);
 		Collection<T> l = (Collection<T>) p.getResult();
 		return ExcelUtil.exportExcel(workbook,name, headers, l);
 	}
@@ -123,8 +134,12 @@ public class RsaleAction<T> extends CrudAction{
 		String sql;
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
-		sql="select * from dd_rsales where amount>0 order by date desc";
-		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,DdRsales.class);
+		if(t.equals("2"))
+			sql="select * from dd_transaction where userid='"+userid+"'";
+		else
+			sql="select * from dd_transaction";
+		
+		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,DdTransaction.class);
 		
 		String content = "totalPage = " + p.getTotalPageCount() + ";";
 		content += "dataStore = [";
@@ -132,9 +147,9 @@ public class RsaleAction<T> extends CrudAction{
 		List l=(List)p.getResult();
 		for(int i=0;i<l.size();i++)
 		{
-			DdRsales d=(DdRsales)l.get(i);
+			DdTransaction d=(DdTransaction)l.get(i);
 
-			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getTransaction()+"</td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td>"+d.getAmount()+"</td><td>"+d.getReason()+"</td><td>"+d.getOperator()+"</td><td>"+d.getDate()+"</td></tr>\",";
+			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getShop()+"</td><td>"+d.getFromAccount()+"</td><td>"+d.getToAccount()+"</td><td>"+d.getTransactionType()+"</td><td>"+d.getTransactionMoney()+"</td><td>"+d.getMemo()+"</td><td>"+d.getOperator()+"</td><td>"+d.getDate()+"</td></tr>\",";
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";
@@ -147,7 +162,11 @@ public class RsaleAction<T> extends CrudAction{
 		String sql;
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
-		sql="select * from dd_rsales where amount>0";
+		if(t.equals("2"))
+			sql="select * from dd_transaction where userid='"+userid+"'";
+		else
+			sql="select * from dd_transaction";
+		
 		
 		int count=CommonDAO.count(sql);
 		return count;

@@ -26,7 +26,8 @@ import org.osinfo.core.webapp.util.ExcelUtil;
 import org.osinfo.core.webapp.util.JsonUtil;
 import org.osinfo.core.webapp.util.PageUtil;
 @Results({
-	 @Result(name="list",location = "/WEB-INF/result/system/online/list.ftl")
+	 @Result(name="list",location = "/WEB-INF/result/system/online/list.ftl"),
+	 @Result(name="list2",location = "/WEB-INF/result/system/online/list2.ftl")
 })
 /**
  * @Author Lucifer.Zhou 4:29:47 PM Jan 6, 2010
@@ -126,6 +127,11 @@ public class SellAction<T> extends CrudAction{
 	}
 	//库存列表
 	public String list() {
+		String t=(String) getSession().getAttribute("type");
+		if(t.equals("2"))
+		{
+			return "list2";
+		}
 		return "list";
 	}
 

@@ -102,11 +102,11 @@ public class WorkbenchAction extends BaseAction {
 			m.put("下架记录", "system/down!list.zf");
 			m.put("售货分析", "user.zf");
 			m.put("退货分析", "user.zf");
-			m.put("用户管理", "user.zf");
 			m.put("格子管理", "system/grid!list.zf");
 			m.put("公告管理", "system/notice!list.zf");
 			m.put("用户管理", "system/user!list.zf");
-			m.put("财务管理", "user.zf");
+			m.put("账号管理", "system/wallet!list.zf");
+			m.put("交易记录", "system/transa!list.zf");
 		}else if(type.equals("2"))
 		{
 			m.put("上货审批", "html/regedit_topper.html");
@@ -119,7 +119,8 @@ public class WorkbenchAction extends BaseAction {
 			m.put("下架记录", "system/down!list.zf");
 			m.put("售货分析", "user.zf");
 			m.put("退货分析", "user.zf");
-			m.put("电子钱包", "user.zf");
+			m.put("我的账号", "system/wallet!list.zf");
+			m.put("交易记录", "system/transa!list.zf");
 		}else if(type.equals("3"))
 		{
 			m.put("售货管理", "system/sale!list.zf");
@@ -133,7 +134,7 @@ public class WorkbenchAction extends BaseAction {
 			m.put("下架记录", "system/down!list.zf");
 		}else
 		{
-			m.put("当前在售", "user.zf");
+			m.put("当前在售", "system/sell!list.zf");
 		}
 		return m;
 	}
