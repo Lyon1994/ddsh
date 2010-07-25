@@ -67,13 +67,13 @@
 				<table border="0" width="170px" cellspacing="0" cellpadding="0">
 					<thead>
 					    <tr>
-					      	<th colspan='5' align='left'>欢迎光临 - 东东社会</th>
+					      	<th colspan='5' align='left'>欢迎光临 - 東東設會</th>
 					    </tr>
 						<tr>
 							<th colspan='5' align='left'>------------------------------------------</th>
 						</tr>
 					    <tr>
-					      	<th align='center' style='width:80px'>名称</th>
+					      	<th align='center' style='width:80px'>商品名称</th>
 					      	<th align='center' style='width:30px'>单价</th>
 					     	<th align='center' style='width:30px'>数量</th>
 					     	<th align='center' style='width:30px'>折扣</th>
@@ -116,6 +116,9 @@
 						</tr>
 						<tr>
 							<th colspan='5' align='left'>------------------------------------------</th>
+						</tr>
+						<tr>
+							<th colspan='5' align='left'>http://www.ddgowo.com</th>
 						</tr>
 						<tr>
 							<th colspan='5' align='left'>最近暂无任何活动</th>
