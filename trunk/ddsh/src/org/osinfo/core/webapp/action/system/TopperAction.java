@@ -31,7 +31,8 @@ import org.osinfo.core.webapp.util.PageUtil;
 @Results({
 	 @Result(name="list",location = "/WEB-INF/result/system/topper/list.ftl"),
 	 @Result(name="list2",location = "/WEB-INF/result/system/topper/list2.ftl"),
-	 @Result(name="list3",location = "/WEB-INF/result/system/topper/list3.ftl")
+	 @Result(name="list3",location = "/WEB-INF/result/system/topper/list3.ftl"),
+	 @Result(name="list4",location = "/WEB-INF/result/system/topper/list4.ftl")
 })
 /**
  * @Author Lucifer.Zhou 4:29:47 PM Jan 6, 2010
@@ -47,7 +48,7 @@ public class TopperAction<T> extends CrudAction{
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	//审批商品
+	//管理员审批商品
 	public String list() {
 		return "list";
 	}
@@ -55,11 +56,14 @@ public class TopperAction<T> extends CrudAction{
 	public String list2() {
 		return "list2";
 	}
-	//待批商品
+	//门店待批商品
 	public String list3() {
 		return "list3";
 	}
-
+	//设计师待批商品
+	public String list4() {
+		return "list4";
+	}
 	//商品递交
 	@Override
 	public String add() {
@@ -155,8 +159,11 @@ public class TopperAction<T> extends CrudAction{
 		String trid=getParameter("trid");
 		String tdid=getParameter("tdid");
 		String value=getParameter("value");
+		String submitdate=getCurrentTime();
+
+		String operator=(String) getSession().getAttribute("userid");
 		
-		String sql="update dd_topper set "+tdid+"="+value+" where id ="+trid;
+		String sql="update dd_topper set "+tdid+"="+value+",date='"+submitdate+"',operator='"+operator+"' where id ="+trid;
 		CommonDAO.executeUpdate(sql);
 		renderSimpleResult(true,"修改成功");
 		return null;

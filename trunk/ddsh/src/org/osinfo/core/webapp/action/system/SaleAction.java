@@ -69,14 +69,28 @@ public class SaleAction<T> extends CrudAction{
 			String sql="insert into dd_sales (transaction,barcode,name,discount,amount,price,operator,date) " +
 			"values ('"+transaction+"','"+b[0]+"','"+b[1]+"',"+b[4]+","+b[3]+","+b[2]+",'"+operator+"','"+submitdate+"')";
 			CommonDAO.executeUpdate(sql);
-			sql="select * from dd_inventory where barcode='"+b[0]+"'";//获取库存数量
-			List l2=CommonDAO.executeQuery(sql, DdInventory.class);
-			if(l2!=null)
+			if(b[5].equals("1"))//货架
 			{
-				DdInventory vs=(DdInventory)l2.get(0);//更新库存数量
-				sql="update dd_inventory set amount="+(vs.getAmount()-Integer.valueOf(b[3]))+" where id ="+vs.getId();
-				CommonDAO.executeUpdate(sql);
+				sql="select * from dd_sell where barcode='"+b[0]+"'";//获取库存数量
+				List l2=CommonDAO.executeQuery(sql, DdSell.class);
+				if(l2.size()>0)
+				{
+					DdInventory vs=(DdInventory)l2.get(0);//更新库存数量
+					sql="update dd_sell set amount="+(vs.getAmount()-Integer.valueOf(b[3]))+" where id ="+vs.getId();
+					CommonDAO.executeUpdate(sql);
+				}
+			}else//库存
+			{
+				sql="select * from dd_inventory where barcode='"+b[0]+"'";//获取库存数量
+				List l2=CommonDAO.executeQuery(sql, DdInventory.class);
+				if(l2.size()>0)
+				{
+					DdInventory vs=(DdInventory)l2.get(0);//更新库存数量
+					sql="update dd_inventory set amount="+(vs.getAmount()-Integer.valueOf(b[3]))+" where id ="+vs.getId();
+					CommonDAO.executeUpdate(sql);
+				}	
 			}
+
 		}
 		//记录交易记录表 
 		String sql="insert into dd_bill (transaction,receive,changes,totalprice,operator,date) " +

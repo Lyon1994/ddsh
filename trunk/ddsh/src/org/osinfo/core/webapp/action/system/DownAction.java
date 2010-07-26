@@ -9,8 +9,6 @@
 package org.osinfo.core.webapp.action.system;
 
 import java.net.URLEncoder;
-import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,15 +20,11 @@ import org.osinfo.core.webapp.action.CrudAction;
 import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
 import org.osinfo.core.webapp.model.DdDown;
-import org.osinfo.core.webapp.model.DdGrid;
-import org.osinfo.core.webapp.model.DdInventory;
-import org.osinfo.core.webapp.model.DdSell;
-import org.osinfo.core.webapp.model.DdTopper;
 import org.osinfo.core.webapp.util.ExcelUtil;
-import org.osinfo.core.webapp.util.JsonUtil;
 import org.osinfo.core.webapp.util.PageUtil;
 @Results({
-	 @Result(name="list",location = "/WEB-INF/result/system/down/list.ftl")
+	 @Result(name="list",location = "/WEB-INF/result/system/down/list.ftl"),
+	 @Result(name="list2",location = "/WEB-INF/result/system/down/list2.ftl")
 })
 /**
  * @Author Lucifer.Zhou 4:29:47 PM Jan 6, 2010
@@ -49,6 +43,11 @@ public class DownAction<T> extends CrudAction{
 	
 	//下架列表
 	public String list() {
+		String t=(String) getSession().getAttribute("type");
+		if(t.equals("3")||t.equals("2"))
+		{
+			return "list2";
+		}
 		return "list";
 	}
 
@@ -91,7 +90,7 @@ public class DownAction<T> extends CrudAction{
 			logger.debug("加载删除页面...");
 	    String ids=getParameter("ids");
 	    if(!"".equals(ids.trim())){
-	    		String sql="delete from dd_sell where id in ("+ids.substring(0,ids.length()-1)+")";
+	    		String sql="delete from dd_down where id in ("+ids.substring(0,ids.length()-1)+")";
 	    		CommonDAO.executeUpdate(sql);
 	    }
 	    renderSimpleResult(true,"ok");

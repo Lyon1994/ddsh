@@ -13,10 +13,10 @@ public class DdTransaction implements java.io.Serializable {
 	private Integer id;
 	private String userid;
 	private String shop;
-	private String fromAccount;
-	private String toAccount;
-	private String transactionType;
-	private Float transactionMoney;
+	private String from;
+	private String to;
+	private String type;
+	private Float money;
 	private String memo;
 	private String operator;
 	private Timestamp date;
@@ -28,15 +28,15 @@ public class DdTransaction implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public DdTransaction(String userid, String shop, String fromAccount,
-			String toAccount, String transactionType, Float transactionMoney,
-			String memo, String operator, Timestamp date) {
+	public DdTransaction(String userid, String shop, String from, String to,
+			String type, Float money, String memo, String operator,
+			Timestamp date) {
 		this.userid = userid;
 		this.shop = shop;
-		this.fromAccount = fromAccount;
-		this.toAccount = toAccount;
-		this.transactionType = transactionType;
-		this.transactionMoney = transactionMoney;
+		this.from = from;
+		this.to = to;
+		this.type = type;
+		this.money = money;
 		this.memo = memo;
 		this.operator = operator;
 		this.date = date;
@@ -68,36 +68,36 @@ public class DdTransaction implements java.io.Serializable {
 		this.shop = shop;
 	}
 
-	public String getFromAccount() {
-		return this.fromAccount;
+	public String getFrom() {
+		return this.from;
 	}
 
-	public void setFromAccount(String fromAccount) {
-		this.fromAccount = fromAccount;
+	public void setFrom(String from) {
+		this.from = from;
 	}
 
-	public String getToAccount() {
-		return this.toAccount;
+	public String getTo() {
+		return this.to;
 	}
 
-	public void setToAccount(String toAccount) {
-		this.toAccount = toAccount;
+	public void setTo(String to) {
+		this.to = to;
 	}
 
-	public String getTransactionType() {
-		return this.transactionType;
+	public String getType() {
+		return this.type;
 	}
 
-	public void setTransactionType(String transactionType) {
-		this.transactionType = transactionType;
+	public void setType(String type) {
+		this.type = type;
 	}
 
-	public Float getTransactionMoney() {
-		return this.transactionMoney;
+	public Float getMoney() {
+		return this.money;
 	}
 
-	public void setTransactionMoney(Float transactionMoney) {
-		this.transactionMoney = transactionMoney;
+	public void setMoney(Float money) {
+		this.money = money;
 	}
 
 	public String getMemo() {

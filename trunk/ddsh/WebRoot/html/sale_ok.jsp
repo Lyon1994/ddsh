@@ -24,7 +24,8 @@
 		function CreatePrintPage(rowsvalue,totalprice,receive,change,transaction) {
 			LODOP.PRINT_INIT("东东设会");
 			LODOP.SET_PRINT_PAGESIZE(3,600,5,"");//
-			LODOP.ADD_PRINT_TBURL(10,10,500,300,encodeURI('print_list.jsp?rowsvalue='+rowsvalue+'&totalprice='+totalprice+'&receive='+receive+'&change='+change+'&transaction='+transaction));
+			//LODOP.SET_PRINT_PAPER(0,0,500,500,"东东设会");
+			LODOP.ADD_PRINT_TBURL(0,0,600,300,encodeURI('print_list.jsp?rowsvalue='+rowsvalue+'&totalprice='+totalprice+'&receive='+receive+'&change='+change+'&transaction='+transaction));
 
 		};
 		/*  
