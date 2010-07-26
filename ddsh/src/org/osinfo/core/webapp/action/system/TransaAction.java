@@ -20,7 +20,6 @@ import org.osinfo.core.webapp.action.CrudAction;
 import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
 import org.osinfo.core.webapp.model.DdTransaction;
-import org.osinfo.core.webapp.model.DdWallet;
 import org.osinfo.core.webapp.util.ExcelUtil;
 import org.osinfo.core.webapp.util.PageUtil;
 @Results({
@@ -56,20 +55,21 @@ public class TransaAction<T> extends CrudAction{
 	public String add() {
 		// TODO Auto-generated method stub
 		String userid=getParameter("userid");
-		String account=getParameter("account");
-		String bankname=getParameter("bankname");
+		String shop=getParameter("shop");
+		String from=getParameter("from");
+		String to=getParameter("to");
 		
-		String accounter=getParameter("accounter");
-		String location=getParameter("location");
+		String type=getParameter("type");
 		String money=getParameter("money");		
+		String memo=getParameter("memo");		
 		
 
 		String submitdate=getCurrentTime();
 
 		String operator=(String) getSession().getAttribute("userid");
 
-		String sql="insert into dd_transaction (userid,account,bankname,accounter,location,money) " +
-				"values ('"+userid+"','"+account+"','"+bankname+"','"+accounter+"','"+location+"',"+money+")";
+		String sql="insert into dd_transaction (userid,shop,from,to,type,money,memo,operator,date) " +
+				"values ('"+userid+"','"+shop+"','"+from+"','"+to+"','"+type+"',"+money+",'"+memo+"','"+operator+"','"+submitdate+"')";
 
 		int v=CommonDAO.executeUpdate(sql);
 		if(v>0)
@@ -148,8 +148,16 @@ public class TransaAction<T> extends CrudAction{
 		for(int i=0;i<l.size();i++)
 		{
 			DdTransaction d=(DdTransaction)l.get(i);
-
-			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getShop()+"</td><td>"+d.getFromAccount()+"</td><td>"+d.getToAccount()+"</td><td>"+d.getTransactionType()+"</td><td>"+d.getTransactionMoney()+"</td><td>"+d.getMemo()+"</td><td>"+d.getOperator()+"</td><td>"+d.getDate()+"</td></tr>\",";
+			String type=d.getType();
+			if(type.equals("1"))
+				type="收入";
+			else if(type.equals("2"))
+				type="支出";
+			else if(type.equals("3"))
+				type="快递";
+			else
+				type="其他";
+			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getUserid()+"</td><td>"+d.getShop()+"</td><td>"+d.getFrom()+"</td><td>"+d.getTo()+"</td><td>"+type+"</td><td>"+d.getMoney()+"</td><td>"+d.getMemo()+"</td><td>"+d.getOperator()+"</td><td>"+d.getDate()+"</td></tr>\",";
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";

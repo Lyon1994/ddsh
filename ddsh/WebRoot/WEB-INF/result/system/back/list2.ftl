@@ -34,7 +34,7 @@
 			
 			function load(param)
 			{
-				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th width='1%'><input type='checkbox' name='select' onclick='ck()'/></th><th>物品名称</th><th>设计师</th><th>数量</th><th>原因</th><th>退回日期</th></tr></thead><tbody>";
+				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th width='1%'><input type='checkbox' name='select' onclick='ck()'/></th><th>物品名称</th><th>设计师</th><th>数量</th><th>原因</th><th>操作人</th><th>日期</th></tr></thead><tbody>";
 				var a="</tbody></table>";
 				$.ajax({
 					 	url: 'back!count.zf?type=0&t='+new Date().getTime(),

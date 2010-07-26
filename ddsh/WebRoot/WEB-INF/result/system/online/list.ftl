@@ -58,6 +58,32 @@
 				load('');
 
 			}
+			function deletes()
+			{
+				var str="";
+				var sel = document.getElementsByName("row");
+			    for(var i=0;i<sel.length;i++)
+			    {
+			   		if(sel[i].checked==true)
+			   			str+=sel[i].value+",";
+			    }
+				if(str==""){
+					alert("请至少选择一条记录");
+					return false;
+				}
+				if(window.confirm("确定要删除这些记录吗？")){
+					$.ajax({
+					 	url: 'sell!del.zf?ids='+str+'&t='+new Date().getTime(),
+					 	type: 'POST',
+					 	dataType: 'json',
+					 	error: function(){alert('error');},
+					 	success: function(json){
+							alert(json.info); 
+							load('');
+					 	}
+					}); 
+				}
+			}
 			function load(param)
 			{
 				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th width='1%'><input type='checkbox' name='select' onclick='ck()'/></th><th>物品ID</th><th>条形码</th><th>物品名称</th><th>格子编号</th><th>数量</th><th>单价</th><th>折扣</th><th>设计师</th></tr></thead><tbody>";
@@ -105,6 +131,7 @@
 			<tr>
 				<td>
 					<img src="${images}/sdown.gif" onclick="down()" style="cursor:hand" />
+					<img src="${images}/delete.gif" onclick="deletes()" style="cursor:hand" />
 					<img src="${images}/export.gif" onclick="exports()" style="cursor:hand" />
 					<img src="${images}/printer.gif" style="cursor:hand" />
 				</td>

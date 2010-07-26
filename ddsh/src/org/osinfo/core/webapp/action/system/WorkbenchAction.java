@@ -110,7 +110,7 @@ public class WorkbenchAction extends BaseAction {
 		}else if(type.equals("2"))
 		{
 			m.put("上货审批", "html/regedit_topper.html");
-			m.put("待批记录", "system/topper!list3.zf");
+			m.put("待批记录", "system/topper!list4.zf");
 			m.put("已批记录", "system/topper!list2.zf");
 			m.put("退回记录", "system/back!list2.zf");
 			m.put("库存记录", "system/inventory!list.zf");

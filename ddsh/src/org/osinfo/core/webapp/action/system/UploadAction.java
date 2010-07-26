@@ -21,12 +21,13 @@ import org.osinfo.core.webapp.action.CrudAction;
 import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
 import org.osinfo.core.webapp.model.DdInventory;
+import org.osinfo.core.webapp.model.DdSell;
 import org.osinfo.core.webapp.model.DdUpload;
-import org.osinfo.core.webapp.model.DdUser;
 import org.osinfo.core.webapp.util.ExcelUtil;
 import org.osinfo.core.webapp.util.PageUtil;
 @Results({
 	 @Result(name="list",location = "/WEB-INF/result/system/upload/list.ftl"),
+	 @Result(name="list2",location = "/WEB-INF/result/system/upload/list2.ftl")
 })
 /**
  * @Author Lucifer.Zhou 4:29:47 PM Jan 6, 2010
@@ -44,6 +45,11 @@ public class UploadAction<T> extends CrudAction{
 	private static final long serialVersionUID = 1L;
 	//上架记录
 	public String list() {
+		String t=(String) getSession().getAttribute("type");
+		if(t.equals("3")||t.equals("2"))
+		{
+			return "list2";
+		}
 		return "list";
 	}
 
@@ -66,10 +72,20 @@ public class UploadAction<T> extends CrudAction{
 		String sql="insert into dd_upload (inventoryid,barcode,name,amount,gridid,price,discount,userid,operator,date) " +
 				"values ("+inventoryid+",'"+barcode+"','"+name+"',"+amount+",'"+gridid+"',"+price+","+discount+",'"+userid+"','"+operator+"','"+submitdate+"')";
 		CommonDAO.executeUpdate(sql);
+		sql="select * from dd_sell where inventoryid="+inventoryid+" and gridid='"+gridid+"'";//判断是不是上传的格子编号和物品都相同，如是则累加
+		List l=CommonDAO.executeQuery(sql, DdSell.class);
+		if(l.size()>0)
+		{
+			DdSell v=(DdSell)l.get(0);
+			sql="update dd_sell set amount="+(v.getAmount()+Integer.valueOf(amount))+" where id ="+v.getId();
+			CommonDAO.executeUpdate(sql);
+		}else
+		{
+			sql="insert into dd_sell (inventoryid,barcode,name,amount,gridid,price,discount,userid) " +
+			"values ("+inventoryid+",'"+barcode+"','"+name+"',"+amount+",'"+gridid+"',"+price+","+discount+",'"+userid+"')";
+			CommonDAO.executeUpdate(sql);
+		}
 
-		sql="insert into dd_sell (inventoryid,barcode,name,amount,gridid,price,discount,userid) " +
-				"values ("+inventoryid+",'"+barcode+"','"+name+"',"+amount+",'"+gridid+"',"+price+","+discount+",'"+userid+"')";
-		CommonDAO.executeUpdate(sql);
 		sql="select * from dd_inventory where id="+inventoryid;//获取库存数量
 		List l2=CommonDAO.executeQuery(sql, DdInventory.class);
 		if(l2!=null)
@@ -78,7 +94,6 @@ public class UploadAction<T> extends CrudAction{
 			sql="update dd_inventory set amount="+(v.getAmount()-Integer.valueOf(amount))+" where id ="+v.getId();
 			CommonDAO.executeUpdate(sql);
 		}
-
     	renderSimpleResult(true,"ok");
     	return null;
 	}
@@ -99,17 +114,27 @@ public class UploadAction<T> extends CrudAction{
 		    	String gridid=t[3];
 		    	String sql="select * from dd_inventory where barcode='"+barcode+"'";
 		    	List l=CommonDAO.executeQuery(sql, DdInventory.class);
-		    	if(l!=null)
+		    	if(l.size()>0)
 		    	{
 		    		DdInventory in=(DdInventory) l.get(0);
 		    		
 		    		sql="insert into dd_upload (inventoryid,barcode,name,amount,gridid,price,discount,userid,operator,date) " +
 					"values ("+in.getId()+",'"+barcode+"','"+in.getName()+"',"+amount+",'"+gridid+"',"+in.getPrice()+","+discount+",'"+in.getUserid()+"','"+operator+"','"+submitdate+"')";
 					CommonDAO.executeUpdate(sql);
-				
-					sql="insert into dd_sell (inventoryid,barcode,name,amount,gridid,price,discount,userid) " +
-							"values ("+in.getId()+",'"+barcode+"','"+in.getName()+"',"+amount+",'"+gridid+"',"+in.getPrice()+","+discount+",'"+in.getUserid()+"')";
-					CommonDAO.executeUpdate(sql);
+					
+					sql="select * from dd_sell where inventoryid="+in.getId()+" and gridid='"+gridid+"'";//判断是不是上传的格子编号和物品都相同，如是则累加
+					List l2=CommonDAO.executeQuery(sql, DdSell.class);
+					if(l.size()>0)
+					{
+						DdSell v=(DdSell)l2.get(0);
+						sql="update dd_sell set amount="+(v.getAmount()+Integer.valueOf(amount))+" where id ="+v.getId();
+						CommonDAO.executeUpdate(sql);
+					}else
+					{
+						sql="insert into dd_sell (inventoryid,barcode,name,amount,gridid,price,discount,userid) " +
+						"values ("+in.getId()+",'"+barcode+"','"+in.getName()+"',"+amount+",'"+gridid+"',"+in.getPrice()+","+discount+",'"+in.getUserid()+"')";
+						CommonDAO.executeUpdate(sql);
+					}
 					
 					sql="update dd_inventory set amount="+(in.getAmount()-Integer.valueOf(amount))+" where id ="+in.getId();
 					CommonDAO.executeUpdate(sql);
