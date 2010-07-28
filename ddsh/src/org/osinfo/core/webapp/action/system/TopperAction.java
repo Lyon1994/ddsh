@@ -8,6 +8,13 @@
  */
 package org.osinfo.core.webapp.action.system;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -18,6 +25,7 @@ import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.osinfo.core.webapp.action.CrudAction;
@@ -41,6 +49,37 @@ import org.osinfo.core.webapp.util.PageUtil;
  */
 public class TopperAction<T> extends CrudAction{
 	private static Logger logger = Logger.getLogger ( TopperAction.class.getName () ) ;
+	private static final int BUFFER_SIZE = 16 * 1024 ; 
+	private File image;
+	private String imageContentType;
+    private String imageFileName;
+    
+    public File getImage() {
+		return image;
+	}
+	public void setImage(File image) {
+		this.image = image;
+	}
+	public String getImageContentType() {
+		return imageContentType;
+	}
+	public void setImageContentType(String imageContentType) {
+		this.imageContentType = imageContentType;
+	}
+	public String getImageFileName() {
+		return imageFileName;
+	}
+	public void setImageFileName(String imageFileName) {
+		this.imageFileName = imageFileName;
+	}
+	public String getCaption() {
+		return caption;
+	}
+	public void setCaption(String caption) {
+		this.caption = caption;
+	}
+	private String caption;
+
 	/**
 	 * @Author Lucifer.Zhou 4:30:01 PM Jan 6, 2010
 	 * long LoginAction.java
@@ -69,7 +108,7 @@ public class TopperAction<T> extends CrudAction{
 	public String add() {
 		// TODO Auto-generated method stub
 		String name=getParameter("name");
-		String image=getParameter("image");
+		//String image=getParameter("image");
 		String amount=getParameter("amount");
 		
 		String price=getParameter("price");
@@ -84,15 +123,40 @@ public class TopperAction<T> extends CrudAction{
 		String submitdate=getCurrentTime();
 
 		String operator=(String) getSession().getAttribute("userid");
-
+		File imageFile = new File(ServletActionContext.getServletContext().getRealPath("/upload") + "/" + imageFileName);
+	       copy(image, imageFile);
+	       
 		String sql="insert into dd_topper (name,image,amount,price,totalprice,spec,material,grade,location,memo,status,submitdate,userid) " +
-				"values ('"+name+"','"+image+"',"+amount+","+price+","+totalprice+",'"+spec+"','"+material+"','"+grade+"','"+location+"','"+memo+"','0','"+submitdate+"','"+operator+"')";
+				"values ('"+name+"','"+imageFileName+"',"+amount+","+price+","+totalprice+",'"+spec+"','"+material+"','"+grade+"','"+location+"','"+memo+"','0','"+submitdate+"','"+operator+"')";
 		int v=CommonDAO.executeUpdate(sql);
 		if(v>0)
 			return "success";
 		else
 			return "error";
 	}
+    private static void copy(File src, File dst)  {
+        try  {
+           InputStream in = null ;
+           OutputStream out = null ;
+            try  {                
+               in = new BufferedInputStream( new FileInputStream(src), BUFFER_SIZE);
+               out = new BufferedOutputStream( new FileOutputStream(dst), BUFFER_SIZE);
+                byte [] buffer = new byte [BUFFER_SIZE];
+                while (in.read(buffer) > 0 )  {
+                   out.write(buffer);
+               } 
+            } finally  {
+                if ( null != in)  {
+                   in.close();
+               } 
+                 if ( null != out)  {
+                   out.close();
+               } 
+           } 
+        } catch (Exception e)  {
+           e.printStackTrace();
+       } 
+   }  
 
 	//审核通过,入库
 	public String apply() {
@@ -246,9 +310,9 @@ public class TopperAction<T> extends CrudAction{
 			else
 				date=d.getSubmitdate();
 			if(type.equals("1"))
-				content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td>"+d.getUserid()+"</td><td>"+d.getImage()+"</td><td class='editbox' id='amount'>"+d.getAmount()+"</td><td class='editbox' id='price'>"+d.getPrice()+"</td><td>"+d.getPrice()*d.getAmount()+"</td><td>"+d.getSpec()+"</td><td>"+d.getGrade()+"</td><td>"+d.getMaterial()+"</td><td>"+d.getLocation()+"</td><td>"+date+"</td><td>"+d.getMemo()+"</td></tr>\",";
+				content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td>"+d.getUserid()+"</td><td><img src='../upload/"+d.getImage()+"' width=50 height=20/></td><td class='editbox' id='amount'>"+d.getAmount()+"</td><td class='editbox' id='price'>"+d.getPrice()+"</td><td>"+d.getPrice()*d.getAmount()+"</td><td>"+d.getSpec()+"</td><td>"+d.getGrade()+"</td><td>"+d.getMaterial()+"</td><td>"+d.getLocation()+"</td><td>"+date+"</td><td>"+d.getMemo()+"</td></tr>\",";
 			else
-				content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getName()+"</td><td>"+d.getUserid()+"</td><td>"+d.getImage()+"</td><td class='editbox' id='amount'>"+d.getAmount()+"</td><td class='editbox' id='price'>"+d.getPrice()+"</td><td>"+d.getPrice()*d.getAmount()+"</td><td>"+d.getSpec()+"</td><td>"+d.getGrade()+"</td><td>"+d.getMaterial()+"</td><td>"+d.getLocation()+"</td><td>"+date+"</td><td>"+d.getMemo()+"</td></tr>\",";
+				content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getName()+"</td><td>"+d.getUserid()+"</td><td><img src='../upload/"+d.getImage()+"' width=50 height=20/></td><td class='editbox' id='amount'>"+d.getAmount()+"</td><td class='editbox' id='price'>"+d.getPrice()+"</td><td>"+d.getPrice()*d.getAmount()+"</td><td>"+d.getSpec()+"</td><td>"+d.getGrade()+"</td><td>"+d.getMaterial()+"</td><td>"+d.getLocation()+"</td><td>"+date+"</td><td>"+d.getMemo()+"</td></tr>\",";
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";
