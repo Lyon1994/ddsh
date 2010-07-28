@@ -7,8 +7,20 @@
 <title>欢迎页面</title>
 	<script language="javascript" src="../js/jquery/jquery-1.4.2.min.js"></script>
 	<script language="javascript">
+			function sale()
+			{
+				var returnstr;
+        		returnstr = window.showModalDialog('sale.jsp','',"dialogHeight: 350px; dialogWidth: 650px;center: yes; help: no;resizable: no; status: no;");
+			}
+			function rsale()
+			{
+				var returnstr;
+        		returnstr = window.showModalDialog('rsale.jsp','',"dialogHeight: 300px; dialogWidth: 700px;center: yes; help: no;resizable: no; status: no;");
+				load('');
+			}
 		$(document).ready(
 			function(){
+
 					$.ajax({
 					 	url: '../system/notice!loadAll.zf?t='+new Date().getTime(),
 					 	type: 'POST',
@@ -107,6 +119,45 @@
 			<tr>
 				<td background="../images/kc_09.gif">　</td>
 				<td>ccc</td>
+				<td background="../images/kc_11.gif">　</td>
+			</tr>
+			<tr>
+				<td valign="top">
+				<img border="0" src="../images/kc_14.gif" width="10" height="9"></td>
+				<td background="../images/kc_15.gif" valign="top"></td>
+				<td valign="top">
+				<img border="0" src="../images/kc_16.gif" width="10" height="9"></td>
+			</tr>
+		</table>
+		</td>
+		<td valign="top">
+
+		</td>
+	</tr>
+	<tr>
+		<td valign="top">
+		<table border="0" width="100%" id="table10" cellspacing="0" cellpadding="0">
+			<tr>
+				<td width="1%">
+				<img border="0" src="../images/kc_03.gif" width="10" height="34"></td>
+				<td background="../images/kc_05.gif" width="100%">
+				<table border="0" width="100%" id="table11">
+					<tr>
+						<td><font color="#FFFFFF">快捷方式</font></td>
+					</tr>
+				</table>
+				</td>
+				<td width="1%">
+				<img border="0" src="../images/kc_07.gif" width="10" height="34"></td>
+			</tr>
+			<tr>
+				<td background="../images/kc_09.gif">　</td>
+				<td><img src="../images/sale.gif" onclick="sale()" style="cursor:hand" /></td>
+				<td background="../images/kc_11.gif">　</td>
+			</tr>
+			<tr>
+				<td background="../images/kc_09.gif">　</td>
+				<td><img src="../images/rsale.gif" onclick="rsale()" style="cursor:hand" /></td>
 				<td background="../images/kc_11.gif">　</td>
 			</tr>
 			<tr>

@@ -75,7 +75,7 @@ public class SaleAction<T> extends CrudAction{
 				List l2=CommonDAO.executeQuery(sql, DdSell.class);
 				if(l2.size()>0)
 				{
-					DdInventory vs=(DdInventory)l2.get(0);//更新库存数量
+					DdSell vs=(DdSell)l2.get(0);//更新库存数量
 					sql="update dd_sell set amount="+(vs.getAmount()-Integer.valueOf(b[3]))+" where id ="+vs.getId();
 					CommonDAO.executeUpdate(sql);
 				}
@@ -99,7 +99,7 @@ public class SaleAction<T> extends CrudAction{
     	renderSimpleResult(true,"操作成功,交易号:"+transaction);
 	    return null;
 	}
-
+	
 	@Override
 	public String del() {
 		// TODO Auto-generated method stub
