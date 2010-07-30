@@ -75,7 +75,7 @@ public class NoticeAction<T> extends CrudAction{
 		if(logger.isDebugEnabled())
 			logger.debug("加载装入页面...");
 	    List l=new ArrayList();
-	    String sql="select * from dd_notice";
+	    String sql="select * from dd_notice order by date desc limit 5";
 	    l=CommonDAO.executeQuery(sql,DdNotice.class);
 	    try
 	    {

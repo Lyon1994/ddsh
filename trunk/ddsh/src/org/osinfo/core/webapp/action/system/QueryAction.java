@@ -8,7 +8,13 @@
  */
 package org.osinfo.core.webapp.action.system;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -20,6 +26,8 @@ import org.osinfo.core.webapp.action.CrudAction;
 import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
 import org.osinfo.core.webapp.model.DdBack;
+import org.osinfo.core.webapp.model.custom.Query;
+import org.osinfo.core.webapp.util.DBUtil;
 import org.osinfo.core.webapp.util.ExcelUtil;
 import org.osinfo.core.webapp.util.PageUtil;
 @Results({
@@ -45,12 +53,13 @@ public class QueryAction<T> extends CrudAction{
 	@Override
 	public String add() {
 		// TODO Auto-generated method stub
+		String transaction=getParameter("transaction");
 		String userid=getParameter("userid");
 		String barcode=getParameter("barcode");
 		String name=getParameter("name");
 		String begin=getParameter("begin");
 		String end=getParameter("end");
-		
+		getRequest().setAttribute("transaction", transaction);
 		getRequest().setAttribute("userid", userid);
 		getRequest().setAttribute("barcode", barcode);
 		getRequest().setAttribute("name", name);
@@ -59,24 +68,127 @@ public class QueryAction<T> extends CrudAction{
 		
 		return "list";
 	}
-	//批量删除
-	public String batchAdd() {
+	public String test() {
 		// TODO Auto-generated method stub
-	    String ids=getParameter("ids");
-	    ids=ids.substring(0,ids.length()-1);
-	    if(!"".equals(ids.trim())){
-	    		String submitdate=getCurrentTime();
 
-	    		String operator=(String) getSession().getAttribute("userid");
-		    	String sql2="insert into dd_back (topperid,userid,name,amount,reason,operator,date) " +
-		    			"select id,userid,name,amount,'批量退回','"+operator+"','"+submitdate+"' from dd_topper where id in ("+ids+")";
-		    	CommonDAO.executeUpdate(sql2);
-		    	
-	    		String sql="update dd_topper set amount=0 where id in ("+ids+")";
-	    		CommonDAO.executeUpdate(sql);
-	    }
 	    renderSimpleResult(true,"ok");
-	    return null;
+        return null;
+	}
+	//按今日、本周、本月、本季、今年以条状图显示
+	public String total() {
+		// TODO Auto-generated method stub
+		String type=getParameter("type");
+		byte[] utf8Bom = new byte[]{(byte) 0xef, (byte) 0xbb, (byte) 0xbf};   
+		String utf8BomStr="";   
+		try {   
+		utf8BomStr = new String(utf8Bom,"UTF-8");//定义BOM标记   
+		} catch (UnsupportedEncodingException e) {   
+		   e.printStackTrace();   
+		}
+		getResponse().setContentType("text/xml;charset=GBK"); //必须是GBK，不累caption无法显示
+		StringBuffer chart = new StringBuffer();   
+		StringBuffer categories = new StringBuffer(); 
+		StringBuffer dataset = new StringBuffer(); 
+		chart.append("<?xml version='1.0' encoding='GBK'?>");//必须是GBK，不累seriesName无法显示
+		if(type.equals("1"))//年销售额
+		{
+			String sql="select DATE_FORMAT(date,'%Y') as year,ROUND(sum(discount*price*amount),2) as sum  from dd_sales group by DATE_FORMAT(date,'%Y')";
+			ResultSet rs = null;
+			Statement stmt = null;
+			Connection conn=DBUtil.getConnection();
+			try {
+				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+				rs=stmt.executeQuery(sql);
+				while(rs.next())
+				{
+					categories.append("<category label='"+rs.getString("year")+"' />");
+					dataset.append("<set value='"+rs.getString("sum")+"' />");
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}finally {
+				DBUtil.close(rs, stmt, conn);
+			}
+			chart.append("<chart palette='2' caption='年销售分析' shownames='1' showvalues='1' decimals='2' numberPrefix='￥'>");   
+			
+			chart.append("<categories>"); 
+			chart.append(categories.toString()); 
+			chart.append("</categories>"); 
+			
+			chart.append("<dataset seriesName='销售收入' color='AFD8F8' decimalSeparator=',' thousandSeparator='.' formatNumber='1' showValues='1' decimalPrecision='2' numberPrefix='%A5'>"); 
+			chart.append(dataset.toString()); 
+			chart.append("</dataset>"); 
+			
+			chart.append("</chart>"); 
+		}else if(type.equals("2"))//按月销售额
+		{
+			String sql="select DATE_FORMAT(date,'%Y-%m') as year,ROUND(sum(discount*price*amount),2) as sum  from dd_sales where DATE_FORMAT(date,'%Y')=DATE_FORMAT(now(),'%Y') group by DATE_FORMAT(date,'%Y-%m')";
+			ResultSet rs = null;
+			Statement stmt = null;
+			Connection conn=DBUtil.getConnection();
+			try {
+				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+				rs=stmt.executeQuery(sql);
+				while(rs.next())
+				{
+					categories.append("<category label='"+rs.getString("year")+"' />");
+					dataset.append("<set value='"+rs.getString("sum")+"' />");
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}finally {
+				DBUtil.close(rs, stmt, conn);
+			}
+			chart.append("<chart palette='2' caption='月销售分析' shownames='1' showvalues='1' decimals='2' numberPrefix='￥'>");   
+			
+			chart.append("<categories>"); 
+			chart.append(categories.toString()); 
+			chart.append("</categories>"); 
+			
+			chart.append("<dataset seriesName='销售收入' color='AFD8F8' decimalSeparator=',' thousandSeparator='.' formatNumber='1' showValues='1' decimalPrecision='2' numberPrefix='%A5'>"); 
+			chart.append(dataset.toString()); 
+			chart.append("</dataset>"); 
+			
+			chart.append("</chart>"); 
+		}else if(type.equals("3"))//按本月销售额
+		{
+			String sql="select DATE_FORMAT(date,'%m-%d') as year,ROUND(sum(discount*price*amount),2) as sum  from dd_sales where DATE_FORMAT(date,'%Y-%m')=DATE_FORMAT(now(),'%Y-%m') group by DATE_FORMAT(date,'%Y-%m-%d')";
+			ResultSet rs = null;
+			Statement stmt = null;
+			Connection conn=DBUtil.getConnection();
+			try {
+				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+				rs=stmt.executeQuery(sql);
+				while(rs.next())
+				{
+					categories.append("<category label='"+rs.getString("year")+"' />");
+					dataset.append("<set value='"+rs.getString("sum")+"' />");
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}finally {
+				DBUtil.close(rs, stmt, conn);
+			}
+			chart.append("<chart palette='2' caption='本月销售分析' shownames='1' showvalues='1' decimals='2' numberPrefix='￥'>");   
+			
+			chart.append("<categories>"); 
+			chart.append(categories.toString()); 
+			chart.append("</categories>"); 
+			
+			chart.append("<dataset seriesName='销售收入' color='AFD8F8' decimalSeparator=',' thousandSeparator='.' formatNumber='1' showValues='1' decimalPrecision='2' numberPrefix='%A5'>"); 
+			chart.append(dataset.toString()); 
+			chart.append("</dataset>"); 
+			
+			chart.append("</chart>"); 
+		}
+
+		System.out.println(chart.toString());
+		getPrintWriter().print(chart.toString());   
+
+		return null;
 	}
 	@Override
 	public String del() {
@@ -142,12 +254,14 @@ public class QueryAction<T> extends CrudAction{
 	}
 	@Override
 	public String myResult() {
+		System.out.println("....");
 		// TODO Auto-generated method stub
+		String transaction=getParameter("transaction");
 		String userid=getParameter("userid");
 		String barcode=getParameter("barcode");
 		String name=getParameter("name");
 		String begin=getParameter("begin");
-		String end=getParameter("end");
+		String end_=getParameter("end");
 		
 		StringBuffer sql=new StringBuffer();
 		String uid=(String) getSession().getAttribute("userid");
@@ -157,9 +271,9 @@ public class QueryAction<T> extends CrudAction{
 		{
 			sql.append(" and s.barcode like '%"+barcode+"%'");
 		}
-		if(!name.trim().equals(""))
+		if(!transaction.trim().equals(""))
 		{
-			sql.append(" and s.name like '%"+name+"%'");
+			sql.append(" and s.transaction like '%"+transaction+"%'");
 		}
 		if(!name.trim().equals(""))
 		{
@@ -167,24 +281,25 @@ public class QueryAction<T> extends CrudAction{
 		}
 		if(!begin.trim().equals(""))
 		{
-			sql.append(" and s.begin >= '"+begin+"'");
+			sql.append(" and s.date >= '"+begin+"'");
 		}
-		if(!end.trim().equals(""))
+		if(!end_.trim().equals(""))
 		{
-			sql.append(" and s.end <= '"+end+"'");
+			sql.append(" and s.date <= '"+end_+"'");
 		}
 		if(t.equals("2"))
 		{
-			sql.append(" and s.userid='"+uid+"'");
+			sql.append(" and t.userid='"+uid+"'");
 			
 		}else
 		{
 			if(!userid.trim().equals(""))
 			{
-				sql.append(" and s.userid like '%"+userid+"%'");
+				sql.append(" and t.userid like '%"+userid+"%'");
 			}
 		}
-		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,DdBack.class);
+		sql.append(" order by s.date desc");
+		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql.toString(),start,end,perpage,Query.class);
 		
 		String content = "totalPage = " + p.getTotalPageCount() + ";";
 		content += "dataStore = [";
@@ -192,9 +307,9 @@ public class QueryAction<T> extends CrudAction{
 		List l=(List)p.getResult();
 		for(int i=0;i<l.size();i++)
 		{
-			DdBack d=(DdBack)l.get(i);
+			Query d=(Query)l.get(i);
 
-			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getName()+"</td><td>"+d.getUserid()+"</td><td>"+d.getAmount()+"</td><td>"+d.getReason()+"</td><td>"+d.getOperator()+"</td><td>"+d.getDate()+"</td></tr>\",";
+			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getTransaction()+"</td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td>"+d.getDiscount()+"</td><td>"+d.getAmount()+"</td><td>"+d.getPrice()+"</td><td>"+d.getOperator()+"</td><td>"+d.getDate()+"</td><td>"+d.getUserid()+"</td></tr>\",";
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";
@@ -203,21 +318,52 @@ public class QueryAction<T> extends CrudAction{
 	@Override
 	public int myCount() {
 		// TODO Auto-generated method stub
-		String sql;
-		String userid=(String) getSession().getAttribute("userid");
+		String transaction=getParameter("transaction");
+		String userid=getParameter("userid");
+		String barcode=getParameter("barcode");
+		String name=getParameter("name");
+		String begin=getParameter("begin");
+		String end_=getParameter("end");
+		
+		StringBuffer sql=new StringBuffer();
+
+		String uid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
+		sql.append("select s.*,t.userid from dd_sales s left join dd_topper t on s.barcode=t.barcode where 1=1 and s.amount>0 ");
+		if(!barcode.trim().equals(""))
+		{
+			sql.append(" and s.barcode like '%"+barcode+"%'");
+		}
+		if(!transaction.trim().equals(""))
+		{
+			sql.append(" and s.transaction like '%"+transaction+"%'");
+		}
+		if(!name.trim().equals(""))
+		{
+			sql.append(" and s.name like '%"+name+"%'");
+		}
+		if(!begin.trim().equals(""))
+		{
+			sql.append(" and s.date >= '"+begin+"'");
+		}
+		if(!end_.trim().equals(""))
+		{
+			sql.append(" and s.date <= '"+end_+"'");
+		}
 		if(t.equals("2"))
 		{
+			sql.append(" and t.userid='"+uid+"'");
 			
-			sql="select s.*,t.userid from dd_sales s left join dd_topper t on s.barcode=t.barcode and userid='"+userid+"' and amount>0";
 		}else
 		{
-			
-			sql="select * from dd_back";
+			if(!userid.trim().equals(""))
+			{
+				sql.append(" and t.userid like '%"+userid+"%'");
+			}
 		}
 		
 		
-		int count=CommonDAO.count(sql);
+		int count=CommonDAO.count(sql.toString());
 		return count;
 	}
 }

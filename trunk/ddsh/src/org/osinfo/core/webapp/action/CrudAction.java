@@ -235,10 +235,12 @@ public abstract class CrudAction extends BaseAction {
 		//pageNo=Integer.parseInt((String)getParameter(PageNo));//开始
 		//pageSize=Integer.parseInt((String)getParameter(ROWS));//开始
 		//ddshow
+		
 		start=Integer.parseInt((String)getParameter(STARTRECORD));//开始
 		end=Integer.parseInt((String)getParameter(ENDRECORD));//开始
 		perpage=Integer.parseInt((String)getParameter(PERPAGE));//开始
 		type=(String)getParameter("type");//操作类型
+		
 		expressions=this.expressionsTranslation(Search_, SearchField_, SearchOper_, SearchString_);
 		String filter = getParameter("filter");
 		if(filter!=null)
