@@ -6,6 +6,7 @@
 <link href="../css/mainstyle.css" rel="stylesheet" type="text/css"/>
 <title>欢迎页面</title>
 	<script language="javascript" src="../js/jquery/jquery-1.4.2.min.js"></script>
+	<script language="JavaScript" src="../fusionCharts/FusionCharts.js"></script>
 	<script language="javascript">
 		$(document).ready(
 			function(){
@@ -19,6 +20,39 @@
 					 		{
 					 			$("<tr id="+json[i].id+"><td background=../images/k_09.gif></td><td>'"+json[i].name+"'</td><td background='../images/k_11.gif'></td></tr>").insertBefore($("#notice"));   
 					 		}
+						}
+					});
+					$.ajax({
+					 	url: '../system/query!test.zf?t='+new Date().getTime(),
+					 	type: 'POST',
+					 	dataType: 'json',
+					 	error: function(){alert('error');},
+					 	success: function(xml){
+							var myChart = new FusionCharts("../fusionCharts/Charts/MSBar3D.swf","sale-analysis-total1","400","300");   
+					      	myChart.setDataURL('../system/query!total.zf?type=1&t='+new Date().getTime());   
+					      	myChart.render("sale-analysis-total-1");   
+						}
+					});
+					$.ajax({
+					 	url: '../system/query!test.zf?t='+new Date().getTime(),
+					 	type: 'POST',
+					 	dataType: 'json',
+					 	error: function(){alert('error');},
+					 	success: function(xml){
+							var myChart = new FusionCharts("../fusionCharts/Charts/MSBar3D.swf","sale-analysis-total1","400","300");   
+					      	myChart.setDataURL('../system/query!total.zf?type=2&t='+new Date().getTime());   
+					      	myChart.render("sale-analysis-total-2");   
+						}
+					});
+					$.ajax({
+					 	url: '../system/query!test.zf?t='+new Date().getTime(),
+					 	type: 'POST',
+					 	dataType: 'json',
+					 	error: function(){alert('error');},
+					 	success: function(xml){
+							var myChart = new FusionCharts("../fusionCharts/Charts/MSBar3D.swf","sale-analysis-total1","400","300");   
+					      	myChart.setDataURL('../system/query!total.zf?type=3&t='+new Date().getTime());   
+					      	myChart.render("sale-analysis-total-3");   
 						}
 					});
 			}
@@ -58,7 +92,7 @@
 			</tbody>
 		</table>
 		</td>
-		<td valign="top">
+		<td valign="top" width='300'>
 		<table border="0" width="100%" id="table6" cellspacing="0" cellpadding="0">
 			<tr>
 				<td width="1%">
@@ -66,7 +100,7 @@
 				<td background="../images/kb_05.gif" width="100%">
 				<table border="0" width="100%" id="table7">
 					<tr>
-						<td><font color="#FFFFFF">热销商品</font></td>
+						<td><font color="#FFFFFF">年销售总额分析</font></td>
 					</tr>
 				</table>
 				</td>
@@ -75,7 +109,36 @@
 			</tr>
 			<tr>
 				<td background="../images/kb_09.gif">　</td>
-				<td>bbb</td>
+				<td><div  id="sale-analysis-total-1" /></td>
+				<td background="../images/kb_11.gif">　</td>
+			</tr>
+			<tr>
+				<td valign="top">
+				<img border="0" src="../images/kb_14.gif" width="10" height="9"></td>
+				<td background="../images/kb_15.gif" valign="top"></td>
+				<td valign="top">
+				<img border="0" src="../images/kb_16.gif" width="10" height="9"></td>
+			</tr>
+		</table>
+		</td>
+		<td valign="top" width='300'>
+		<table border="0" width="100%" id="table6" cellspacing="0" cellpadding="0">
+			<tr>
+				<td width="1%">
+				<img border="0" src="../images/kb_03.gif" width="10" height="34"></td>
+				<td background="../images/kb_05.gif" width="100%">
+				<table border="0" width="100%" id="table7">
+					<tr>
+						<td><font color="#FFFFFF">月销售额分析</font></td>
+					</tr>
+				</table>
+				</td>
+				<td width="1%">
+				<img border="0" src="../images/kb_07.gif" width="10" height="34"></td>
+			</tr>
+			<tr>
+				<td background="../images/kb_09.gif">　</td>
+				<td><div  id="sale-analysis-total-2" /></td>
 				<td background="../images/kb_11.gif">　</td>
 			</tr>
 			<tr>
@@ -97,7 +160,7 @@
 				<td background="../images/kc_05.gif" width="100%">
 				<table border="0" width="100%" id="table11">
 					<tr>
-						<td><font color="#FFFFFF">最新销售</font></td>
+						<td><font color="#FFFFFF">本月销售额分析</font></td>
 					</tr>
 				</table>
 				</td>
@@ -106,7 +169,7 @@
 			</tr>
 			<tr>
 				<td background="../images/kc_09.gif">　</td>
-				<td>ccc</td>
+				<td><div  id="sale-analysis-total-3" /></td>
 				<td background="../images/kc_11.gif">　</td>
 			</tr>
 			<tr>
@@ -126,7 +189,7 @@
 				<td background="../images/kd_05.gif" width="100%">
 				<table border="0" width="100%" id="table15">
 					<tr>
-						<td><font color="#FFFFFF">财务管理</font></td>
+						<td><font color="#FFFFFF">今日热销产品</font></td>
 					</tr>
 				</table>
 				</td>

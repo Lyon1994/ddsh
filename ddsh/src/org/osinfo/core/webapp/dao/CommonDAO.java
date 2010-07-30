@@ -91,6 +91,7 @@ public class CommonDAO {
 	}
 	public static PageUtil findPageByMultiTableSQLQuery(String sql, long start, long end,long pageSize,Class c)
 	{
+		System.out.println(sql);
 		ResultSet rs = null;
 		Statement stmt = null;
 		Connection conn=DBUtil.getConnection();
@@ -100,7 +101,7 @@ public class CommonDAO {
 		try {
 			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
 			rs=stmt.executeQuery(sql+" limit "+(start-1)+","+pageSize);
-			System.out.println(sql);
+
 			list = DBUtil.populate(rs, c);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -112,6 +113,7 @@ public class CommonDAO {
 	}
 	public static PageUtil findByMultiTableSQLQuery(String sql,Class c)
 	{
+		System.out.println(sql);
 		ResultSet rs = null;
 		Statement stmt = null;
 		Connection conn=DBUtil.getConnection();
@@ -120,7 +122,6 @@ public class CommonDAO {
 		try {
 			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
 			rs=stmt.executeQuery(sql);
-			System.out.println(sql);
 			list = DBUtil.populate(rs, c);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
