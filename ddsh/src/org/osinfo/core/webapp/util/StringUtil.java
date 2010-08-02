@@ -21,7 +21,7 @@ import java.io.UnsupportedEncodingException;
  */
 public class StringUtil {
 	//编码转换
-	public static String convert1(String s)
+	public static String convert(String s)
 	{
 		String result = null;
 		byte[] temp;
