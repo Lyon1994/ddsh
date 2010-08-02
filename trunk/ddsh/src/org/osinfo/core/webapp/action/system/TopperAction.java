@@ -16,6 +16,10 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,6 +37,7 @@ import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
 import org.osinfo.core.webapp.model.DdTopper;
 import org.osinfo.core.webapp.model.DdUser;
+import org.osinfo.core.webapp.util.DBUtil;
 import org.osinfo.core.webapp.util.ExcelUtil;
 import org.osinfo.core.webapp.util.JsonUtil;
 import org.osinfo.core.webapp.util.PageUtil;
@@ -107,6 +112,8 @@ public class TopperAction<T> extends CrudAction{
 	@Override
 	public String add() {
 		// TODO Auto-generated method stub
+		String type=getParameter("type");
+		String barcode=getParameter("barcode");
 		String name=getParameter("name");
 		//String image=getParameter("image");
 		String amount=getParameter("amount");
@@ -123,11 +130,22 @@ public class TopperAction<T> extends CrudAction{
 		String submitdate=getCurrentTime();
 
 		String operator=(String) getSession().getAttribute("userid");
-		File imageFile = new File(ServletActionContext.getServletContext().getRealPath("/upload") + "/" + imageFileName);
-	       copy(image, imageFile);
-	       
-		String sql="insert into dd_topper (name,image,amount,price,totalprice,spec,material,grade,location,memo,status,submitdate,userid) " +
-				"values ('"+name+"','"+imageFileName+"',"+amount+","+price+","+totalprice+",'"+spec+"','"+material+"','"+grade+"','"+location+"','"+memo+"','0','"+submitdate+"','"+operator+"')";
+		
+		
+
+	    String sql="";
+	    if(type.equals("1"))
+	    {
+			File imageFile = new File(ServletActionContext.getServletContext().getRealPath("/upload") + "/" + imageFileName);
+		    copy(image, imageFile);
+	    	sql="insert into dd_topper (name,type,image,amount,price,totalprice,spec,material,grade,location,memo,status,submitdate,userid) " +
+			"values ('"+name+"','1','"+imageFileName+"',"+amount+","+price+","+totalprice+",'"+spec+"','"+material+"','"+grade+"','"+location+"','"+memo+"','0','"+submitdate+"','"+operator+"')";
+	    }else
+	    {
+	    	sql="insert into dd_topper (barcode,name,type,amount,price,spec,material,grade,location,memo,status,submitdate,userid) " +
+			"select barcode,name,'2','"+amount+"',price,spec,material,grade,location,'"+memo+"','0','"+submitdate+"','"+operator+"' from dd_inventory where barcode ='"+barcode+"'";
+	    }
+
 		int v=CommonDAO.executeUpdate(sql);
 		if(v>0)
 			return "success";
@@ -170,13 +188,67 @@ public class TopperAction<T> extends CrudAction{
 	    if(!"".equals(ids.trim())){
 	    	String[] idList = ids.split("\\,");
     		for(String id:idList){
-    			String sql="update dd_topper set status='1',barcode='"+getRandomBarCode()+"',date='"+submitdate+"',operator='"+operator+"' where id ="+id;
-    	    	CommonDAO.executeUpdate(sql);
+    			String sql="select barcode,type,amount from dd_topper where id ="+id;
+    			ResultSet rs = null;
+    			Statement stmt = null;
+    			Connection conn=DBUtil.getConnection();
+    			String type="1";
+    			String barcode="";
+    			String amount="";
+    			try {
+    				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+    				rs=stmt.executeQuery(sql);
+    				while (rs.next())
+    				{
+    					type=rs.getString("type");
+    					barcode=rs.getString("barcode");
+    					amount=rs.getString("amount");
+    				}
+    			} catch (SQLException e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}finally {
+    				DBUtil.close(rs, stmt, conn);
+    			}
+    			if(type==null)
+    				type="1";
+    			if(type.equals("1"))
+    			{
+    				sql="update dd_topper set status='1',barcode='"+getRandomBarCode()+"',date='"+submitdate+"',operator='"+operator+"' where id ="+id;
+    				CommonDAO.executeUpdate(sql);
+    		    	
+    		    	String sql2="insert into dd_inventory (barcode,name,amount,price,discount,totalprice,userid,spec,material,grade,location,operator,date) " +
+    		    			"select barcode,name,amount,price,"+1+",totalprice,userid,spec,material,grade,location,operator,date from dd_topper where id ="+id;
+    		    	CommonDAO.executeUpdate(sql2);
+    			}else
+    			{
+    				sql="update dd_topper set status='1',date='"+submitdate+"',operator='"+operator+"' where id ="+id;
+    				CommonDAO.executeUpdate(sql);
+    				sql="select amount from dd_inventory  where barcode='"+barcode+"'";
+
+        			conn=DBUtil.getConnection();
+    				String amount_="";
+        			try {
+        				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+        				rs=stmt.executeQuery(sql);
+        				while (rs.next())
+        				{
+        					amount_=rs.getString("amount");
+        				}
+        			} catch (SQLException e) {
+        				// TODO Auto-generated catch block
+        				e.printStackTrace();
+        			}finally {
+        				DBUtil.close(rs, stmt, conn);
+        			}
+    				sql="update dd_inventory set amount="+(Integer.valueOf(amount)+Integer.valueOf(amount_))+" where barcode='"+barcode+"'";
+    		    	CommonDAO.executeUpdate(sql);
+    			}
     		}
-	    	
-	    	String sql2="insert into dd_inventory (barcode,name,amount,price,discount,totalprice,userid,spec,material,grade,location,operator,date) " +
-	    			"select barcode,name,amount,price,"+1+",totalprice,userid,spec,material,grade,location,operator,date from dd_topper where id in ("+ids+")";
-	    	CommonDAO.executeUpdate(sql2);
+	    	//
+	    	//String sql2="insert into dd_inventory (barcode,name,amount,price,discount,totalprice,userid,spec,material,grade,location,operator,date) " +
+	    			//"select barcode,name,amount,price,"+1+",totalprice,userid,spec,material,grade,location,operator,date from dd_topper where id in ("+ids+")";
+	    	//CommonDAO.executeUpdate(sql2);
 	    }
 	    renderSimpleResult(true,"ok");
         return null;
@@ -305,14 +377,22 @@ public class TopperAction<T> extends CrudAction{
 		{
 			DdTopper d=(DdTopper)l.get(i);
 			Timestamp date;
+			String type_=d.getType();
+			if(type_==null)
+				type_="新商品";
 			if(type.equals("1"))
 				date=d.getDate();
 			else
 				date=d.getSubmitdate();
-			if(type.equals("1"))
-				content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td>"+d.getUserid()+"</td><td><img src='../upload/"+d.getImage()+"' width=50 height=20/></td><td class='editbox' id='amount'>"+d.getAmount()+"</td><td class='editbox' id='price'>"+d.getPrice()+"</td><td>"+d.getPrice()*d.getAmount()+"</td><td>"+d.getSpec()+"</td><td>"+d.getGrade()+"</td><td>"+d.getMaterial()+"</td><td>"+d.getLocation()+"</td><td>"+date+"</td><td>"+d.getMemo()+"</td></tr>\",";
+			
+			if(type_.equals("2"))
+				type_="老商品";
 			else
-				content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getName()+"</td><td>"+d.getUserid()+"</td><td><img src='../upload/"+d.getImage()+"' width=50 height=20/></td><td class='editbox' id='amount'>"+d.getAmount()+"</td><td class='editbox' id='price'>"+d.getPrice()+"</td><td>"+d.getPrice()*d.getAmount()+"</td><td>"+d.getSpec()+"</td><td>"+d.getGrade()+"</td><td>"+d.getMaterial()+"</td><td>"+d.getLocation()+"</td><td>"+date+"</td><td>"+d.getMemo()+"</td></tr>\",";
+				type_="新商品";
+			if(type.equals("1"))
+				content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td>"+type_+"</td><td>"+d.getUserid()+"</td><td><img src='../upload/"+d.getImage()+"' width=50 height=20/></td><td class='editbox' id='amount'>"+d.getAmount()+"</td><td class='editbox' id='price'>"+d.getPrice()+"</td><td>"+d.getPrice()*d.getAmount()+"</td><td>"+d.getSpec()+"</td><td>"+d.getGrade()+"</td><td>"+d.getMaterial()+"</td><td>"+d.getLocation()+"</td><td>"+date+"</td><td>"+d.getMemo()+"</td></tr>\",";
+			else
+				content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getName()+"</td><td>"+type_+"</td><td>"+d.getUserid()+"</td><td><img src='../upload/"+d.getImage()+"' width=50 height=20/></td><td class='editbox' id='amount'>"+d.getAmount()+"</td><td class='editbox' id='price'>"+d.getPrice()+"</td><td>"+d.getPrice()*d.getAmount()+"</td><td>"+d.getSpec()+"</td><td>"+d.getGrade()+"</td><td>"+d.getMaterial()+"</td><td>"+d.getLocation()+"</td><td>"+date+"</td><td>"+d.getMemo()+"</td></tr>\",";
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";

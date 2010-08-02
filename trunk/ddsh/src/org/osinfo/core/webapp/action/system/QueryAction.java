@@ -183,7 +183,226 @@ public class QueryAction<T> extends CrudAction{
 			chart.append("</dataset>"); 
 			
 			chart.append("</chart>"); 
+		}else if(type.equals("4"))//按上月销售额
+		{
+			String sql="select DATE_FORMAT(date,'%m-%d') as year,ROUND(sum(discount*price*amount),2) as sum  from dd_sales where DATE_FORMAT(date,'%Y-%m')=DATE_FORMAT(DATE_SUB(curdate(), INTERVAL 1 MONTH),'%Y-%m') group by DATE_FORMAT(date,'%Y-%m-%d')";
+			ResultSet rs = null;
+			Statement stmt = null;
+			Connection conn=DBUtil.getConnection();
+			try {
+				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+				rs=stmt.executeQuery(sql);
+				while(rs.next())
+				{
+					categories.append("<category label='"+rs.getString("year")+"' />");
+					dataset.append("<set value='"+rs.getString("sum")+"' />");
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}finally {
+				DBUtil.close(rs, stmt, conn);
+			}
+			chart.append("<chart palette='2' caption='上月销售分析' shownames='1' showvalues='1' decimals='2' numberPrefix='￥'>");   
+			
+			chart.append("<categories>"); 
+			chart.append(categories.toString()); 
+			chart.append("</categories>"); 
+			
+			chart.append("<dataset seriesName='销售收入' color='AFD8F8' decimalSeparator=',' thousandSeparator='.' formatNumber='1' showValues='1' decimalPrecision='2' numberPrefix='%A5'>"); 
+			chart.append(dataset.toString()); 
+			chart.append("</dataset>"); 
+			
+			chart.append("</chart>"); 
+		}else if(type.equals("5"))//按本周销售额
+		{
+			String sql="select DATE_FORMAT(date,'%m-%d') as year,ROUND(sum(discount*price*amount),2) as sum  from dd_sales where YEARWEEK(date_format(date,'%Y-%m-%d')) = YEARWEEK(now()) group by DATE_FORMAT(date,'%Y-%m-%d')";
+			ResultSet rs = null;
+			Statement stmt = null;
+			Connection conn=DBUtil.getConnection();
+			try {
+				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+				rs=stmt.executeQuery(sql);
+				while(rs.next())
+				{
+					categories.append("<category label='"+rs.getString("year")+"' />");
+					dataset.append("<set value='"+rs.getString("sum")+"' />");
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}finally {
+				DBUtil.close(rs, stmt, conn);
+			}
+			chart.append("<chart palette='2' caption='本周销售分析' shownames='1' showvalues='1' decimals='2' numberPrefix='￥'>");   
+			
+			chart.append("<categories>"); 
+			chart.append(categories.toString()); 
+			chart.append("</categories>"); 
+			
+			chart.append("<dataset seriesName='销售收入' color='AFD8F8' decimalSeparator=',' thousandSeparator='.' formatNumber='1' showValues='1' decimalPrecision='2' numberPrefix='%A5'>"); 
+			chart.append(dataset.toString()); 
+			chart.append("</dataset>"); 
+			
+			chart.append("</chart>"); 
+		}else if(type.equals("6"))//按上周销售额
+		{
+			String sql="select DATE_FORMAT(date,'%m-%d') as year,ROUND(sum(discount*price*amount),2) as sum  from dd_sales where YEARWEEK(date_format(date,'%Y-%m-%d')) = (YEARWEEK(now())-1) group by DATE_FORMAT(date,'%Y-%m-%d')";
+			ResultSet rs = null;
+			Statement stmt = null;
+			Connection conn=DBUtil.getConnection();
+			try {
+				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+				rs=stmt.executeQuery(sql);
+				while(rs.next())
+				{
+					categories.append("<category label='"+rs.getString("year")+"' />");
+					dataset.append("<set value='"+rs.getString("sum")+"' />");
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}finally {
+				DBUtil.close(rs, stmt, conn);
+			}
+			chart.append("<chart palette='2' caption='上周销售分析' shownames='1' showvalues='1' decimals='2' numberPrefix='￥'>");   
+			
+			chart.append("<categories>"); 
+			chart.append(categories.toString()); 
+			chart.append("</categories>"); 
+			
+			chart.append("<dataset seriesName='销售收入' color='AFD8F8' decimalSeparator=',' thousandSeparator='.' formatNumber='1' showValues='1' decimalPrecision='2' numberPrefix='%A5'>"); 
+			chart.append(dataset.toString()); 
+			chart.append("</dataset>"); 
+			
+			chart.append("</chart>"); 
+		}else if(type.equals("7"))//按本周销售额TOP10
+		{
+			String sql="select name,ROUND(sum(discount*price*amount),2) as sum  from dd_sales where YEARWEEK(date_format(date,'%Y-%m-%d')) = YEARWEEK(now()) group by name limit 10";
+			ResultSet rs = null;
+			Statement stmt = null;
+			Connection conn=DBUtil.getConnection();
+			try {
+				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+				rs=stmt.executeQuery(sql);
+				while(rs.next())
+				{
+					categories.append("<category label='"+rs.getString("name")+"' />");
+					dataset.append("<set value='"+rs.getString("sum")+"' />");
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}finally {
+				DBUtil.close(rs, stmt, conn);
+			}
+			chart.append("<chart palette='2' caption='本周销售TOP10分析' shownames='1' showvalues='1' decimals='2' numberPrefix='￥'>");   
+			
+			chart.append("<categories>"); 
+			chart.append(categories.toString()); 
+			chart.append("</categories>"); 
+			
+			chart.append("<dataset seriesName='销售收入' color='AFD8F8' decimalSeparator=',' thousandSeparator='.' formatNumber='1' showValues='1' decimalPrecision='2' numberPrefix='%A5'>"); 
+			chart.append(dataset.toString()); 
+			chart.append("</dataset>"); 
+			
+			chart.append("</chart>"); 
+		}else if(type.equals("8"))//按本月销售额TOP10
+		{
+			String sql="select name,ROUND(sum(discount*price*amount),2) as sum  from dd_sales where DATE_FORMAT(date,'%Y-%m')=DATE_FORMAT(now(),'%Y-%m') group by name limit 10";
+			ResultSet rs = null;
+			Statement stmt = null;
+			Connection conn=DBUtil.getConnection();
+			try {
+				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+				rs=stmt.executeQuery(sql);
+				while(rs.next())
+				{
+					categories.append("<category label='"+rs.getString("name")+"' />");
+					dataset.append("<set value='"+rs.getString("sum")+"' />");
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}finally {
+				DBUtil.close(rs, stmt, conn);
+			}
+			chart.append("<chart palette='2' caption='本月销售TOP10分析' shownames='1' showvalues='1' decimals='2' numberPrefix='￥'>");   
+			
+			chart.append("<categories>"); 
+			chart.append(categories.toString()); 
+			chart.append("</categories>"); 
+			
+			chart.append("<dataset seriesName='销售收入' color='AFD8F8' decimalSeparator=',' thousandSeparator='.' formatNumber='1' showValues='1' decimalPrecision='2' numberPrefix='%A5'>"); 
+			chart.append(dataset.toString()); 
+			chart.append("</dataset>"); 
+			
+			chart.append("</chart>"); 
+		}else if(type.equals("9"))//按今年销售额TOP10
+		{
+			String sql="select name,ROUND(sum(discount*price*amount),2) as sum  from dd_sales where DATE_FORMAT(date,'%Y')=DATE_FORMAT(now(),'%Y') group by name limit 10";
+			ResultSet rs = null;
+			Statement stmt = null;
+			Connection conn=DBUtil.getConnection();
+			try {
+				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+				rs=stmt.executeQuery(sql);
+				while(rs.next())
+				{
+					categories.append("<category label='"+rs.getString("name")+"' />");
+					dataset.append("<set value='"+rs.getString("sum")+"' />");
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}finally {
+				DBUtil.close(rs, stmt, conn);
+			}
+			chart.append("<chart palette='2' caption='今年销售TOP10分析' shownames='1' showvalues='1' decimals='2' numberPrefix='￥'>");   
+			
+			chart.append("<categories>"); 
+			chart.append(categories.toString()); 
+			chart.append("</categories>"); 
+			
+			chart.append("<dataset seriesName='销售收入' color='AFD8F8' decimalSeparator=',' thousandSeparator='.' formatNumber='1' showValues='1' decimalPrecision='2' numberPrefix='%A5'>"); 
+			chart.append(dataset.toString()); 
+			chart.append("</dataset>"); 
+			
+			chart.append("</chart>"); 
+		}else if(type.equals("10"))//按今日销售额TOP10
+		{
+			String sql="select name,ROUND(sum(discount*price*amount),2) as sum  from dd_sales where DATE_FORMAT(date,'%Y-%m-%d')=DATE_FORMAT(now(),'%Y-%m-%d') group by name limit 10";
+			ResultSet rs = null;
+			Statement stmt = null;
+			Connection conn=DBUtil.getConnection();
+			try {
+				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+				rs=stmt.executeQuery(sql);
+				while(rs.next())
+				{
+					categories.append("<category label='"+rs.getString("name")+"' />");
+					dataset.append("<set value='"+rs.getString("sum")+"' />");
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}finally {
+				DBUtil.close(rs, stmt, conn);
+			}
+			chart.append("<chart palette='2' caption='今日销售TOP10分析' shownames='1' showvalues='1' decimals='2' numberPrefix='￥'>");   
+			
+			chart.append("<categories>"); 
+			chart.append(categories.toString()); 
+			chart.append("</categories>"); 
+			
+			chart.append("<dataset seriesName='销售收入' color='AFD8F8' decimalSeparator=',' thousandSeparator='.' formatNumber='1' showValues='1' decimalPrecision='2' numberPrefix='%A5'>"); 
+			chart.append(dataset.toString()); 
+			chart.append("</dataset>"); 
+			
+			chart.append("</chart>"); 
 		}
+
+
 
 		System.out.println(chart.toString());
 		getPrintWriter().print(chart.toString());   
@@ -213,7 +432,7 @@ public class QueryAction<T> extends CrudAction{
 			String bound, String where, String sort, String dir)
 			throws Exception {
 		// TODO Auto-generated method stub
-		String name="退回表";
+		String name="销售分析表";
 		String name2=name;
 		if (getRequest().getHeader("User-Agent").toLowerCase().indexOf("firefox") > 0)
 			name2 = new String(name.getBytes("UTF-8"), "ISO8859-1");//firefox浏览器
@@ -221,24 +440,52 @@ public class QueryAction<T> extends CrudAction{
 			name2 = URLEncoder.encode(name, "UTF-8");//IE浏览器 终极解决文件名乱码
 
 		getResponse().setHeader("Content-disposition","attachment;filename=" +name2+"-"+getCurrentTime() + ".xls");
-		String[] headers = { "序号","上货编号","设计师","名称","数量","理由","操作人","日期"};
-		String userid=(String) getSession().getAttribute("userid");
+		String[] headers = { "序号","交易号","条形码","名称","折扣","数量","单价","操作人","日期","设计师"};
+		String transaction=getParameter("transaction");
+		String userid=getParameter("userid");
+		String barcode=getParameter("barcode");
+		String name_=org.osinfo.core.webapp.util.StringUtil.convert(getParameter("name"));
+		String begin=getParameter("begin");
+		String end_=getParameter("end");
+		
+		System.out.println("name_"+name_);
+		StringBuffer sql=new StringBuffer();
+		String uid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
-		String sql;
+		sql.append("select s.*,t.userid from dd_sales s left join dd_topper t on s.barcode=t.barcode where 1=1 and s.amount>0 ");
+		if(!barcode.trim().equals(""))
+		{
+			sql.append(" and s.barcode like '%"+barcode+"%'");
+		}
+		if(!transaction.trim().equals(""))
+		{
+			sql.append(" and s.transaction like '%"+transaction+"%'");
+		}
+		if(!name.trim().equals(""))
+		{
+			sql.append(" and s.name like '%"+name_+"%'");
+		}
+		if(!begin.trim().equals(""))
+		{
+			sql.append(" and s.date >= '"+begin+"'");
+		}
+		if(!end_.trim().equals(""))
+		{
+			sql.append(" and s.date <= '"+end_+"'");
+		}
 		if(t.equals("2"))
 		{
-			if(type.equals("1"))
-				sql="select * from dd_back where userid='"+userid+"' and amount>0 order by date desc";
-			else
-				sql="select * from dd_back where userid='"+userid+"' and amount>0 order by date desc";
+			sql.append(" and t.userid='"+uid+"'");
+			
 		}else
 		{
-			if(type.equals("1"))
-				sql="select * from dd_back order by date desc";
-			else
-				sql="select * from dd_back order by date desc";
+			if(!userid.trim().equals(""))
+			{
+				sql.append(" and t.userid like '%"+userid+"%'");
+			}
 		}
-		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,DdBack.class);
+		sql.append(" order by s.date desc");
+		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql.toString(),Query.class);
 		Collection<T> l = (Collection<T>) p.getResult();
 		return ExcelUtil.exportExcel(workbook,name, headers, l);
 	}

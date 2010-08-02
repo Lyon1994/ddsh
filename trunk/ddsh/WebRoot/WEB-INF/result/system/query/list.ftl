@@ -61,7 +61,15 @@
 			}
 			function exports()
 			{
-				window.open('back!export.zf?type=0&t='+new Date().getTime());
+				var userid=$('#userid').attr('value');
+				var barcode=$('#barcode').attr('value');
+				var name=$('#name').attr('value');
+				var begin=$('#begin').attr('value');
+				var end=$('#end').attr('value');
+				var transaction=$('#transaction').attr('value');
+				var para='transaction='+transaction+'&userid='+userid+'&barcode='+barcode+'&name='+name+'&begin='+begin+'&end='+end+'&t='+new Date().getTime();
+
+				window.open('query!export.zf?'+para);
 			}
 			$(document).ready(
 				function(){

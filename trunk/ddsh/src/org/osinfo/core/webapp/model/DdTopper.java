@@ -13,6 +13,7 @@ public class DdTopper implements java.io.Serializable {
 	private Integer id;
 	private String barcode;
 	private String name;
+	private String type;
 	private String image;
 	private Integer amount;
 	private Float price;
@@ -48,12 +49,14 @@ public class DdTopper implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public DdTopper(String barcode, String name, String image, Integer amount,
-			Float price, Float totalprice, String userid, String spec,
-			String material, String grade, String location, String status,
-			String memo, Timestamp submitdate, Timestamp date, String operator) {
+	public DdTopper(String barcode, String name, String type, String image,
+			Integer amount, Float price, Float totalprice, String userid,
+			String spec, String material, String grade, String location,
+			String status, String memo, Timestamp submitdate, Timestamp date,
+			String operator) {
 		this.barcode = barcode;
 		this.name = name;
+		this.type = type;
 		this.image = image;
 		this.amount = amount;
 		this.price = price;
@@ -94,6 +97,14 @@ public class DdTopper implements java.io.Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getType() {
+		return this.type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	public String getImage() {
