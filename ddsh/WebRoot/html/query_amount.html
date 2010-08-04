@@ -4,22 +4,21 @@
 <meta http-equiv="Content-Language" content="zh-cn"/>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link href="../css/mainstyle.css" rel="stylesheet" type="text/css"/>
-<title>销售额分析</title>
+<title>销售量分析</title>
 	<script language="javascript" src="../js/jquery/jquery-1.4.2.min.js"></script>
 	<script language="JavaScript" src="../fusionCharts/FusionCharts.js"></script>
 	<script language="javascript">
 		$(document).ready(
 			function(){
 					$.ajax({
-					 	url: '../system/notice!loadAll.zf?t='+new Date().getTime(),
+					 	url: '../system/query!test.zf?t='+new Date().getTime(),
 					 	type: 'POST',
 					 	dataType: 'json',
 					 	error: function(){alert('error');},
-					 	success: function(json){
-					 		for(var i=0;i<json.length;i++)
-					 		{
-					 			$("<tr id="+json[i].id+"><td background=../images/k_09.gif></td><td>'"+json[i].name+"'</td><td background='../images/k_11.gif'></td></tr>").insertBefore($("#notice"));   
-					 		}
+					 	success: function(xml){
+							var myChart = new FusionCharts("../fusionCharts/Charts/MSBar3D.swf","sale-analysis-total11","400","300");   
+					      	myChart.setDataURL('../system/query!total.zf?type=11&t='+new Date().getTime());   
+					      	myChart.render("sale-analysis-total-11");   
 						}
 					});
 					$.ajax({
@@ -28,9 +27,9 @@
 					 	dataType: 'json',
 					 	error: function(){alert('error');},
 					 	success: function(xml){
-							var myChart = new FusionCharts("../fusionCharts/Charts/MSBar3D.swf","sale-analysis-total1","400","300");   
-					      	myChart.setDataURL('../system/query!total.zf?type=1&t='+new Date().getTime());   
-					      	myChart.render("sale-analysis-total-1");   
+							var myChart = new FusionCharts("../fusionCharts/Charts/MSBar3D.swf","sale-analysis-total12","400","300");   
+					      	myChart.setDataURL('../system/query!total.zf?type=12&t='+new Date().getTime());   
+					      	myChart.render("sale-analysis-total-12");   
 						}
 					});
 					$.ajax({
@@ -39,9 +38,9 @@
 					 	dataType: 'json',
 					 	error: function(){alert('error');},
 					 	success: function(xml){
-							var myChart = new FusionCharts("../fusionCharts/Charts/MSBar3D.swf","sale-analysis-total2","400","300");   
-					      	myChart.setDataURL('../system/query!total.zf?type=2&t='+new Date().getTime());   
-					      	myChart.render("sale-analysis-total-2");   
+							var myChart = new FusionCharts("../fusionCharts/Charts/MSBar3D.swf","sale-analysis-total13","400","300");   
+					      	myChart.setDataURL('../system/query!total.zf?type=13&t='+new Date().getTime());   
+					      	myChart.render("sale-analysis-total-13");   
 						}
 					});
 					$.ajax({
@@ -50,44 +49,12 @@
 					 	dataType: 'json',
 					 	error: function(){alert('error');},
 					 	success: function(xml){
-							var myChart = new FusionCharts("../fusionCharts/Charts/MSBar3D.swf","sale-analysis-total3","400","300");   
-					      	myChart.setDataURL('../system/query!total.zf?type=3&t='+new Date().getTime());   
-					      	myChart.render("sale-analysis-total-3");   
+							var myChart = new FusionCharts("../fusionCharts/Charts/MSBar3D.swf","sale-analysis-total14","400","300");   
+					      	myChart.setDataURL('../system/query!total.zf?type=14&t='+new Date().getTime());   
+					      	myChart.render("sale-analysis-total-14");   
 						}
 					});
-					$.ajax({
-					 	url: '../system/query!test.zf?t='+new Date().getTime(),
-					 	type: 'POST',
-					 	dataType: 'json',
-					 	error: function(){alert('error');},
-					 	success: function(xml){
-							var myChart = new FusionCharts("../fusionCharts/Charts/MSBar3D.swf","sale-analysis-total4","400","300");   
-					      	myChart.setDataURL('../system/query!total.zf?type=4&t='+new Date().getTime());   
-					      	myChart.render("sale-analysis-total-4");   
-						}
-					});
-					$.ajax({
-					 	url: '../system/query!test.zf?t='+new Date().getTime(),
-					 	type: 'POST',
-					 	dataType: 'json',
-					 	error: function(){alert('error');},
-					 	success: function(xml){
-							var myChart = new FusionCharts("../fusionCharts/Charts/MSBar3D.swf","sale-analysis-total5","400","300");   
-					      	myChart.setDataURL('../system/query!total.zf?type=5&t='+new Date().getTime());   
-					      	myChart.render("sale-analysis-total-5");   
-						}
-					});
-					$.ajax({
-					 	url: '../system/query!test.zf?t='+new Date().getTime(),
-					 	type: 'POST',
-					 	dataType: 'json',
-					 	error: function(){alert('error');},
-					 	success: function(xml){
-							var myChart = new FusionCharts("../fusionCharts/Charts/MSBar3D.swf","sale-analysis-total6","400","300");   
-					      	myChart.setDataURL('../system/query!total.zf?type=6&t='+new Date().getTime());   
-					      	myChart.render("sale-analysis-total-6");   
-						}
-					});
+
 			}
 		)
 	</script>
@@ -105,7 +72,7 @@
 				<td background="../images/kb_05.gif" width="100%">
 				<table border="0" width="100%" id="table7">
 					<tr>
-						<td><font color="#FFFFFF">年销售总额分析</font></td>
+						<td><font color="#FFFFFF">今日销售量TOP10分析</font></td>
 					</tr>
 				</table>
 				</td>
@@ -114,7 +81,7 @@
 			</tr>
 			<tr>
 				<td background="../images/kb_09.gif">　</td>
-				<td><div  id="sale-analysis-total-1" /></td>
+				<td><div  id="sale-analysis-total-11" /></td>
 				<td background="../images/kb_11.gif">　</td>
 			</tr>
 			<tr>
@@ -134,7 +101,7 @@
 				<td background="../images/kb_05.gif" width="100%">
 				<table border="0" width="100%" id="table7">
 					<tr>
-						<td><font color="#FFFFFF">月销售额分析</font></td>
+						<td><font color="#FFFFFF">本周销售量TOP10分析</font></td>
 					</tr>
 				</table>
 				</td>
@@ -143,7 +110,7 @@
 			</tr>
 			<tr>
 				<td background="../images/kb_09.gif">　</td>
-				<td><div  id="sale-analysis-total-2" /></td>
+				<td><div  id="sale-analysis-total-12" /></td>
 				<td background="../images/kb_11.gif">　</td>
 			</tr>
 			<tr>
@@ -163,7 +130,7 @@
 				<td background="../images/kc_05.gif" width="100%">
 				<table border="0" width="100%" id="table11">
 					<tr>
-						<td><font color="#FFFFFF">本月销售额分析</font></td>
+						<td><font color="#FFFFFF">本月销售量TOP10分析</font></td>
 					</tr>
 				</table>
 				</td>
@@ -172,7 +139,7 @@
 			</tr>
 			<tr>
 				<td background="../images/kc_09.gif">　</td>
-				<td><div  id="sale-analysis-total-3" /></td>
+				<td><div  id="sale-analysis-total-13" /></td>
 				<td background="../images/kc_11.gif">　</td>
 			</tr>
 			<tr>
@@ -194,7 +161,7 @@
 				<td background="../images/kd_05.gif" width="100%">
 				<table border="0" width="100%" id="table15">
 					<tr>
-						<td><font color="#FFFFFF">上月销售额分析</font></td>
+						<td><font color="#FFFFFF">今年销售量TOP10分析</font></td>
 					</tr>
 				</table>
 				</td>
@@ -203,7 +170,7 @@
 			</tr>
 			<tr>
 				<td background="../images/kd_09.gif">　</td>
-				<td><div  id="sale-analysis-total-4" /></td>
+				<td><div  id="sale-analysis-total-14" /></td>
 				<td background="../images/kd_11.gif">　</td>
 			</tr>
 			<tr>
@@ -215,64 +182,7 @@
 			</tr>
 		</table>
 		</td>
-		<td valign="top">
-		<table border="0" width="100%" id="table14" cellspacing="0" cellpadding="0">
-			<tr>
-				<td width="1%">
-				<img border="0" src="../images/kd_03.gif" width="10" height="34"></td>
-				<td background="../images/kd_05.gif" width="100%">
-				<table border="0" width="100%" id="table15">
-					<tr>
-						<td><font color="#FFFFFF">本周销售额分析</font></td>
-					</tr>
-				</table>
-				</td>
-				<td width="1%">
-				<img border="0" src="../images/kd_07.gif" width="10" height="34"></td>
-			</tr>
-			<tr>
-				<td background="../images/kd_09.gif">　</td>
-				<td><div  id="sale-analysis-total-5" /></td>
-				<td background="../images/kd_11.gif">　</td>
-			</tr>
-			<tr>
-				<td valign="top">
-				<img border="0" src="../images/kd_14.gif" width="10" height="9"></td>
-				<td background="../images/kd_15.gif" valign="top"></td>
-				<td valign="top">
-				<img border="0" src="../images/kd_16.gif" width="10" height="9"></td>
-			</tr>
-		</table>
-		</td>
-		<td valign="top">
-		<table border="0" width="100%" id="table10" cellspacing="0" cellpadding="0">
-			<tr>
-				<td width="1%">
-				<img border="0" src="../images/kc_03.gif" width="10" height="34"></td>
-				<td background="../images/kc_05.gif" width="100%">
-				<table border="0" width="100%" id="table11">
-					<tr>
-						<td><font color="#FFFFFF">上周销售额分析</font></td>
-					</tr>
-				</table>
-				</td>
-				<td width="1%">
-				<img border="0" src="../images/kc_07.gif" width="10" height="34"></td>
-			</tr>
-			<tr>
-				<td background="../images/kc_09.gif">　</td>
-				<td><div  id="sale-analysis-total-6" /></td>
-				<td background="../images/kc_11.gif">　</td>
-			</tr>
-			<tr>
-				<td valign="top">
-				<img border="0" src="../images/kc_14.gif" width="10" height="9"></td>
-				<td background="../images/kc_15.gif" valign="top"></td>
-				<td valign="top">
-				<img border="0" src="../images/kc_16.gif" width="10" height="9"></td>
-			</tr>
-		</table>
-		</td>
+
 	</tr>
 
 </table>
