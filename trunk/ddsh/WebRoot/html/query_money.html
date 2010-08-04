@@ -11,18 +11,6 @@
 		$(document).ready(
 			function(){
 					$.ajax({
-					 	url: '../system/notice!loadAll.zf?t='+new Date().getTime(),
-					 	type: 'POST',
-					 	dataType: 'json',
-					 	error: function(){alert('error');},
-					 	success: function(json){
-					 		for(var i=0;i<json.length;i++)
-					 		{
-					 			$("<tr id="+json[i].id+"><td background=../images/k_09.gif></td><td>'"+json[i].name+"'</td><td background='../images/k_11.gif'></td></tr>").insertBefore($("#notice"));   
-					 		}
-						}
-					});
-					$.ajax({
 					 	url: '../system/query!test.zf?t='+new Date().getTime(),
 					 	type: 'POST',
 					 	dataType: 'json',
