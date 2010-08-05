@@ -70,17 +70,26 @@ public class UserAction<T> extends CrudAction{
 		String mail=getParameter("mail");
 
 		String brand=getParameter("brand");
+		String result=getParameter("result");
 		String submitdate=getCurrentTime();
 
-		String operator=(String) getSession().getAttribute("userid");
+		if(type==null)
+			type="2";//默认设计师
 
-		String sql="insert into dd_user (userid,password,name,idcard,sex,address,mobile,telephone,fax,mail,type,status,submitdate,operator,verifydate,brand) values ('"+userid+"','"+password+"','"+name+"','"+idcard+"','"+sex+"','"+address+"','"+mobile+"','"+telephone+"','"+fax+"','"+mail+"','"+type+"','1','"+submitdate+"','"+operator+"','"+submitdate+"','"+brand+"')";
+		String sql="insert into dd_user (userid,name,brand,password,type,status,idcard,sex,address,mobile,telephone,fax,mail,submitdate) values ('"+userid+"','"+name+"','"+brand+"','"+password+"','"+type+"','1','"+idcard+"','"+sex+"','"+address+"','"+mobile+"','"+telephone+"','"+fax+"','"+mail+"','"+submitdate+"')";
 
 		int v=CommonDAO.executeUpdate(sql);
 		if(v>0)
-			return "success";
-		else
-			return "error";
+		{
+			if(result==null)
+				return "success";
+			else
+				return "success2";
+		}else
+			if(result==null)
+				return "error";
+			else
+				return "error2";
 	}
 	public String enable() {
 		// TODO Auto-generated method stub

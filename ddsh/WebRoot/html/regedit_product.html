@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <title>上货审批</title>
+    <title>商品注册</title>
     <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
     
     <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
@@ -10,14 +10,7 @@
 	<script language="javascript">
 		$(document).ready(
 			function(){
-				$("#amount").change(function(){
-					var totalQuantity = $("#amount").val()*$("#price").val();
-					$("#totalprice").attr('value',totalQuantity);
-				});
-				$("#price").change(function(){
-					var totalQuantity = $("#amount").val()*$("#price").val();
-					$("#totalprice").attr('value',totalQuantity);
-				});
+
 			}
 		)
 		function check(){
@@ -33,13 +26,12 @@
   </head>
   
   <body>
-  	<form name="regedit" action="/ddsh/system/topper!add.zf" method="post" enctype ="multipart/form-data" onSubmit="check();">
-	<input type="hidden" name="type" size="20" value='1'/>
+  	<form name="regedit" action="/ddsh/system/product!add.zf" method="post" enctype ="multipart/form-data" onsubmit="check();">
 	<!--标题开始-->
 	<table border="0" width="100%" cellspacing="0" cellpadding="0" height="25">
 	<tr class="tree_title_txt">
 	<td nowrap width="100%" class="tree_title_txt" valign="middle" id="cwCellTopTitTxt">
-	上货审批 &gt; 新建</td>
+	商品注册 &gt; 新建</td>
 	</tr>
 	</table>
 	<!--标题结束-->
@@ -55,18 +47,12 @@
 				<tr>
 					<td>商品名称：</td>
 					<td><input type="text" name="name" size="20" class="text"/></td>
+					<td>类型：</td>
+					<td><select size='1' name='type'><option selected value=1>小型</option><option value=2>中型</option><option value=3>大型</option></select></td>
+				</tr>
+				<tr>
 					<td>上传图片：</td>
 					<td><input type="file" name="image" size="20" class="text"/></td>
-				</tr>
-				<tr>
-					<td>数量：</td>
-					<td><input type="text" id="amount" name="amount" size="20" class="text" value='1'/></td>
-					<td>单价：</td>
-					<td><input type="text" id="price" name="price" size="20" class="text" value='1.00'/></td>
-				</tr>
-				<tr>
-					<td>总价：</td>
-					<td><input type="text" id="totalprice" name="totalprice" size="20" class="text" value='1.00' readonly/></td>
 					<td></td>
 					<td></td>
 				</tr>

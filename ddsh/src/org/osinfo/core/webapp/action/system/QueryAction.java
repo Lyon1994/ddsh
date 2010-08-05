@@ -524,6 +524,130 @@ public class QueryAction<T> extends CrudAction{
 			chart.append("</dataset>"); 
 			
 			chart.append("</chart>"); 
+		}else if(type.equals("15"))//按今日设计师销售额TOP10
+		{
+			String sql="select i.userid as name,ROUND(sum(s.discount*s.price*s.amount),2) as sum  from dd_sales s left join dd_inventory i on s.barcode=i.barcode where DATE_FORMAT(s.date,'%Y-%m-%d')=DATE_FORMAT(now(),'%Y-%m-%d') group by i.userid limit 10";
+			ResultSet rs = null;
+			Statement stmt = null;
+			Connection conn=DBUtil.getConnection();
+			try {
+				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+				rs=stmt.executeQuery(sql);
+				while(rs.next())
+				{
+					categories.append("<category label='"+rs.getString("name")+"' />");
+					dataset.append("<set value='"+rs.getString("sum")+"' />");
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}finally {
+				DBUtil.close(rs, stmt, conn);
+			}
+			chart.append("<chart palette='2' caption='今日销售TOP10分析' formatNumberScale='0' shownames='1' showvalues='1' decimals='2' numberPrefix='￥'>");   
+			
+			chart.append("<categories>"); 
+			chart.append(categories.toString()); 
+			chart.append("</categories>"); 
+			
+			chart.append("<dataset seriesName='销售额' color='AFD8F8' decimalSeparator=',' thousandSeparator='.' formatNumber='1' showValues='1' decimalPrecision='2' numberPrefix='%A5'>"); 
+			chart.append(dataset.toString()); 
+			chart.append("</dataset>"); 
+			
+			chart.append("</chart>"); 
+		}else if(type.equals("16"))//按本周设计师销售额TOP10
+		{
+			String sql="select i.userid as name,ROUND(sum(s.discount*s.price*s.amount),2) as sum  from dd_sales s left join dd_inventory i on s.barcode=i.barcode where YEARWEEK(date_format(s.date,'%Y-%m-%d')) = YEARWEEK(now()) group by i.userid limit 10";
+			ResultSet rs = null;
+			Statement stmt = null;
+			Connection conn=DBUtil.getConnection();
+			try {
+				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+				rs=stmt.executeQuery(sql);
+				while(rs.next())
+				{
+					categories.append("<category label='"+rs.getString("name")+"' />");
+					dataset.append("<set value='"+rs.getString("sum")+"' />");
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}finally {
+				DBUtil.close(rs, stmt, conn);
+			}
+			chart.append("<chart palette='2' caption='本周销售TOP10分析' formatNumberScale='0' shownames='1' showvalues='1' decimals='2' numberPrefix='￥'>");   
+			
+			chart.append("<categories>"); 
+			chart.append(categories.toString()); 
+			chart.append("</categories>"); 
+			
+			chart.append("<dataset seriesName='销售额' color='AFD8F8' decimalSeparator=',' thousandSeparator='.' formatNumber='1' showValues='1' decimalPrecision='2' numberPrefix='%A5'>"); 
+			chart.append(dataset.toString()); 
+			chart.append("</dataset>"); 
+			
+			chart.append("</chart>"); 
+		}else if(type.equals("17"))//按本月设计师销售额TOP10
+		{
+			String sql="select i.userid as name,ROUND(sum(s.discount*s.price*s.amount),2) as sum  from dd_sales s left join dd_inventory i on s.barcode=i.barcode where DATE_FORMAT(s.date,'%Y-%m')=DATE_FORMAT(now(),'%Y-%m') group by i.userid limit 10";
+			ResultSet rs = null;
+			Statement stmt = null;
+			Connection conn=DBUtil.getConnection();
+			try {
+				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+				rs=stmt.executeQuery(sql);
+				while(rs.next())
+				{
+					categories.append("<category label='"+rs.getString("name")+"' />");
+					dataset.append("<set value='"+rs.getString("sum")+"' />");
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}finally {
+				DBUtil.close(rs, stmt, conn);
+			}
+			chart.append("<chart palette='2' caption='本月销售TOP10分析' formatNumberScale='0' shownames='1' showvalues='1' decimals='2' numberPrefix='￥'>");   
+			
+			chart.append("<categories>"); 
+			chart.append(categories.toString()); 
+			chart.append("</categories>"); 
+			
+			chart.append("<dataset seriesName='销售额' color='AFD8F8' decimalSeparator=',' thousandSeparator='.' formatNumber='1' showValues='1' decimalPrecision='2' numberPrefix='%A5'>"); 
+			chart.append(dataset.toString()); 
+			chart.append("</dataset>"); 
+			
+			chart.append("</chart>"); 
+		}else if(type.equals("18"))//按今年设计师销售额TOP10
+		{
+			String sql="select i.userid as name,ROUND(sum(s.discount*s.price*s.amount),2) as sum  from dd_sales s left join dd_inventory i on s.barcode=i.barcode where DATE_FORMAT(s.date,'%Y')=DATE_FORMAT(now(),'%Y') group by i.userid limit 10";
+			ResultSet rs = null;
+			Statement stmt = null;
+			Connection conn=DBUtil.getConnection();
+			try {
+				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+				rs=stmt.executeQuery(sql);
+				while(rs.next())
+				{
+					categories.append("<category label='"+rs.getString("name")+"' />");
+					dataset.append("<set value='"+rs.getString("sum")+"' />");
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}finally {
+				DBUtil.close(rs, stmt, conn);
+			}
+			chart.append("<chart palette='2' caption='今年销售TOP10分析' formatNumberScale='0' shownames='1' showvalues='1' decimals='2' numberPrefix='￥'>");   
+			
+			chart.append("<categories>"); 
+			chart.append(categories.toString()); 
+			chart.append("</categories>"); 
+			
+			chart.append("<dataset seriesName='销售额' color='AFD8F8' decimalSeparator=',' thousandSeparator='.' formatNumber='1' showValues='1' decimalPrecision='2' numberPrefix='%A5'>"); 
+			chart.append(dataset.toString()); 
+			chart.append("</dataset>"); 
+			
+			chart.append("</chart>"); 
 		}
 
 

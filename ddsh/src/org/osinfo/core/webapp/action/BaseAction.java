@@ -9,14 +9,10 @@
 package org.osinfo.core.webapp.action;
 
 import java.io.IOException;
-
 import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -33,15 +29,16 @@ import org.apache.struts2.convention.annotation.Results;
 import org.osinfo.core.webapp.Constants;
 import org.osinfo.core.webapp.action.util.Struts2Utils;
 
-
 import com.opensymphony.xwork2.ActionSupport;
 
 @Results( {   
 	@Result(name = "next", location = "/next.jsp", type = "dispatcher"), 
     @Result(name = "redirectAction", location = "./child/child", type = "redirectAction"),
     @Result(name = "redirect", location = "http://www.zf-info.com", type = "redirect"),
-    @Result(name = "success", location = "/WEB-INF/result/system/success.ftl"),
-    @Result(name = "error", location = "/WEB-INF/result/system/error.ftl")
+    @Result(name = "success", location = "/html/success.html",type = "redirect"),
+    @Result(name = "success2", location = "/html/success2.html",type = "redirect"),
+    @Result(name = "error", location = "/html/error.html",type = "redirect"),
+    @Result(name = "error2", location = "/html/error2.html",type = "redirect")
     }
 ) 
 /**

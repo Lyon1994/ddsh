@@ -43,7 +43,7 @@
 			margin-left: auto;
 			padding: 0px;
 			width: 825px;
-			height: 30px;
+			height: 20px;
 			text-align: left;
 			}
 			#diycontain {
@@ -122,13 +122,13 @@
 			<div align="center">
 				<table border="0" width="90%" id="table7">
 					<tr>
-			<td class="text2" align="left"><b class="text2">東東設會管理平台</b><p class="text2" style="line-height:28px;"><br>
+			<td class="text2"><b class="text2">東東設會管理平台</b><p class="text2" style="line-height:25px;">
 			東東設會管理平台是东东设会全新打造的一个应用平台，通过这个平台，第三方设计师的信息和商品管理被全自动的展示和了解，实时把握商品信息，方便快捷管理商品，赶快加入我们吧。<br>
 			<br>
 			加入东东社会管理平台的优势：<br>
-			●&nbsp;商铺动态实时通知 <br>
-			●&nbsp;管理和了解第一手商品信息 <br>
-			●&nbsp;我的钱包功能，了解收支状况</td>
+			●商铺动态实时通知 <br>
+			●管理和了解第一手商品信息 <br>
+			●我的钱包功能，了解收支状况</td>
 					</tr>
 					<tr>
 						<td>　</td>
@@ -152,7 +152,7 @@
 	</table>
 	<table border="0" width="100%" id="table3" style="border-collapse:collapse">
 		<tr>
-			<td style="border: 1px solid #9EB2BD;height:495px;padding:10px;background-image: url('images/reg_bg.gif'); background-repeat: no-repeat; background-position: 0% 100%;" valign="top">
+			<td style="border: 1px solid #9EB2BD;height:465px;padding:10px;background-image: url('images/reg_bg.gif'); background-repeat: no-repeat; background-position: 0% 100%;" valign="top">
 			<table border="0" width="100%" id="table4">
 				<tr>
 					<td>
@@ -163,15 +163,15 @@
 					<table border="0" width="100%" id="table5">
 						<tr>
 							<td height="35" class="text2">用户名：</td>
-							<td><input type="text" id="userid" name="userid" size="25" style="width:160px;height:18px;"></td>
+							<td><input type="text" id="userid" name="userid" size="25"></td>
 						</tr>
 						<tr>
 							<td height="35" class="text2">密&nbsp;&nbsp;&nbsp; 码：</td>
-							<td><input type="password" name="password" size="25" style="width:160px;height:18px;"></td>
+							<td><input type="password" name="password" size="25"></td>
 						</tr>
 						<tr>
 							<td height="35" class="text2">验证码：</td>
-							<td><input type="text" name="code" size="25" style="width:160px;height:18px;"></td>
+							<td><input type="text" name="code" size="25"></td>
 						</tr>
 						<tr>
 							<td>　</td>
@@ -191,13 +191,13 @@
 				<tr>
 					<td height="60">
 					<p align="center">
-					<img border="0" src="${images}/btn_login.gif"   style="cursor:hand;width:129;height:35" onclick="javascript:document.login.submit();"></td>
+					<img border="0" src="${images}/btn_login.gif"   style="cursor:hand;width:129;height:35" onclick="javascript:document.login.submit(); "></td>
 				</tr>
 				<tr>
 					<td><hr size="1"></td>
 				</tr>
 				<tr>
-					<td><b class="text2"><br>还没東東設會账户？</b><br>
+					<td><b class="text2">还没東東設會账户？</b><br>
 					<br>
 					<a href="html/regedit_user.html">立即免费注册</a></td>
 				</tr>
@@ -228,7 +228,7 @@
 				<td><hr size="1"></td>
 			</tr>
 			<tr>
-				<td height="30"><div id="foot-links"><a href="#">关于東東設會</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a href="#">帮助中心</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a target="_blank" href="#">诚征英才</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a href="#">账户安全</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a href="#">联系我们</a></div></td>
+				<td><div id="foot-links"><a href="#">关于東東設會</a>|<a target="_blank" href="#">客服中心</a>|<a href="#">帮助中心</a>|<a target="_blank" href="#">诚征英才</a>|<a href="#">账户安全</a>|<a href="#">联系我们</a></div></td>
 			</tr>
 			<tr>
 				<td>

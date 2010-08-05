@@ -30,7 +30,7 @@
 			<table border="0" width="100%" id="table4" cellspacing="0" cellpadding="0" background="images/banner_2.jpg">
 				<tr>
 					<td width="1%">
-					<img border="0" src="images/banner_1.jpg" width="169" height="71"></td>
+					<img border="0" src="images/banner_1.jpg"></td>
 					<td background="images/banner_2.jpg">
 					<table border="0" width="100%" id="table5">
 						<tr>
