@@ -72,7 +72,13 @@ public class LoginAction extends BaseAction{
 		getSession().setAttribute("type",null);
 		getSession().setAttribute("menu", null);
 		getSession().setAttribute("typename", null);
-		return "login";
+		try {
+			getResponse().sendRedirect("/ddsh");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	@Action("/submit.*")   
 	public String submit()

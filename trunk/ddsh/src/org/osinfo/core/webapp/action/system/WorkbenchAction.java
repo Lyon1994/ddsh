@@ -91,11 +91,11 @@ public class WorkbenchAction extends BaseAction {
 		Map m=new LinkedHashMap();
 		if(type.equals("1"))
 		{
-			m.put("用户注册", "html/regedit_user.html");
-			m.put("用户审批", "system/user!list2.zf");
-			m.put("商品审批", "system/topper!list.zf");
+			m.put("用户注册", "html/regedit_user_2.html");
+			m.put("新用户审批", "system/user!list2.zf");
+			m.put("新商品审批", "system/topper!list.zf");
 			m.put("已批记录", "system/topper!list2.zf");
-			m.put("商品退回", "system/back!list.zf");
+			m.put("退回记录", "system/back!list.zf");
 			m.put("库存管理", "system/inventory!list.zf");//这里有上架
 			m.put("上架记录", "system/upload!list.zf");
 			m.put("当前在售", "system/sell!list.zf");//这里有下架
@@ -110,6 +110,9 @@ public class WorkbenchAction extends BaseAction {
 			m.put("交易记录", "system/transa!list.zf");
 		}else if(type.equals("2"))
 		{
+			m.put("注册商品", "html/regedit_product.html");
+			m.put("注册记录", "system/product!list2.zf");
+			m.put("我的商品", "system/product!list.zf");
 			m.put("上货审批", "html/regedit_topper.html");
 			m.put("待批记录", "system/topper!list4.zf");
 			m.put("已批记录", "system/topper!list2.zf");
@@ -145,10 +148,10 @@ public class WorkbenchAction extends BaseAction {
 		// TODO Auto-generated method stub
 
         getResponse().setContentType("image/jpeg");
-        int width = 50;
-        int height = 18;
+        int width = 150;
+        int height = 50;
         // 取得一个4位随机字母数字字符串
-        String s = RandomStringUtils.random(4, true, true);
+        String s = RandomStringUtils.random(5, true, true);
 
         // 保存入session,用于与用户的输入进行比较.
         // 注意比较完之后清除session.
@@ -171,7 +174,7 @@ public class WorkbenchAction extends BaseAction {
         g.fillRect(0, 0, width, height);
 
         // 设定字体
-        Font mFont = new Font("Times New Roman", Font.BOLD, 18);// 设置字体
+        Font mFont = new Font("Times New Roman", Font.BOLD, 38);// 设置字体
         g.setFont(mFont);
 
         // 画边框
@@ -194,7 +197,7 @@ public class WorkbenchAction extends BaseAction {
         g.setColor(new Color(20 + random.nextInt(110), 20 + random
                 .nextInt(110), 20 + random.nextInt(110)));
 
-        g.drawString(s, 2, 16);
+        g.drawString(s, 2, 40);//显示位置x,y
 
         // 图象生效
         g.dispose();
