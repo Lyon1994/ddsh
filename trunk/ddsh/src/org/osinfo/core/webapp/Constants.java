@@ -34,5 +34,5 @@ public class Constants {
 	public static final String CONTENT_TYPE_EXCEL = "application/vnd.ms-excel;charset=UTF-8";//application/msexcel
 	
 	public static final String CONTENT_TYPE_JSON="text/json";
-
+	public static final String VALIDATECODE="j_validation_code";
 }

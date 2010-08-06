@@ -13,6 +13,7 @@ public class DdProduct implements java.io.Serializable {
 	private Integer id;
 	private String barcode;
 	private String name;
+	private Float price;
 	private String type;
 	private String status;
 	private String image;
@@ -43,12 +44,13 @@ public class DdProduct implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public DdProduct(String barcode, String name, String type, String status,
-			String image, String userid, String spec, String material,
-			String grade, String location, String memo, Timestamp submitdate,
-			String operator, Timestamp date) {
+	public DdProduct(String barcode, String name, Float price, String type,
+			String status, String image, String userid, String spec,
+			String material, String grade, String location, String memo,
+			Timestamp submitdate, String operator, Timestamp date) {
 		this.barcode = barcode;
 		this.name = name;
+		this.price = price;
 		this.type = type;
 		this.status = status;
 		this.image = image;
@@ -87,6 +89,14 @@ public class DdProduct implements java.io.Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Float getPrice() {
+		return this.price;
+	}
+
+	public void setPrice(Float price) {
+		this.price = price;
 	}
 
 	public String getType() {

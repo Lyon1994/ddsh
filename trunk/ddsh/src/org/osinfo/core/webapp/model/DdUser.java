@@ -13,6 +13,10 @@ public class DdUser implements java.io.Serializable {
 	private Integer id;
 	private String userid;
 	private String name;
+	private String brand;
+	private String password;
+	private String type;
+	private String status;
 	private String idcard;
 	private String sex;
 	private String address;
@@ -20,15 +24,9 @@ public class DdUser implements java.io.Serializable {
 	private String telephone;
 	private String fax;
 	private String mail;
-	private String type;
-	private String status;
 	private Timestamp submitdate;
 	private String operator;
-	private Timestamp verifydate;
-	private String updateby;
-	private Timestamp updatedate;
-	private String password;
-	private String brand;
+	private Timestamp date;
 
 	// Constructors
 
@@ -37,27 +35,26 @@ public class DdUser implements java.io.Serializable {
 	}
 
 	/** minimal constructor */
-	public DdUser(String userid, String name, String sex, String type,
-			String status, Timestamp submitdate, String operator,
-			String password) {
+	public DdUser(String userid, String name, String password, String type,
+			String status) {
 		this.userid = userid;
 		this.name = name;
-		this.sex = sex;
+		this.password = password;
 		this.type = type;
 		this.status = status;
-		this.submitdate = submitdate;
-		this.operator = operator;
-		this.password = password;
 	}
 
 	/** full constructor */
-	public DdUser(String userid, String name, String idcard, String sex,
+	public DdUser(String userid, String name, String brand, String password,
+			String type, String status, String idcard, String sex,
 			String address, String mobile, String telephone, String fax,
-			String mail, String type, String status, Timestamp submitdate,
-			String operator, Timestamp verifydate, String updateby,
-			Timestamp updatedate, String password, String brand) {
+			String mail, Timestamp submitdate, String operator, Timestamp date) {
 		this.userid = userid;
 		this.name = name;
+		this.brand = brand;
+		this.password = password;
+		this.type = type;
+		this.status = status;
 		this.idcard = idcard;
 		this.sex = sex;
 		this.address = address;
@@ -65,15 +62,9 @@ public class DdUser implements java.io.Serializable {
 		this.telephone = telephone;
 		this.fax = fax;
 		this.mail = mail;
-		this.type = type;
-		this.status = status;
 		this.submitdate = submitdate;
 		this.operator = operator;
-		this.verifydate = verifydate;
-		this.updateby = updateby;
-		this.updatedate = updatedate;
-		this.password = password;
-		this.brand = brand;
+		this.date = date;
 	}
 
 	// Property accessors
@@ -100,6 +91,38 @@ public class DdUser implements java.io.Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getBrand() {
+		return this.brand;
+	}
+
+	public void setBrand(String brand) {
+		this.brand = brand;
+	}
+
+	public String getPassword() {
+		return this.password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getType() {
+		return this.type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getStatus() {
+		return this.status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public String getIdcard() {
@@ -158,22 +181,6 @@ public class DdUser implements java.io.Serializable {
 		this.mail = mail;
 	}
 
-	public String getType() {
-		return this.type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public String getStatus() {
-		return this.status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
 	public Timestamp getSubmitdate() {
 		return this.submitdate;
 	}
@@ -190,44 +197,12 @@ public class DdUser implements java.io.Serializable {
 		this.operator = operator;
 	}
 
-	public Timestamp getVerifydate() {
-		return this.verifydate;
+	public Timestamp getDate() {
+		return this.date;
 	}
 
-	public void setVerifydate(Timestamp verifydate) {
-		this.verifydate = verifydate;
-	}
-
-	public String getUpdateby() {
-		return this.updateby;
-	}
-
-	public void setUpdateby(String updateby) {
-		this.updateby = updateby;
-	}
-
-	public Timestamp getUpdatedate() {
-		return this.updatedate;
-	}
-
-	public void setUpdatedate(Timestamp updatedate) {
-		this.updatedate = updatedate;
-	}
-
-	public String getPassword() {
-		return this.password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getBrand() {
-		return this.brand;
-	}
-
-	public void setBrand(String brand) {
-		this.brand = brand;
+	public void setDate(Timestamp date) {
+		this.date = date;
 	}
 
 }

@@ -10,13 +10,17 @@
         <meta http-equiv="Expires" content="0"/>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-    	<title>用户列表</title>
+    	<title>字典管理</title>
 		<link href="${css}/mainstyle.css" rel="stylesheet" type="text/css">
+				
 		<script language="javascript" src="${jquery}/jquery-1.4.2.min.js"></script>
+
+		
 		<script language="javascript" src="${jquery_lib}/jquery.cookie.min.js"></script>
     	<script language="javascript" src="${jquery_jpage}/jquery.jpage.js"></script>
 
     	<link href="${jquery_jpage}/theme/blue/css/jpage.css" rel="stylesheet" type="text/css">
+
 		<script language="javascript">
 			<!--
 			var b=false;
@@ -48,7 +52,7 @@
 				//alert(trid);
 				//alert(value);
 				$.ajax({
-					 	url: 'user!edit.zf?trid='+trid+'&tdid='+tdid+'&value='+value+'&t='+new Date().getTime(),
+					 	url: 'dic!edit.zf?trid='+trid+'&tdid='+tdid+'&value='+value+'&t='+new Date().getTime(),
 					 	type: 'POST',
 					 	dataType: 'json',
 					 	error: function(){alert('error');},
@@ -91,6 +95,7 @@
 			    for (var i=0;i<sel.length;i++ )
 		    		sel[i].checked = b;  
 			}
+
 			function deletes()
 			{
 				var str="";
@@ -104,9 +109,9 @@
 					alert("请至少选择一条记录");
 					return false;
 				}
-				if(window.confirm("确定要删除这些用户吗？")){
+				if(window.confirm("确定要删除这些记录吗？")){
 					$.ajax({
-					 	url: 'user!del.zf?ids='+str+'&t='+new Date().getTime(),
+					 	url: 'dic!del.zf?ids='+str+'&t='+new Date().getTime(),
 					 	type: 'POST',
 					 	dataType: 'json',
 					 	error: function(){alert('error');},
@@ -117,26 +122,26 @@
 					}); 
 				}
 			}
-			
+
 			function load(param)
 			{
-				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th width='1%'><input type='checkbox' name='select' onclick='ck()'/></th><th>用户编号</th><th>名称</th><th>品牌</th><th>类型</th><th>状态</th><th>手机号码</th><th>电话</th><th>传真</th><th>邮件</th><th>联系地址</th><th>验证日期</th></tr></thead><tbody>";
+				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th width='1%'><input type='checkbox' name='select' onclick='ck()'/></th><th>父节点</th><th>子节点</th><th>值</th></tr></thead><tbody>";
 				var a="</tbody></table>";
 				$.ajax({
-					 	url: 'user!count.zf?type=1&t='+new Date().getTime(),
+					 	url: 'dic!count.zf?type=1&t='+new Date().getTime(),
 					 	type: 'POST',
 					 	dataType: 'json',
 					 	error: function(){alert('error');},
 					 	success: function(json){
 							//蓝色主题
-							$('#list').jpage({dataBefore:b,dataAfter:a,dataStore: null,themeName:'blue',totalRecord:json[0],proxyUrl:'user!result.zf?t='+new Date().getTime()+'&type=1',openCookies:false,
+							$('#list').jpage({dataBefore:b,dataAfter:a,dataStore: null,themeName:'blue',totalRecord:json[0],proxyUrl:'dic!result.zf?t='+new Date().getTime()+'&type=1',openCookies:false,
 							showMode:'full',ajaxParam:param,actionAfter:editbox}); 
 					 	}
 					}); 
 			}
 			function exports()
 			{
-				window.open('user!export.zf?type=1&t='+new Date().getTime());
+				window.open('dic!export.zf?type=1&t='+new Date().getTime());
 			}
 			$(document).ready(
 				function(){
@@ -156,7 +161,7 @@
 	<table border="0" width="100%" cellspacing="0" cellpadding=" height="25">
 	<tr class="tree_title_txt">
 	<td nowrap width="100%" class="tree_title_txt" valign="middle" id="cwCellTopTitTxt">
-	人员管理</td>
+	字典管理</td>
 	</tr>
 	</table>
 	<!--标题结束-->
@@ -164,10 +169,10 @@
 		<table border="0" width="100%" cellspacing="0" cellpadding=" height="30">
 			<tr>
 				<td height="30" valign="bottom">
-					<a href="${base}/html/regedit_user_2.html"><img src="${images}/add.gif" style="cursor:hand"/></a>
-					<img src="${images}/delete.gif" onclick="deletes()"  style="cursor:hand"/>
-					<img src="${images}/export.gif" onclick="exports()"  style="cursor:hand"/>
-					<img src="${images}/printer.gif" style="cursor:hand"/>
+					<a href="${base}/html/regedit_dic.html"><img src="${images}/add.gif" style="cursor:hand"/></a>
+					<img src="${images}/delete.gif" onclick="deletes()" style="cursor:hand" />
+					<img src="${images}/export.gif" onclick="exports()" style="cursor:hand" />
+					<img src="${images}/printer.gif" style="cursor:hand" />
 				</td>
 			</tr>
 		</table>
