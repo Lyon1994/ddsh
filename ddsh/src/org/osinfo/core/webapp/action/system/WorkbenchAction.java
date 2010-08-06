@@ -25,6 +25,7 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
+import org.osinfo.core.webapp.Constants;
 import org.osinfo.core.webapp.action.BaseAction;
 
 @Results({
@@ -34,7 +35,7 @@ import org.osinfo.core.webapp.action.BaseAction;
 	 @Result(name="main",location = "/WEB-INF/result/system/main.ftl")
 })
 public class WorkbenchAction extends BaseAction {
-	private String VALIDATECODE="j_validation_code";
+
 	/**
 	 * @Author Lucifer.Zhou 11:32:26 AM Mar 28, 2010
 	 * long WorkbenchAction.java
@@ -92,11 +93,13 @@ public class WorkbenchAction extends BaseAction {
 		if(type.equals("1"))
 		{
 			m.put("用户注册", "html/regedit_user_2.html");
-			m.put("新用户审批", "system/user!list2.zf");
-			m.put("新商品审批", "system/topper!list.zf");
+			m.put("用户审批", "system/user!list2.zf");
+			m.put("商品审批", "system/product!list5.zf");
+			m.put("商品管理", "system/product!list.zf");
+			m.put("货品审批", "system/topper!list2.zf");
 			m.put("已批记录", "system/topper!list2.zf");
-			m.put("退回记录", "system/back!list.zf");
 			m.put("库存管理", "system/inventory!list.zf");//这里有上架
+			m.put("退回记录", "system/back!list.zf");
 			m.put("上架记录", "system/upload!list.zf");
 			m.put("当前在售", "system/sell!list.zf");//这里有下架
 			m.put("下架记录", "system/down!list.zf");
@@ -108,16 +111,17 @@ public class WorkbenchAction extends BaseAction {
 			m.put("用户管理", "system/user!list.zf");
 			m.put("账号管理", "system/wallet!list.zf");
 			m.put("交易记录", "system/transa!list.zf");
+			m.put("字典管理", "system/dic!list.zf");
 		}else if(type.equals("2"))
 		{
-			m.put("注册商品", "html/regedit_product.html");
-			m.put("注册记录", "system/product!list2.zf");
-			m.put("我的商品", "system/product!list.zf");
+			m.put("商品注册", "html/regedit_product.html");
+			m.put("待批商品", "system/product!list4.zf");
+			m.put("我的商品", "system/product!list2.zf");
 			m.put("上货审批", "html/regedit_topper.html");
-			m.put("待批记录", "system/topper!list4.zf");
-			m.put("已批记录", "system/topper!list2.zf");
-			m.put("退回记录", "system/back!list2.zf");
+			m.put("待批货品", "system/topper!list4.zf");
+			m.put("已批货品", "system/topper!list2.zf");
 			m.put("库存记录", "system/inventory!list.zf");
+			m.put("退回记录", "system/back!list2.zf");
 			m.put("上架记录", "system/upload!list.zf");
 			m.put("当前在售", "system/sell!list.zf");
 			m.put("下架记录", "system/down!list.zf");
@@ -146,7 +150,10 @@ public class WorkbenchAction extends BaseAction {
 	@Action("/captcha.*")   
 	public String execute() {
 		// TODO Auto-generated method stub
-
+		// 禁止图像缓存。                
+		getResponse().setHeader("Pragma", "no-cache");
+		getResponse().setHeader("Cache-Control", "no-cache");
+		getResponse().setDateHeader("Expires", 0);  
         getResponse().setContentType("image/jpeg");
         int width = 150;
         int height = 50;
@@ -156,8 +163,8 @@ public class WorkbenchAction extends BaseAction {
         // 保存入session,用于与用户的输入进行比较.
         // 注意比较完之后清除session.
         //HttpSession session = request.getSession(true);
-        getSession().setAttribute(VALIDATECODE, s);
-        System.out.println(VALIDATECODE+"："+s);
+        getSession().setAttribute(Constants.VALIDATECODE, s);
+        System.out.println(Constants.VALIDATECODE+"："+s);
 
         ServletOutputStream out = null;
 		try {

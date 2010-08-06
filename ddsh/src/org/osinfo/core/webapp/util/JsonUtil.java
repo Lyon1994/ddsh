@@ -31,14 +31,47 @@ public class JsonUtil {
 	@SuppressWarnings("unchecked")
 	public static String object2json(Object obj) {             
 		StringBuilder json = new StringBuilder();             
-		if (obj == null) {               json.append("\"\"");             } else if (obj instanceof String || obj instanceof Integer || obj instanceof Float                 || obj instanceof Boolean || obj instanceof Short || obj instanceof Double                 || obj instanceof Long || obj instanceof BigDecimal || obj instanceof BigInteger                 || obj instanceof Byte) {               json.append("\"").append(string2json(obj.toString())).append("\"");             } else if (obj instanceof Object[]) {               json.append(array2json((Object[]) obj));             } else if (obj instanceof List) {               json.append(list2json((List<?>) obj));             } else if (obj instanceof Map) {               json.append(map2json((Map<?, ?>) obj));             } else if (obj instanceof Set) {               json.append(set2json((Set<?>) obj));             } else {               json.append(bean2json(obj));             }             return json.toString();  }
+		if (obj == null) {               
+			json.append("\"\"");             
+		} else if (obj instanceof String || obj instanceof Integer || obj instanceof Float                 || obj instanceof Boolean || obj instanceof Short || obj instanceof Double                 || obj instanceof Long || obj instanceof BigDecimal || obj instanceof BigInteger                 || obj instanceof Byte) {               
+			json.append("\"").append(string2json(obj.toString())).append("\"");             
+		} else if (obj instanceof Object[]) {               
+				json.append(array2json((Object[]) obj));             
+		} else if (obj instanceof List) {               
+			json.append(list2json((List<?>) obj));             
+		} else if (obj instanceof Map) {               
+			json.append(map2json((Map<?, ?>) obj));             
+		} else if (obj instanceof Set) {               
+			json.append(set2json((Set<?>) obj));             
+		} else {               
+			json.append(bean2json(obj));             
+		}             
+		return json.toString();  
+	}
 	public static String bean2json(Object bean) {             
 		StringBuilder json = new StringBuilder();             
 		json.append("{");             
 		PropertyDescriptor[] props = null;             
 		try {               
 			props = Introspector.getBeanInfo(bean.getClass(), Object.class).getPropertyDescriptors();             
-		} catch (IntrospectionException e) {}             if (props != null) {               for (int i = 0; i < props.length; i++) {                 try {                   String name = object2json(props[i].getName());                   String value = object2json(props[i].getReadMethod().invoke(bean));                   json.append(name);                   json.append(":");                   json.append(value);                   json.append(",");                 } catch (Exception e) {}               }               json.setCharAt(json.length() - 1, '}');             } else {               json.append("}");             }             return json.toString();  }
+		} catch (IntrospectionException e) {}             
+		if (props != null) {               
+			for (int i = 0; i < props.length; i++) {                 
+				try {                   
+					String name = object2json(props[i].getName());                   
+					String value = object2json(props[i].getReadMethod().invoke(bean));                   
+					json.append(name);                   
+					json.append(":");                   
+					json.append(value);                   
+					json.append(",");                 
+				} catch (Exception e) {}               
+			}               
+			json.setCharAt(json.length() - 1, '}');             
+		} else {               
+			json.append("}");             
+		}             
+		return json.toString();  
+	}
 	public static String list2json(List<?> list) {             
 		StringBuilder json = new StringBuilder();             
 		json.append("[");             
@@ -47,7 +80,11 @@ public class JsonUtil {
 				json.append(object2json(obj));                 
 				json.append(",");               }               
 			json.setCharAt(json.length() - 1, ']');             
-		} else {               json.append("]");             }             return json.toString();  }
+		} else {               
+			json.append("]");             
+		}             
+		return json.toString();  
+	}
 	public static String array2json(Object[] array) {             
 		StringBuilder json = new StringBuilder();             
 		json.append("[");             

@@ -5,7 +5,7 @@
 	    <#include "/include/meta.ftl" encoding="utf-8">
 	    <title>东东设会在线销售管理系统</title>
 	</head>
-	<frameset framespacing="0" border="0" frameborder="0" rows="101,*,80">
+	<frameset framespacing="0" border="0" frameborder="0" rows="101,*,40">
 		<frame name="banner" scrolling="no" noresize target="contents" src="header.zf">
 		<frameset cols="240,*">
 			<frame name="contents" src="left.zf">

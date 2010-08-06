@@ -1,37 +1,103 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <title>上货审批</title>
+    <title>新增货品</title>
     <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
     
     <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
 	<link href="../css/mainstyle.css" rel="stylesheet" type="text/css"/>
+	<script language="javascript" src="../js/jquery/jquery-1.4.2.min.js"></script>
+	<script language="javascript" src="../js/jquery/jquery-plugins/jQuery.FillOptions.js"></script>
+	<script language="javascript" src="../js/jquery/jquery-plugins/validation/jquery.validate.js"></script>
+	<script language="javascript" type="text/javascript" src="../js/My97DatePicker/WdatePicker.js"></script>
+	<script language="javascript">
+		$(document).ready(
+			function(){
+				$("#barcode").FillOptions("../system/product!load.zf",{datatype:"json",textfield:"name",valuefiled:"value"});
+				$("#ems").FillOptions("../system/dic!load.zf?parent=ems",{datatype:"json",textfield:"name",valuefiled:"value"});
+				$("#pay").FillOptions("../system/dic!load.zf?parent=pay",{datatype:"json",textfield:"name",valuefiled:"value"});
+				
+				$("#regedit").validate();
+			}
+		)
 
+	</script>
   </head>
   
   <body>
-
+  	<form name="regedit" id="regedit" action="../system/submit!add.zf" method="post">
+	<input type="hidden" name="type" size="20" value='2'/>
 	<!--标题开始-->
 	<table border="0" width="100%" cellspacing="0" cellpadding="0" height="25">
 	<tr class="tree_title_txt">
 	<td nowrap width="100%" class="tree_title_txt" valign="middle" id="cwCellTopTitTxt">
-	上货审批 &gt; 新建</td>
+	新增货品 &gt; 新建</td>
 	</tr>
 	</table>
 	<!--标题结束-->
-	 <br/>
-	 <br/><br/>
-	 <br/><br/>
+	 
+	 
+	 
 	<!--报表开始-->
 	<div>
-		<a href="regedit_topper_new.html"><span style="font-size:x-large">新物品</span></a> | <a href="regedit_topper_old.html"><span style="font-size:x-large">老物品</span></a>
+	<table border="0" width="100%" id="table2" cellspacing="0" cellpadding="0">
+		<tr>
+			<td class="maintab_kuang">
+			<table border="0" width="100%" id="table3" cellspacing="0" cellpadding="0" class="tab_table_title">
+				<tr>
+					<td>商品条码：</td>
+					<td><select name="barcode" id="barcode"></select></td>
+					<td>数量：</td>
+					<td><input type="text" id="amount" name="amount"  size="20" class="text required digits"/></td>
+				</tr>
+				<tr>
+					<td>发货地：</td>
+					<td><input type="text" name="place"  size="20" class="text required"/></td>
+					<td>快递方式：</td>
+					<td><select id="ems" name="ems"></select></td>
+				</tr>
+				<tr>
+					<td>发货日：</td>
+					<td><input id="begin" name="begin" class="Wdate required" type="text" onclick="WdatePicker()"/></td>
+					<td>到货日：</td>
+					<td><input id="end" name="end" class="Wdate required" type="text" onclick="WdatePicker()"/></td>
+				</tr>
+				<tr>
+					<td>付款方式：</td>
+					<td><select id="pay" name="pay"></select></td>
+					<td>费用：</td>
+					<td><input type="text"  name="money"  size="20" class="text required digits"/></td>
+				</tr>
+				<tr>
+					<td>备注：</td>
+					<td><textarea rows="6" name="memo" cols="100" class="text required"></textarea></td>
+					<td>　</td>
+					<td>　</td>
+				</tr>
+				<tr>
+					<td colspan="4"><hr size="1"/></td>
+				</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+	 
+	<table border="0" width="100%" cellspacing="0" cellpadding="0" style="margin-top:2px;" class="maintab2">
+	<tr class="maintab">
+	<td style="padding:0px 10px 0px 10px" align="center" >
+		
+	<table border="0" cellspacing="0" cellpadding="0">
+	<tr>
+	<td nowrap><input type="submit" value="保 存" name="B5" class="com_button2"/>
+	&nbsp;&nbsp;<input type="reset" value="重 置" name="B3" class="com_button2"/>
+	 	</td>
+	</tr>
+	</table>	
+	</td>
+	</tr>
+	</table>
+	 
 	</div>
-	<br/><br/><br/><br/>
-	<div>
-		说明：<br/><br/>
-			新物品提交会产生新的条形码编号<br/>
-			老物品不会产生新的条形码编号，提交时候只需输入已有的条码编号即可快速实现商品的提交<br/>
-			不通价格的老物品也视为新物品
-	</div>
+	</form>
   </body>
 </html>

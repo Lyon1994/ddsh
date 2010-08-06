@@ -72,11 +72,15 @@ public class UserAction<T> extends CrudAction{
 		String brand=getParameter("brand");
 		String result=getParameter("result");
 		String submitdate=getCurrentTime();
+		String operator=(String) getSession().getAttribute("userid");
+		String sql="";
 
-		if(type==null)
+		if(type==null)//等待开通
+		{
 			type="2";//默认设计师
-
-		String sql="insert into dd_user (userid,name,brand,password,type,status,idcard,sex,address,mobile,telephone,fax,mail,submitdate) values ('"+userid+"','"+name+"','"+brand+"','"+password+"','"+type+"','1','"+idcard+"','"+sex+"','"+address+"','"+mobile+"','"+telephone+"','"+fax+"','"+mail+"','"+submitdate+"')";
+			sql="insert into dd_user (userid,name,brand,password,type,status,idcard,sex,address,mobile,telephone,fax,mail,submitdate) values ('"+userid+"','"+name+"','"+brand+"','"+password+"','"+type+"','0','"+idcard+"','"+sex+"','"+address+"','"+mobile+"','"+telephone+"','"+fax+"','"+mail+"','"+submitdate+"')";
+		}else
+			sql="insert into dd_user (userid,name,brand,password,type,status,idcard,sex,address,mobile,telephone,fax,mail,submitdate,operator,date) values ('"+userid+"','"+name+"','"+brand+"','"+password+"','"+type+"','1','"+idcard+"','"+sex+"','"+address+"','"+mobile+"','"+telephone+"','"+fax+"','"+mail+"','"+submitdate+"','"+operator+"','"+submitdate+"')";
 
 		int v=CommonDAO.executeUpdate(sql);
 		if(v>0)
@@ -97,9 +101,10 @@ public class UserAction<T> extends CrudAction{
 			logger.debug("加载启用页面...");
 	    String ids=getParameter("ids");
 	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");//可以方便地修改日期格式   
+	    String operator=(String) getSession().getAttribute("userid");
 		String date=dateFormat.format(new Date()); 
 	    if(!"".equals(ids.trim())){
-	    		String sql="update dd_user set status='1' , verifydate='"+date+"' where id in ("+ids.substring(0,ids.length()-1)+")";
+	    		String sql="update dd_user set status='1' ,operator='"+operator+"', date='"+date+"' where id in ("+ids.substring(0,ids.length()-1)+")";
 	    		CommonDAO.executeUpdate(sql);
 	    }
 	    renderSimpleResult(true,"ok");
@@ -144,12 +149,12 @@ public class UserAction<T> extends CrudAction{
 			name2 = URLEncoder.encode(name, "UTF-8");//IE浏览器 终极解决文件名乱码
 
 		getResponse().setHeader("Content-disposition","attachment;filename=" +name2+"-"+getCurrentTime() + ".xls");
-		String[] headers = { "序号", "用户编号", "名称","身份证", "性别", "地址", "手机号码","电话","传真","邮件","类型","状态","提交日期","操作者","验证日期","更新者","更新日期","密码","品牌"};
+		String[] headers = { "序号", "用户编号", "名称", "品牌", "密码", "类型", "状态","身份证", "性别", "地址", "手机号码","电话","传真","邮件","提交日期","操作者","验证日期"};
 		String sql;
 		if(type.equals("1"))
-			sql="select * from dd_user where status='1' order by verifydate desc";
+			sql="select * from dd_user where status='1' order by date desc";
 		else
-			sql="select * from dd_user where status='0' order by verifydate desc";
+			sql="select * from dd_user where status='0' order by date desc";
 		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,DdUser.class);
 		Collection<T> l = (Collection<T>) p.getResult();
 		return ExcelUtil.exportExcel(workbook,name, headers, l);
@@ -169,9 +174,9 @@ public class UserAction<T> extends CrudAction{
 		// TODO Auto-generated method stub
 		String sql;
 		if(type.equals("1"))
-			sql="select * from dd_user where status='1' order by verifydate desc";
+			sql="select * from dd_user where status='1' order by date desc";
 		else
-			sql="select * from dd_user where status='0' order by verifydate desc";
+			sql="select * from dd_user where status='0' order by date desc";
 		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,DdUser.class);
 		
 		String content = "totalPage = " + p.getTotalPageCount() + ";";
@@ -181,23 +186,26 @@ public class UserAction<T> extends CrudAction{
 		for(int i=0;i<l.size();i++)
 		{
 			DdUser d=(DdUser)l.get(i);
-			String t="<font color='green'>管理员</a>";
+			String t="<font color='green'>管理员</font>";
 			if(d.getType().equals("2"))
 			{
-				t="<font color='green'>设计师("+d.getBrand()+")</a>";
+				t="<font color='red'>设计师</font>";
 			}else if(d.getType().equals("3"))
 			{
-				t="<font color='yellow'>店员</a>";
+				t="<font color='yellow'>收银员</font>";
 			}else if(d.getType().equals("4"))
 			{
-				t="<font color='blue'>测试人员</a>";
+				t="<font color='blue'>上货员</font>";
 			}
+			String s="正式会员";
+			if(d.getStatus().equals("0"))
+				s="待审核";
 			Timestamp date;
 			if(type.equals("1"))
-				date=d.getVerifydate();
+				date=d.getDate();
 			else
 				date=d.getSubmitdate();
-			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getUserid()+"</td><td>"+d.getName()+"</td><td>"+t+"</td><td class='editbox' id='mobile'>"+d.getMobile()+"</td><td class='editbox' id='telephone'>"+d.getTelephone()+"</td><td class='editbox' id='fax'>"+d.getFax()+"</td><td class='editbox' id='mail'>"+d.getMail()+"</td><td class='editbox' id='address'>"+d.getAddress()+"</td><td>"+date+"</td></tr>\",";
+			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getUserid()+"</td><td>"+d.getName()+"</td><td>"+d.getBrand()+"</td><td>"+t+"</td><td>"+s+"</td><td class='editbox' id='mobile'>"+d.getMobile()+"</td><td class='editbox' id='telephone'>"+d.getTelephone()+"</td><td class='editbox' id='fax'>"+d.getFax()+"</td><td class='editbox' id='mail'>"+d.getMail()+"</td><td class='editbox' id='address'>"+d.getAddress()+"</td><td>"+date+"</td></tr>\",";
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";

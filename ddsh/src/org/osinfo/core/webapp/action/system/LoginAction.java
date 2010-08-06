@@ -17,6 +17,7 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
+import org.osinfo.core.webapp.Constants;
 import org.osinfo.core.webapp.action.BaseAction;
 import org.osinfo.core.webapp.dao.CommonDAO;
 import org.osinfo.core.webapp.model.DdUser;
@@ -88,37 +89,48 @@ public class LoginAction extends BaseAction{
 		String userid=getParameter("userid");
 		String password=getParameter("password");
 		String code=getParameter("code");
-		
-		String sql="select * from dd_user where userid='"+userid+"' and password='"+password+"'";
-		List l=CommonDAO.executeQuery(sql,DdUser.class);
-		if(l.size()==1)
+		if(code.equalsIgnoreCase((String) getSession().getAttribute(Constants.VALIDATECODE)))
 		{
-			DdUser user=(DdUser)l.get(0);
-			getSession().setAttribute("id", user.getId());
-			getSession().setAttribute("userid", user.getUserid());
-			getSession().setAttribute("name", user.getName());
-			getSession().setAttribute("type", user.getType());
-			getSession().setAttribute("menu", WorkbenchAction.getTree(user.getType()));
-			
-			if(user.getType().equals("1"))
-				getSession().setAttribute("typename", "管理员");
-			else if(user.getType().equals("2"))
-				getSession().setAttribute("typename", "设计师");
-			else if(user.getType().equals("3"))
-				getSession().setAttribute("typename", "店员");
-			else if(user.getType().equals("4"))
-				getSession().setAttribute("typename", "测试人员");
-			else
-				getSession().setAttribute("typename", "未知用户");
-			try {
-				getResponse().sendRedirect("workbench_.zf");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			String sql="select * from dd_user where userid='"+userid+"' and password='"+password+"'";
+			List l=CommonDAO.executeQuery(sql,DdUser.class);
+			if(l.size()>=1)
+			{
+				DdUser user=(DdUser)l.get(0);
+				if(user.getStatus().equals("0"))//未开通
+				{
+					try {
+						getResponse().sendRedirect("/ddsh/html/error3.html");
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}else
+				{
+					getSession().setAttribute("id", user.getId());
+					getSession().setAttribute("userid", user.getUserid());
+					getSession().setAttribute("name", user.getName());
+					getSession().setAttribute("type", user.getType());
+					getSession().setAttribute("menu", WorkbenchAction.getTree(user.getType()));
+					
+					if(user.getType().equals("1"))
+						getSession().setAttribute("typename", "管理员");
+					else if(user.getType().equals("2"))
+						getSession().setAttribute("typename", "设计师");
+					else if(user.getType().equals("3"))
+						getSession().setAttribute("typename", "店员");
+					else if(user.getType().equals("4"))
+						getSession().setAttribute("typename", "测试人员");
+					else
+						getSession().setAttribute("typename", "未知用户");
+					try {
+						getResponse().sendRedirect("workbench_.zf");
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 			}
 		}
-		
-		
 		return "login";
 	}
 	@Action("/workbench_.*")   

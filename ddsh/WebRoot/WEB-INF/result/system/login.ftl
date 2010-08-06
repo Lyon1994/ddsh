@@ -14,12 +14,18 @@
 		<link href="${css}/mainstyle.css" rel="stylesheet" type="text/css">
 		<script language="javascript" src="js/jquery/jquery-1.4.2.min.js"></script>
 		<script language="javascript">
+
 			$(document).ready(
 				function(){
 						$("#userid").focus();
 						$('#refresh').click(function(){
-							alert('tt');
+							$('#image').attr('src','captcha.zf?random='+Math.random());
 						});
+						$("body").bind('keyup',function(event) {
+							if(event.keyCode==13){
+								document.login.submit();
+							}   
+						}); 
 				}
 			)
 		</script>
@@ -179,7 +185,7 @@
 						</tr>
 						<tr>
 							<td>　</td>
-							<td><img src="captcha.zf"  align="absMiddle"/></td>
+							<td><img id='image' src="captcha.zf"  align="absMiddle"/></td>
 						</tr>
 						<tr>
 							<td>　</td>
