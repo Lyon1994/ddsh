@@ -34,7 +34,7 @@
 			
 			function load(param)
 			{
-				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th width='1%'><input type='checkbox' name='select' onclick='ck()'/></th><th>用户编号</th><th>门店名称</th><th>门店账号</th><th>客户账号</th><th>交易类型</th><th>金额</th><th>备注</th><th>操作人</th><th>日期</th></tr></thead><tbody>";
+				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th width='1%'><input type='checkbox' name='select' onclick='ck()'/></th><th>用户编号</th><th>目标用户</th><th>交易类型</th><th>状态</th><th>金额</th><th>备注</th><th>处理日期</th></tr></thead><tbody>";
 				var a="</tbody></table>";
 				$.ajax({
 					 	url: 'transa!count.zf?type=1&t='+new Date().getTime(),
@@ -50,7 +50,7 @@
 			}
 			function exports()
 			{
-				window.open('sell!export.zf?type=1&t='+new Date().getTime());
+				window.open('transa!export.zf?type=1&t='+new Date().getTime());
 			}
 			$(document).ready(
 				function(){

@@ -16,10 +16,6 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,8 +32,6 @@ import org.osinfo.core.webapp.action.CrudAction;
 import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
 import org.osinfo.core.webapp.model.DdProduct;
-import org.osinfo.core.webapp.model.DdTopper;
-import org.osinfo.core.webapp.util.DBUtil;
 import org.osinfo.core.webapp.util.ExcelUtil;
 import org.osinfo.core.webapp.util.FloatUtil;
 import org.osinfo.core.webapp.util.JsonUtil;
@@ -45,7 +39,6 @@ import org.osinfo.core.webapp.util.PageUtil;
 @Results({
 	 @Result(name="list",location = "/WEB-INF/result/system/product/list.ftl"),
 	 @Result(name="list2",location = "/WEB-INF/result/system/product/list2.ftl"),
-	 @Result(name="list3",location = "/WEB-INF/result/system/product/list3.ftl"),
 	 @Result(name="list4",location = "/WEB-INF/result/system/product/list4.ftl"),
 	 @Result(name="list5",location = "/WEB-INF/result/system/product/list5.ftl")
 })
@@ -102,10 +95,7 @@ public class ProductAction<T> extends CrudAction{
 	public String list2() {
 		return "list2";
 	}
-	//门店待批商品
-	public String list3() {
-		return "list3";
-	}
+
 	//设计师待批商品
 	public String list4() {
 		return "list4";
@@ -265,15 +255,15 @@ public class ProductAction<T> extends CrudAction{
 		if(t.equals("2"))
 		{
 			if(type.equals("1"))
-				sql="select * from dd_product where status='1' and userid='"+userid+"' order by date desc";
+				sql="select * from dd_product where status='1' and userid='"+userid+"' order by userid,barcode desc";
 			else
-				sql="select * from dd_product where status='0' and userid='"+userid+"' order by submitdate desc";
+				sql="select * from dd_product where status='0' and userid='"+userid+"' order by userid,submitdate desc";
 		}else
 		{
 			if(type.equals("1"))
-				sql="select * from dd_product where status='1' order by date desc";
+				sql="select * from dd_product where status='1' order by userid,barcode desc";
 			else
-				sql="select * from dd_product where status='0' order by submitdate desc";
+				sql="select * from dd_product where status='0' order by userid,submitdate desc";
 		}
 		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,DdProduct.class);
 		Collection<T> l = (Collection<T>) p.getResult();
@@ -298,15 +288,15 @@ public class ProductAction<T> extends CrudAction{
 		if(t.equals("2"))
 		{
 			if(type.equals("1"))
-				sql="select * from dd_product where status='1' and userid='"+userid+"' order by date desc";
+				sql="select * from dd_product where status='1' and userid='"+userid+"' order by userid,barcode desc";
 			else
-				sql="select * from dd_product where status='0' and userid='"+userid+"' order by submitdate desc";
+				sql="select * from dd_product where status='0' and userid='"+userid+"' order by userid,submitdate desc";
 		}else
 		{
 			if(type.equals("1"))
-				sql="select * from dd_product where status='1' order by date desc";
+				sql="select * from dd_product where status='1' order by userid,barcode desc";
 			else
-				sql="select * from dd_product where status='0' order by submitdate desc";
+				sql="select * from dd_product where status='0' order by userid,submitdate desc";
 		}
 		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,DdProduct.class);
 		

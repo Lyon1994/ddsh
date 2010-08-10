@@ -82,9 +82,9 @@ public class WorkbenchAction extends BaseAction {
 		else if(t.equals("2"))
 			getRequest().setAttribute("page", "workbench_design");
 		else if(t.equals("3"))
-			getRequest().setAttribute("page", "workbench_shop");
+			getRequest().setAttribute("page", "workbench_money");
 		else if(t.equals("4"))
-			getRequest().setAttribute("page", "workbench_test");
+			getRequest().setAttribute("page", "workbench_upload");
 		return "main";
 	}
 	public static Map getTree(String type)
@@ -96,20 +96,23 @@ public class WorkbenchAction extends BaseAction {
 			m.put("用户审批", "system/user!list2.zf");
 			m.put("商品审批", "system/product!list5.zf");
 			m.put("商品管理", "system/product!list.zf");
-			m.put("货品审批", "system/topper!list2.zf");
-			m.put("已批记录", "system/topper!list2.zf");
+			m.put("货品审批", "system/submit!list.zf");
 			m.put("库存管理", "system/inventory!list.zf");//这里有上架
-			m.put("退回记录", "system/back!list.zf");
 			m.put("上架记录", "system/upload!list.zf");
-			m.put("当前在售", "system/sell!list.zf");//这里有下架
-			m.put("下架记录", "system/down!list.zf");
+			m.put("销售记录", "system/sale!list.zf");
+			m.put("退回记录", "system/back!list.zf");
+			//m.put("当前在售", "system/sell!list.zf");//这里有下架
+			//m.put("下架记录", "system/down!list.zf");
 			m.put("售货分析", "html/sale_query.html");
 			m.put("退货分析", "html/rsale_query.html");
-			m.put("格子管理", "system/grid!list.zf");
+			//m.put("格子管理", "system/grid!list.zf");
+			
 			m.put("公告管理", "system/notice!list.zf");
 			m.put("活动管理", "system/notice!list.zf");
 			m.put("用户管理", "system/user!list.zf");
+			m.put("東東钱柜", "html/wallet2.html");
 			m.put("账号管理", "system/wallet!list.zf");
+			m.put("交易待批", "system/transa!list2.zf");
 			m.put("交易记录", "system/transa!list.zf");
 			m.put("字典管理", "system/dic!list.zf");
 		}else if(type.equals("2"))
@@ -117,32 +120,26 @@ public class WorkbenchAction extends BaseAction {
 			m.put("商品注册", "html/regedit_product.html");
 			m.put("待批商品", "system/product!list4.zf");
 			m.put("我的商品", "system/product!list2.zf");
-			m.put("上货审批", "html/regedit_topper.html");
-			m.put("待批货品", "system/topper!list4.zf");
-			m.put("已批货品", "system/topper!list2.zf");
+			m.put("上货审批", "html/product_submit.html");
+			m.put("待批货品", "system/submit!list2.zf");
 			m.put("库存记录", "system/inventory!list.zf");
-			m.put("退回记录", "system/back!list2.zf");
 			m.put("上架记录", "system/upload!list.zf");
-			m.put("当前在售", "system/sell!list.zf");
-			m.put("下架记录", "system/down!list.zf");
-			m.put("售货分析", "html/sale_query.html");
-			m.put("退货分析", "html/rsale_query.html");
-			m.put("我的账号", "system/wallet!list.zf");
+			m.put("销售记录", "system/sale!list.zf");
+			m.put("退回记录", "system/back!list.zf");
+			//m.put("当前在售", "system/sell!list.zf");
+			//m.put("下架记录", "system/down!list.zf");
+			//m.put("售货分析", "html/sale_query.html");
+			//m.put("退货分析", "html/rsale_query.html");
+			m.put("电子钱包", "html/wallet.html");
+			m.put("交易待批", "system/transa!list2.zf");
 			m.put("交易记录", "system/transa!list.zf");
-		}else if(type.equals("3"))
+		}else if(type.equals("3"))//收银员
 		{
-			m.put("售货管理", "system/sale!list.zf");
-			m.put("退货管理", "system/rsale!list.zf");
-			m.put("待批记录", "system/topper!list3.zf");
-			m.put("已批记录", "system/topper!list2.zf");
-			m.put("退回记录", "system/back!list2.zf");
-			m.put("库存管理", "system/inventory!list.zf");
+			
+		}else if(type.equals("4"))//上货员
+		{
+			m.put("库存记录", "system/inventory!list.zf");
 			m.put("上架记录", "system/upload!list.zf");
-			m.put("当前在售", "system/sell!list.zf");
-			m.put("下架记录", "system/down!list.zf");
-		}else
-		{
-			m.put("当前在售", "system/sell!list.zf");
 		}
 		return m;
 	}

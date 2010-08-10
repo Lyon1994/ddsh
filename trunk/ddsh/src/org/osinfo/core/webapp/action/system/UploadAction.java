@@ -9,7 +9,6 @@
 package org.osinfo.core.webapp.action.system;
 
 import java.net.URLEncoder;
-import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,7 +21,7 @@ import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
 import org.osinfo.core.webapp.model.DdInventory;
 import org.osinfo.core.webapp.model.DdSell;
-import org.osinfo.core.webapp.model.DdUpload;
+import org.osinfo.core.webapp.model.custom.Upload;
 import org.osinfo.core.webapp.util.ExcelUtil;
 import org.osinfo.core.webapp.util.PageUtil;
 @Results({
@@ -97,54 +96,7 @@ public class UploadAction<T> extends CrudAction{
     	renderSimpleResult(true,"ok");
     	return null;
 	}
-	//批量上传,修改库存表的数量为0,用户可在上传记录表进行修改数量和格子编号
-	//如果数量被修改了，则要补全库存表
-	public String batchAdd() {
-		// TODO Auto-generated method stub
-	    String value=getParameter("value");
-	    String[] tmp=value.split("\\|");
-		String submitdate=getCurrentTime();
-		String operator=(String) getSession().getAttribute("userid");
-	    for(int i=0;i<tmp.length;i++)
-	    {
-	    	String[] t=tmp[i].split("\\,");
-		    	String barcode=t[0];
-		    	String amount=t[1];
-		    	String discount=t[2];
-		    	String gridid=t[3];
-		    	String sql="select * from dd_inventory where barcode='"+barcode+"'";
-		    	List l=CommonDAO.executeQuery(sql, DdInventory.class);
-		    	if(l.size()>0)
-		    	{
-		    		DdInventory in=(DdInventory) l.get(0);
-		    		
-		    		sql="insert into dd_upload (inventoryid,barcode,name,amount,gridid,price,discount,userid,operator,date) " +
-					"values ("+in.getId()+",'"+barcode+"','"+in.getName()+"',"+amount+",'"+gridid+"',"+in.getPrice()+","+discount+",'"+in.getUserid()+"','"+operator+"','"+submitdate+"')";
-					CommonDAO.executeUpdate(sql);
-					
-					sql="select * from dd_sell where inventoryid="+in.getId()+" and gridid='"+gridid+"'";//判断是不是上传的格子编号和物品都相同，如是则累加
-					List l2=CommonDAO.executeQuery(sql, DdSell.class);
-					if(l.size()>0)
-					{
-						DdSell v=(DdSell)l2.get(0);
-						sql="update dd_sell set amount="+(v.getAmount()+Integer.valueOf(amount))+" where id ="+v.getId();
-						CommonDAO.executeUpdate(sql);
-					}else
-					{
-						sql="insert into dd_sell (inventoryid,barcode,name,amount,gridid,price,discount,userid) " +
-						"values ("+in.getId()+",'"+barcode+"','"+in.getName()+"',"+amount+",'"+gridid+"',"+in.getPrice()+","+discount+",'"+in.getUserid()+"')";
-						CommonDAO.executeUpdate(sql);
-					}
-					
-					sql="update dd_inventory set amount="+(in.getAmount()-Integer.valueOf(amount))+" where id ="+in.getId();
-					CommonDAO.executeUpdate(sql);
 
-		    	}
-	    }
-
-	    renderSimpleResult(true,"处理完成");
-	    return null;
-	}
 	@Override
 	public String del() {
 		// TODO Auto-generated method stub
@@ -165,26 +117,7 @@ public class UploadAction<T> extends CrudAction{
 		String trid=getParameter("trid");
 		String tdid=getParameter("tdid");
 		String value=getParameter("value");
-		String sql="";
-		if(tdid.equalsIgnoreCase("amount"))//如果修改的是数量，则要修改库存量
-		{
-			sql="select * from dd_upload where id="+trid;//获取已上传的物品id
-			List l=CommonDAO.executeQuery(sql, DdUpload.class);
-			for(int i=0;i<l.size();i++)
-			{
-				DdUpload u=(DdUpload)l.get(i);
-				int va=u.getAmount()-Integer.valueOf(value);//差量
-				sql="select * from dd_inventory where id="+u.getInventoryid();//获取库存数量
-				List l2=CommonDAO.executeQuery(sql, DdInventory.class);
-				for(int j=0;j<l2.size();j++)
-				{
-					DdInventory v=(DdInventory)l2.get(j);
-					sql="update dd_inventory set amount="+(v.getAmount()+va)+" where id ="+v.getId();
-					CommonDAO.executeUpdate(sql);
-				}
-			}
-		}
-		sql="update dd_upload set "+tdid+"='"+value+"' where id ="+trid;
+		String sql="update dd_upload set "+tdid+"='"+value+"' where id ="+trid;
 		CommonDAO.executeUpdate(sql);
 		renderSimpleResult(true,"修改成功");
 		return null;
@@ -200,11 +133,20 @@ public class UploadAction<T> extends CrudAction{
 			name2 = new String(name.getBytes("UTF-8"), "ISO8859-1");//firefox浏览器
 		else if (getRequest().getHeader("User-Agent").toUpperCase().indexOf("MSIE") > 0)
 			name2 = URLEncoder.encode(name, "UTF-8");//IE浏览器 终极解决文件名乱码
-
+		String t=(String) getSession().getAttribute("type");
+		String userid=(String) getSession().getAttribute("userid");
 		getResponse().setHeader("Content-disposition","attachment;filename=" +name2+"-"+getCurrentTime() + ".xls");
-		String[] headers = { "序号", "商品ID", "条形码","名称", "数量", "格子编号", "价格","折扣","用户编号","操作者","提交日期"};
-		String sql="select * from dd_upload";
-		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,DdInventory.class);
+		String[] headers = { "序号", "条形码","名称", "数量", "操作者","提交日期"};
+		String sql="";
+		if(t.equals("2")||t.equals("4"))
+		{
+			sql="select u.id,u.barcode,p.name,u.amount,u.operator,u.date from dd_upload u left join dd_product p on u.barcode=p.barcode where  u.operator='"+userid+"' and u.amount>0 order by u.date desc";
+			
+		}else
+		{
+			sql="select u.id,u.barcode,p.name,u.amount,u.operator,u.date from dd_upload u left join dd_product p on u.barcode=p.barcode where u.amount>0 order by u.date desc";
+		}
+		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,Upload.class);
 		Collection<T> l = (Collection<T>) p.getResult();
 		return ExcelUtil.exportExcel(workbook,name, headers, l);
 	}
@@ -224,14 +166,15 @@ public class UploadAction<T> extends CrudAction{
 		String sql;
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
-		if(t.equals("2"))
+		if(t.equals("2")||t.equals("4"))
 		{
-			sql="select * from dd_upload where userid='"+userid+"' and amount>0 order by date desc";
+			sql="select u.id,u.barcode,p.name,u.amount,u.operator,u.date from dd_upload u left join dd_product p on u.barcode=p.barcode where u.operator='"+userid+"' and u.amount>0 order by u.date desc";
+			
 		}else
 		{
-			sql="select * from dd_upload where amount>0 order by date desc";
+			sql="select u.id,u.barcode,p.name,u.amount,u.operator,u.date from dd_upload u left join dd_product p on u.barcode=p.barcode where u.amount>0 order by u.date desc";
 		}
-		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,DdUpload.class);
+		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,Upload.class);
 		
 		String content = "totalPage = " + p.getTotalPageCount() + ";";
 		content += "dataStore = [";
@@ -239,10 +182,8 @@ public class UploadAction<T> extends CrudAction{
 		List l=(List)p.getResult();
 		for(int i=0;i<l.size();i++)
 		{
-			DdUpload d=(DdUpload)l.get(i);
-			Timestamp date=d.getDate();
-
-			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td>"+d.getUserid()+"</td><td>"+d.getAmount()+"</td><td>"+d.getPrice()+"</td><td>"+d.getDiscount()+"</td><td>"+d.getGridid()+"</td><td>"+date+"</td><td>"+d.getOperator()+"</td></tr>\",";
+			Upload d=(Upload)l.get(i);
+			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td>"+d.getAmount()+"</td><td>"+d.getOperator()+"</td><td>"+d.getDate()+"</td></tr>\",";
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";
@@ -255,12 +196,13 @@ public class UploadAction<T> extends CrudAction{
 		String sql;
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
-		if(t.equals("2"))
+		if(t.equals("2")||t.equals("4"))
 		{
-			sql="select * from dd_upload where userid='"+userid+"' and amount>0";
+			sql="select u.id  from dd_upload u  where  u.operator='"+userid+"' and u.amount>0 order by u.date desc";
+			
 		}else
 		{
-			 sql="select * from dd_upload where amount>0";
+			sql="select u.id  from dd_upload u  where u.amount>0 order by u.date desc";
 		}
 		int count=CommonDAO.count(sql);
 		return count;

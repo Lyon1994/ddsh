@@ -29,7 +29,7 @@
 					 	success: function(json){
 					 		for(var i=0;i<json.length;i++)
 					 		{
-					 			$("#begin").append("<tr id="+json[i].id+"><td align=\'center\'><img src='../images/delete.gif' onclick='delete_(this)' style='cursor:hand' /></td><td align=\'center\'><input type='text' name='barcode' value='"+json[i].barcode+"' readonly/></td></td><td align=\'center\'><input type='text' name='name' value='"+json[i].name+"' readonly/></td><td align=\'center\'><input type='text' name='amount' value='"+json[i].amount+"' style='width:60px'/></td><td align=\'center\'><input type='text' name='discount' value='"+json[i].discount+"' style='width:60px'/></td><td align=\'center\'><input type='text' name='gridid'/></td></tr>");   
+					 			$("#begin").append("<tr id="+json[i].id+"><td align=\'center\'><img src='../images/delete.gif' onclick='delete_(this)' style='cursor:hand' /></td><td align=\'center\'><input type='text' name='barcode' value='"+json[i].barcode+"' readonly/></td></td><td align=\'center\'><input type='text' name='amount' value='"+json[i].amount+"' style='width:60px'/></td></tr>");   
 					 		}
 						}
 					});
@@ -47,7 +47,7 @@
 						   	{
 						   		var para='value='+rowsvalue+'&t='+new Date().getTime();
 								$.ajax({
-								 	url: '../system/upload!batchAdd.zf',
+								 	url: '../system/inventory!batchUpload.zf',
 								 	type: 'POST',
 								 	dataType: 'json',
 								 	data:para,//参数设置
@@ -85,14 +85,11 @@
 					    <TR>
 							<TH></TH>
 					      	<TH>条形码</TH>
-					      	<TH>名称</TH>
 					      	<TH>数量</TH>
-					      	<TH>折扣</TH>
-					      	<TH>格子编号</TH>
 					    </TR>
-					  </THEAD>
-				  	<TBODY id="begin">
-					</TBODY>
+					</THEAD>
+				  	<tbody id="begin">
+					</tbody>
 				</table>
 			</td>
 		</tr>

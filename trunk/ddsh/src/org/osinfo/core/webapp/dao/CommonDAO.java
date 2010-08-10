@@ -49,6 +49,25 @@ public class CommonDAO {
 		}
 		return list;
 	}
+	public static float sum(String sql) {
+		System.out.println(sql);
+		ResultSet rs = null;
+		Statement stmt = null;
+		float sum=0;
+		Connection conn=DBUtil.getConnection();
+		try {
+			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+			rs=stmt.executeQuery(sql);
+			while(rs.next())
+				sum=Float.parseFloat(rs.getString("sum"));
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			DBUtil.close(rs, stmt, conn);
+		}
+		return sum;
+	}
 
 	public static int executeUpdate(String sql) {
 		System.out.println(sql);

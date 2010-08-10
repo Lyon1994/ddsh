@@ -12,12 +12,12 @@ public class DdTransaction implements java.io.Serializable {
 
 	private Integer id;
 	private String userid;
-	private String shop;
-	private String from;
-	private String to;
+	private String user;
 	private String type;
+	private String status;
 	private Float money;
 	private String memo;
+	private Timestamp submitdate;
 	private String operator;
 	private Timestamp date;
 
@@ -27,17 +27,27 @@ public class DdTransaction implements java.io.Serializable {
 	public DdTransaction() {
 	}
 
-	/** full constructor */
-	public DdTransaction(String userid, String shop, String from, String to,
-			String type, Float money, String memo, String operator,
-			Timestamp date) {
+	/** minimal constructor */
+	public DdTransaction(String userid, String type, String status,
+			Float money, Timestamp submitdate) {
 		this.userid = userid;
-		this.shop = shop;
-		this.from = from;
-		this.to = to;
 		this.type = type;
+		this.status = status;
+		this.money = money;
+		this.submitdate = submitdate;
+	}
+
+	/** full constructor */
+	public DdTransaction(String userid, String user, String type,
+			String status, Float money, String memo, Timestamp submitdate,
+			String operator, Timestamp date) {
+		this.userid = userid;
+		this.user = user;
+		this.type = type;
+		this.status = status;
 		this.money = money;
 		this.memo = memo;
+		this.submitdate = submitdate;
 		this.operator = operator;
 		this.date = date;
 	}
@@ -60,28 +70,12 @@ public class DdTransaction implements java.io.Serializable {
 		this.userid = userid;
 	}
 
-	public String getShop() {
-		return this.shop;
+	public String getUser() {
+		return this.user;
 	}
 
-	public void setShop(String shop) {
-		this.shop = shop;
-	}
-
-	public String getFrom() {
-		return this.from;
-	}
-
-	public void setFrom(String from) {
-		this.from = from;
-	}
-
-	public String getTo() {
-		return this.to;
-	}
-
-	public void setTo(String to) {
-		this.to = to;
+	public void setUser(String user) {
+		this.user = user;
 	}
 
 	public String getType() {
@@ -90,6 +84,14 @@ public class DdTransaction implements java.io.Serializable {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getStatus() {
+		return this.status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public Float getMoney() {
@@ -106,6 +108,14 @@ public class DdTransaction implements java.io.Serializable {
 
 	public void setMemo(String memo) {
 		this.memo = memo;
+	}
+
+	public Timestamp getSubmitdate() {
+		return this.submitdate;
+	}
+
+	public void setSubmitdate(Timestamp submitdate) {
+		this.submitdate = submitdate;
 	}
 
 	public String getOperator() {

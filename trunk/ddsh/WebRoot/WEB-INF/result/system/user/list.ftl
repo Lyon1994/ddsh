@@ -44,13 +44,15 @@
 				var tdid=$obj.attr("id");
 				var trid = $obj.parent().attr("id"); //取得该行数据的ID，此例ID绑定在tr中
 				var value = $obj.find("input:text")[0].value; //取得文本框的值，即新数据
+				var param='trid='+trid+'&tdid='+tdid+'&value='+value+'&t='+new Date().getTime();
 				//alert(tdid);
 				//alert(trid);
 				//alert(value);
 				$.ajax({
-					 	url: 'user!edit.zf?trid='+trid+'&tdid='+tdid+'&value='+value+'&t='+new Date().getTime(),
+					 	url: 'user!edit.zf',
 					 	type: 'POST',
 					 	dataType: 'json',
+					 	data:param,
 					 	error: function(){alert('error');},
 					 	success: function(json){
 							alert(json.info); 
@@ -120,7 +122,7 @@
 			
 			function load(param)
 			{
-				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th width='1%'><input type='checkbox' name='select' onclick='ck()'/></th><th>用户编号</th><th>名称</th><th>品牌</th><th>类型</th><th>状态</th><th>手机号码</th><th>电话</th><th>传真</th><th>邮件</th><th>联系地址</th><th>验证日期</th></tr></thead><tbody>";
+				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th width='1%'><input type='checkbox' name='select' onclick='ck()'/></th><th>用户编号</th><th>名称</th><th>品牌</th><th>密码</th><th>类型</th><th>状态</th><th>手机号码</th><th>电话</th><th>传真</th><th>邮件</th><th>联系地址</th><th>验证日期</th></tr></thead><tbody>";
 				var a="</tbody></table>";
 				$.ajax({
 					 	url: 'user!count.zf?type=1&t='+new Date().getTime(),

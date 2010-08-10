@@ -85,7 +85,7 @@
 			}
 			function load(param)
 			{
-				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th width='1%'><input type='checkbox' name='select' onclick='ck()'/></th><th>用户编号</th><th>名称</th><th>品牌</th><th>类型</th><th>状态</th><th>手机号码</th><th>电话</th><th>传真</th><th>邮件</th><th>联系地址</th><th>提交日期</th></tr></thead><tbody>";
+				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th width='1%'><input type='checkbox' name='select' onclick='ck()'/></th><th>用户编号</th><th>名称</th><th>品牌</th><th>密码</th><th>类型</th><th>状态</th><th>手机号码</th><th>电话</th><th>传真</th><th>邮件</th><th>联系地址</th><th>提交日期</th></tr></thead><tbody>";
 				var a="</tbody></table>";
 				$.ajax({
 					 	url: 'user!count.zf?type=0&t='+new Date().getTime(),

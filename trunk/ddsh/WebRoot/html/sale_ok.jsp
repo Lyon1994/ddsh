@@ -83,15 +83,13 @@
 								 	error: function(){alert('处理错误！');},
 								 	success: function(json){
 										alert(json.info);
-										if($("#print").attr('checked')==true)
-										{
-											CreatePrintPage(rowsvalue,totalprice,receive,change,transaction);
-											LODOP.PRINT();	
-										}
 								 	}
 								});
-
-							
+							if($("#print").attr('checked')==true)
+							{
+								CreatePrintPage(rowsvalue,totalprice,receive,change,transaction);
+								LODOP.PRINT();	
+							}
 							return false;
 						}
 					);

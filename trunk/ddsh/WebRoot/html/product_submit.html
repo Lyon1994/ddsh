@@ -14,9 +14,15 @@
 		$(document).ready(
 			function(){
 				$("#barcode").FillOptions("../system/product!load.zf",{datatype:"json",textfield:"name",valuefiled:"value"});
-				$("#ems").FillOptions("../system/dic!load.zf?parent=ems",{datatype:"json",textfield:"name",valuefiled:"value"});
+				$("#type").FillOptions("../system/dic!load.zf?parent=send",{datatype:"json",textfield:"name",valuefiled:"value"});
+				//$("#ems").FillOptions("../system/dic!load.zf?parent=ems",{datatype:"json",textfield:"name",valuefiled:"value"});
 				$("#pay").FillOptions("../system/dic!load.zf?parent=pay",{datatype:"json",textfield:"name",valuefiled:"value"});
-				
+				$("#type").change(function(){
+			         if($("#type").val()=='01')
+			                  $("#kuaidi").show();
+			         else
+			                  $("#kuaidi").hide();
+		         })
 				$("#regedit").validate();
 			}
 		)
@@ -47,30 +53,24 @@
 				<tr>
 					<td>商品条码：</td>
 					<td><select name="barcode" id="barcode"></select></td>
-					<td>数量：</td>
-					<td><input type="text" id="amount" name="amount"  size="20" class="text required digits"/></td>
+					<td>送货方式：</td>
+					<td><select name="types" id="type"></select></td>
 				</tr>
 				<tr>
+					<td>数量：</td>
+					<td><input type="text" id="amount" name="amount"  size="20" class="text required digits"/></td>
 					<td>发货地：</td>
 					<td><input type="text" name="place"  size="20" class="text required"/></td>
-					<td>快递方式：</td>
-					<td><select id="ems" name="ems"></select></td>
 				</tr>
 				<tr>
 					<td>发货日：</td>
-					<td><input id="begin" name="begin" class="Wdate required" type="text" onclick="WdatePicker()"/></td>
+					<td><input id="begin" name="begin" size="20" class="text Wdate required" type="text" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})"/></td>
 					<td>到货日：</td>
-					<td><input id="end" name="end" class="Wdate required" type="text" onclick="WdatePicker()"/></td>
-				</tr>
-				<tr>
-					<td>付款方式：</td>
-					<td><select id="pay" name="pay"></select></td>
-					<td>费用：</td>
-					<td><input type="text"  name="money"  size="20" class="text required digits"/></td>
+					<td><input id="end" name="end" size="20" class="text Wdate required" type="text" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})"/></td>
 				</tr>
 				<tr>
 					<td>备注：</td>
-					<td><textarea rows="6" name="memo" cols="100" class="text required"></textarea></td>
+					<td><textarea rows="6" name="memo" cols="100" class="text"></textarea></td>
 					<td>　</td>
 					<td>　</td>
 				</tr>
@@ -81,7 +81,29 @@
 			</td>
 		</tr>
 	</table>
-	 
+	<table border="0" width="100%" id="kuaidi" cellspacing="0" cellpadding="0">
+		<tr>
+			<td class="maintab_kuang">
+				<table border="0" width="100%" id="table3" cellspacing="0" cellpadding="0" class="tab_table_title">
+					<tr>
+									<td>快递单号</td>
+									<td><input type="text" name="serialnumber"  size="20" class="text"/></td>
+									<td>快递公司：</td>
+									<td><input type="text" name="ems"  size="20" class="text"/></td>
+								</tr>
+								<tr>
+									<td>付款方式：</td>
+									<td><select id="pay" name="pay"></select></td>
+									<td>快递费：</td>
+									<td><input type="text"  name="money"  size="20" value='0' class="text digits"/></td>
+								</tr>
+					<tr>
+						<td colspan="4"><hr size="1"/></td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
 	<table border="0" width="100%" cellspacing="0" cellpadding="0" style="margin-top:2px;" class="maintab2">
 	<tr class="maintab">
 	<td style="padding:0px 10px 0px 10px" align="center" >

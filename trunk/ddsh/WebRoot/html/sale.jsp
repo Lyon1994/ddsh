@@ -40,7 +40,7 @@
 								 	success: function(json){
 								 		if(json.length>0)
 								 		{
-								 			$("#begin").append("<tr id="+json[0].id+"><td align=\'center\'><img src='../images/delete.gif' onclick='delete_(this)' style='cursor:hand' /></td><td align=\'center\'><input type='text' name='barcode' value='"+json[0].barcode+"' readonly/></td><td align=\'center\'><input type='text' name='name' value='"+json[0].name+"' readonly/></td><td align=\'center\'><input type='text' name='price' value='"+json[0].price+"' readonly style='width:40px'/></td><td align=\'center\'><input type='text' name='amount' value='1' style='width:40px'/></td><td align=\'center\'><input type='text' name='discount' value='"+json[0].discount+"' style='width:40px'/></td><td><select size='1' id='from' name='from'><option selected value=1>货架</option><option value=2>库存</option></select></td></tr>");   
+								 			$("#begin").append("<tr id="+json[0].id+"><td align=\'center\'><img src='../images/delete.gif' onclick='delete_(this)' style='cursor:hand' /></td><td align=\'center\'><input type='text' name='barcode' value='"+json[0].barcode+"' readonly/></td><td align=\'center\'><input type='text' name='name' value='"+json[0].name+"' readonly/></td><td align=\'center\'><input type='text' name='price' value='"+json[0].price+"' readonly style='width:40px'/></td><td align=\'center\'><input type='text' name='discount' value='"+json[0].discount+"' style='width:40px'/></td><td align=\'center\'><input type='text' name='amount' value='1' style='width:40px'/></td></tr>");   
 								 		}else
 								 			alert('商品不存在！');
 								 	}
@@ -53,7 +53,7 @@
 							var rows=$('#begin').find('tr').length;//提取表格数据行
 						    var rowsvalue='';
 						   	$.each($('#begin').find('tr'), function(i,item){ 
-						    	rowsvalue=rowsvalue+$('input[type="text"],select[name="from"]',this).fieldArray();
+						    	rowsvalue=rowsvalue+$('input[type="text"]',this).fieldArray();
 						    	if(rows>1)
 						    		rowsvalue=rowsvalue+'|';
 						    	rows--;
@@ -133,9 +133,8 @@
 					      	<TH>条形码</TH>
 					      	<TH>名称</TH>
 					      	<TH>单价</TH>
-					     	<TH>数量</TH>
 					     	<TH>折扣</TH>
-					     	<TH>来自</TH>
+					     	<TH>数量</TH>
 					    </TR>
 					  </THEAD>
 				  	<TBODY id="begin">

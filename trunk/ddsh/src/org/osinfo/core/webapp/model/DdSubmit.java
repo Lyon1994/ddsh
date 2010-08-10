@@ -13,10 +13,13 @@ public class DdSubmit implements java.io.Serializable {
 	private Integer id;
 	private String barcode;
 	private Integer amount;
+	private String status;
+	private String type;
 	private String place;
-	private String ems;
 	private Timestamp begin;
 	private Timestamp end;
+	private String ems;
+	private String receipt;
 	private String pay;
 	private Float money;
 	private String memo;
@@ -31,30 +34,32 @@ public class DdSubmit implements java.io.Serializable {
 	}
 
 	/** minimal constructor */
-	public DdSubmit(String barcode, Integer amount, String place, String ems,
-			Timestamp begin, Timestamp end, String pay, Float money,
-			Timestamp submitdate) {
+	public DdSubmit(String barcode, Integer amount, String status, String type,
+			String place, Timestamp begin, Timestamp end, Timestamp submitdate) {
 		this.barcode = barcode;
 		this.amount = amount;
+		this.status = status;
+		this.type = type;
 		this.place = place;
-		this.ems = ems;
 		this.begin = begin;
 		this.end = end;
-		this.pay = pay;
-		this.money = money;
 		this.submitdate = submitdate;
 	}
 
 	/** full constructor */
-	public DdSubmit(String barcode, Integer amount, String place, String ems,
-			Timestamp begin, Timestamp end, String pay, Float money,
-			String memo, Timestamp submitdate, Timestamp date, String operator) {
+	public DdSubmit(String barcode, Integer amount, String status, String type,
+			String place, Timestamp begin, Timestamp end, String ems,
+			String receipt, String pay, Float money, String memo,
+			Timestamp submitdate, Timestamp date, String operator) {
 		this.barcode = barcode;
 		this.amount = amount;
+		this.status = status;
+		this.type = type;
 		this.place = place;
-		this.ems = ems;
 		this.begin = begin;
 		this.end = end;
+		this.ems = ems;
+		this.receipt = receipt;
 		this.pay = pay;
 		this.money = money;
 		this.memo = memo;
@@ -89,20 +94,28 @@ public class DdSubmit implements java.io.Serializable {
 		this.amount = amount;
 	}
 
+	public String getStatus() {
+		return this.status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getType() {
+		return this.type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
 	public String getPlace() {
 		return this.place;
 	}
 
 	public void setPlace(String place) {
 		this.place = place;
-	}
-
-	public String getEms() {
-		return this.ems;
-	}
-
-	public void setEms(String ems) {
-		this.ems = ems;
 	}
 
 	public Timestamp getBegin() {
@@ -119,6 +132,22 @@ public class DdSubmit implements java.io.Serializable {
 
 	public void setEnd(Timestamp end) {
 		this.end = end;
+	}
+
+	public String getEms() {
+		return this.ems;
+	}
+
+	public void setEms(String ems) {
+		this.ems = ems;
+	}
+
+	public String getReceipt() {
+		return this.receipt;
+	}
+
+	public void setReceipt(String receipt) {
+		this.receipt = receipt;
 	}
 
 	public String getPay() {
