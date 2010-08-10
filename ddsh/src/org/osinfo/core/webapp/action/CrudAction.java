@@ -240,7 +240,6 @@ public abstract class CrudAction extends BaseAction {
 		end=Integer.parseInt((String)getParameter(ENDRECORD));//开始
 		perpage=Integer.parseInt((String)getParameter(PERPAGE));//开始
 		type=(String)getParameter("type");//操作类型
-		
 		expressions=this.expressionsTranslation(Search_, SearchField_, SearchOper_, SearchString_);
 		String filter = getParameter("filter");
 		if(filter!=null)
@@ -279,7 +278,7 @@ public abstract class CrudAction extends BaseAction {
 		cfg=new JsonConfig();
 		//具体实现类
 		String content=this.myResult();
-		System.out.println(content);
+		//System.out.println(content);
 		//设置headers参数
 		String fullContentType = "text/html;charset=UTF-8";
 		getResponse().setContentType(fullContentType);
@@ -307,14 +306,15 @@ public abstract class CrudAction extends BaseAction {
 		if(logger.isDebugEnabled())
 			logger.debug("加载列表导出页面...");
 	    String name=getParameter("name");
-	    String type=getParameter("type");
+	    String t=getParameter("t");
 	    String scope=getParameter("scope");
 	    String template=getParameter("template");
 	    String bound=getParameter("bound");
 	    String where=getParameter("where");
 	    String sort=getParameter("sort");
 	    String dir=getParameter("dir");
-	    type="1";
+	    type=getParameter("type");
+	    t="1";
 	    ServletOutputStream out = null;
 		try {
 			out = getResponse().getOutputStream();
@@ -324,7 +324,7 @@ public abstract class CrudAction extends BaseAction {
 		}
     	HSSFWorkbook workbook = null;
     	POIFSFileSystem fs ;
-	    if(type.equalsIgnoreCase("1"))//excel
+	    if(t.equalsIgnoreCase("1"))//excel
 	    {
 			if (template != null) {
 				if(!template.trim().equals(""))
@@ -374,16 +374,16 @@ public abstract class CrudAction extends BaseAction {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-	    }else if(type.equalsIgnoreCase("2"))//pdf
+	    }else if(t.equalsIgnoreCase("2"))//pdf
 	    {
 	    	
-	    }else if(type.equalsIgnoreCase("3"))//word
+	    }else if(t.equalsIgnoreCase("3"))//word
 	    {
 	    	
-	    }else if(type.equalsIgnoreCase("4"))//cvs
+	    }else if(t.equalsIgnoreCase("4"))//cvs
 	    {
 	    	
-	    }else if(type.equalsIgnoreCase("5"))//txt
+	    }else if(t.equalsIgnoreCase("5"))//txt
 	    {
 	    	
 	    }

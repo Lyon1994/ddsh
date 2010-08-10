@@ -19,16 +19,12 @@ import org.apache.struts2.convention.annotation.Results;
 import org.osinfo.core.webapp.action.CrudAction;
 import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
-import org.osinfo.core.webapp.model.DdBack;
 import org.osinfo.core.webapp.model.DdInventory;
-import org.osinfo.core.webapp.model.DdSales;
-import org.osinfo.core.webapp.model.DdSell;
-import org.osinfo.core.webapp.model.DdTopper;
+import org.osinfo.core.webapp.model.custom.Sales;
 import org.osinfo.core.webapp.util.ExcelUtil;
 import org.osinfo.core.webapp.util.PageUtil;
 @Results({
-	 @Result(name="list",location = "/WEB-INF/result/system/sale/list.ftl"),
-	 @Result(name="list2",location = "/WEB-INF/result/system/sale/list2.ftl"),
+	 @Result(name="list",location = "/WEB-INF/result/system/sale/list.ftl")
 })
 /**
  * @Author Lucifer.Zhou 4:29:47 PM Jan 6, 2010
@@ -49,8 +45,6 @@ public class SaleAction<T> extends CrudAction{
 	}
 
 	//售货,插入销售明细，同时也记录销售交易记录表
-	//出售的时候要注意物品时从货架上拿的话，要先走下架，放入库存，再出售
-	//如果是从库存拿的话不需要走下架
 	@Override
 	public String add() {
 		// TODO Auto-generated method stub
@@ -66,30 +60,17 @@ public class SaleAction<T> extends CrudAction{
 		for(int i=0;i<v.length;i++)
 		{
 			String[] b=v[i].split("\\,");
-			String sql="insert into dd_sales (transaction,barcode,name,discount,amount,price,operator,date) " +
-			"values ('"+transaction+"','"+b[0]+"','"+b[1]+"',"+b[4]+","+b[3]+","+b[2]+",'"+operator+"','"+submitdate+"')";
+			String sql="insert into dd_sales (transaction,barcode,discount,amount,operator,date) " +
+			"values ('"+transaction+"','"+b[0]+"',"+b[3]+","+b[4]+",'"+operator+"','"+submitdate+"')";
 			CommonDAO.executeUpdate(sql);
-			if(b[5].equals("1"))//货架
+			sql="select * from dd_inventory where barcode='"+b[0]+"'";//获取库存数量
+			List l2=CommonDAO.executeQuery(sql, DdInventory.class);
+			if(l2.size()==1)
 			{
-				sql="select * from dd_sell where barcode='"+b[0]+"'";//获取库存数量
-				List l2=CommonDAO.executeQuery(sql, DdSell.class);
-				if(l2.size()>0)
-				{
-					DdSell vs=(DdSell)l2.get(0);//更新库存数量
-					sql="update dd_sell set amount="+(vs.getAmount()-Integer.valueOf(b[3]))+" where id ="+vs.getId();
-					CommonDAO.executeUpdate(sql);
-				}
-			}else//库存
-			{
-				sql="select * from dd_inventory where barcode='"+b[0]+"'";//获取库存数量
-				List l2=CommonDAO.executeQuery(sql, DdInventory.class);
-				if(l2.size()>0)
-				{
-					DdInventory vs=(DdInventory)l2.get(0);//更新库存数量
-					sql="update dd_inventory set amount="+(vs.getAmount()-Integer.valueOf(b[3]))+" where id ="+vs.getId();
-					CommonDAO.executeUpdate(sql);
-				}	
-			}
+				DdInventory vs=(DdInventory)l2.get(0);//更新库存数量
+				sql="update dd_inventory set amount="+(vs.getAmount()-Integer.valueOf(b[4]))+" where id ="+vs.getId();
+				CommonDAO.executeUpdate(sql);
+			}	
 
 		}
 		//记录交易记录表 
@@ -110,7 +91,7 @@ public class SaleAction<T> extends CrudAction{
 	    		String sql="delete from dd_sales where id in ("+ids.substring(0,ids.length()-1)+")";
 	    		CommonDAO.executeUpdate(sql);
 	    }
-	    renderSimpleResult(true,"ok");
+	    renderSimpleResult(true,"操作成功");
         return null;
 	}
 	@Override
@@ -132,11 +113,15 @@ public class SaleAction<T> extends CrudAction{
 
 		getResponse().setHeader("Content-disposition","attachment;filename=" +name2+"-"+getCurrentTime() + ".xls");
 		String[] headers = { "序号","交易号","条形码", "名称","折扣", "数量", "价格","操作者","日期"};
+		String sql;
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
-		String sql;
-		sql="select * from dd_sales where amount>0 order by date desc";
-		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,DdSales.class);
+		if(t.equals("2"))
+			sql="select s.id,s.transaction,s.barcode,p.name,s.discount,s.amount,p.price,s.operator,s.date from dd_sales s left join dd_product p on s.barcode=p.barcode where p.userid='"+userid+"' and s.amount>0 order by s.date desc";
+		else
+			sql="select s.id,s.transaction,s.barcode,p.name,s.discount,s.amount,p.price,s.operator,s.date from dd_sales s left join dd_product p on s.barcode=p.barcode where s.amount>0 order by s.date desc";;
+		
+			PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,Sales.class);
 		Collection<T> l = (Collection<T>) p.getResult();
 		return ExcelUtil.exportExcel(workbook,name, headers, l);
 	}
@@ -156,8 +141,12 @@ public class SaleAction<T> extends CrudAction{
 		String sql;
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
-		sql="select * from dd_sales where amount>0 order by date desc";
-		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,DdSales.class);
+		if(t.equals("2"))
+			sql="select s.id,s.transaction,s.barcode,p.name,s.discount,s.amount,p.price,s.operator,s.date from dd_sales s left join dd_product p on s.barcode=p.barcode where p.userid='"+userid+"' and s.amount>0 order by s.date desc";
+		else
+			sql="select s.id,s.transaction,s.barcode,p.name,s.discount,s.amount,p.price,s.operator,s.date from dd_sales s left join dd_product p on s.barcode=p.barcode where s.amount>0 order by s.date desc";;
+		
+		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,Sales.class);
 		
 		String content = "totalPage = " + p.getTotalPageCount() + ";";
 		content += "dataStore = [";
@@ -165,7 +154,7 @@ public class SaleAction<T> extends CrudAction{
 		List l=(List)p.getResult();
 		for(int i=0;i<l.size();i++)
 		{
-			DdSales d=(DdSales)l.get(i);
+			Sales d=(Sales)l.get(i);
 
 			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getTransaction()+"</td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td>"+d.getDiscount()+"</td><td>"+d.getAmount()+"</td><td>"+d.getPrice()+"</td><td>"+d.getOperator()+"</td><td>"+d.getDate()+"</td></tr>\",";
 		}
@@ -180,7 +169,11 @@ public class SaleAction<T> extends CrudAction{
 		String sql;
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
-		sql="select * from dd_sales where amount>0";
+		if(t.equals("2"))
+			sql="select s.id  from dd_sales s left join dd_product p on s.barcode=p.barcode where p.userid='"+userid+"' and s.amount>0 order by s.date desc";
+		else
+			sql="select * from dd_sales  where  amount>0 order by date desc";;
+		
 		int count=CommonDAO.count(sql);
 		return count;
 	}

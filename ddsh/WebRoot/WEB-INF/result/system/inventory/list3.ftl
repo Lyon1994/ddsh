@@ -20,6 +20,7 @@
 		<script language="javascript">
 			<!--
 			var b=false;
+
 			function ck()
 			{
 				if(b)
@@ -29,6 +30,80 @@
 				var sel = document.getElementsByName("row");
 			    for (var i=0;i<sel.length;i++ )
 		    		sel[i].checked = b;  
+			}
+			function uploadQuick()
+			{
+				var str="";
+				var sel = document.getElementsByName("row");
+			    for(var i=0;i<sel.length;i++)
+			    {
+			   		if(sel[i].checked==true)
+			   			str+=sel[i].value+",";
+			    }
+				if(str==""){
+					alert("请至少选择一条记录");
+					return false;
+				}
+				var returnstr;
+        		returnstr = window.showModalDialog('../html/inventory_upload_more.jsp?ids='+str,'',"dialogHeight: 350px; dialogWidth:650px;center: yes; help: no;resizable: no; status: no;");
+				load('');
+			}
+
+			function upload()
+			{
+				var str="";
+				var m=0;
+				var sel = document.getElementsByName("row");
+				for(var i=0;i<sel.length;i++)
+			    {
+			   		if(sel[i].checked==true)
+			   		{
+			   			str+=sel[i].value+",";
+			   			m=m+1;
+			   		}
+
+			    }
+			    if(str==""){
+					alert("请至少选择一条记录");
+					return false;
+				}
+				if(m>1)
+			    {
+			    	alert("请选择一条记录!不能多选操作");
+					return false;
+			    }
+				var returnstr;
+        		returnstr = window.showModalDialog('../html/inventory_upload.jsp?id='+str.replace(',',''),'',"dialogHeight: 300px; dialogWidth: 650px;center: yes; help: no;resizable: no; status: no;");
+				load('');
+
+			}
+			function back()
+			{
+				var str="";
+				var m=0;
+				var sel = document.getElementsByName("row");
+				for(var i=0;i<sel.length;i++)
+			    {
+			   		if(sel[i].checked==true)
+			   		{
+			   			str+=sel[i].value+",";
+			   			m=m+1;
+			   		}
+
+			    }
+			    if(str==""){
+					alert("请至少选择一条记录");
+					return false;
+				}
+				if(m>1)
+			    {
+			    	alert("请选择一条记录!不能多选操作");
+					return false;
+			    }
+				var returnstr;
+        		returnstr = window.showModalDialog('../html/back_submit2.jsp?id='+str.replace(',',''),'',"dialogHeight: 300px; dialogWidth: 500px;center: yes; help: no;resizable: no; status: no;");
+				load('');
+
 			}
 			function load(param)
 			{
@@ -46,10 +121,7 @@
 					 	}
 					}); 
 			}
-			function exports()
-			{
-				window.open('inventory!export.zf?type=1&t='+new Date().getTime());
-			}
+
 			$(document).ready(
 				function(){
 					//demo1带参数
@@ -76,8 +148,9 @@
 		<table border="0" width="100%" cellspacing="0" cellpadding=" height="30">
 			<tr>
 				<td>
-					<img src="${images}/export.gif" onclick="exports()" style="cursor:hand" />
-					<img src="${images}/printer.gif" style="cursor:hand" />
+					<img src="${images}/return.gif" onclick="back()" alt="单件退回" style="cursor:hand"/>
+					<img src="${images}/mup.gif" onclick="uploadQuick()" alt="批量上架" style="cursor:hand"/>
+					<img src="${images}/sup.gif" onclick="upload()" alt="单品上架" style="cursor:hand"/>
 				</td>
 			</tr>
 		</table>

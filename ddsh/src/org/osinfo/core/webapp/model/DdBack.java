@@ -11,10 +11,10 @@ public class DdBack implements java.io.Serializable {
 	// Fields
 
 	private Integer id;
-	private Integer topperid;
-	private String userid;
-	private String name;
+	private String barcode;
+	private String transaction;
 	private Integer amount;
+	private String type;
 	private String reason;
 	private String operator;
 	private Timestamp date;
@@ -25,13 +25,20 @@ public class DdBack implements java.io.Serializable {
 	public DdBack() {
 	}
 
-	/** full constructor */
-	public DdBack(Integer topperid, String userid, String name, Integer amount,
-			String reason, String operator, Timestamp date) {
-		this.topperid = topperid;
-		this.userid = userid;
-		this.name = name;
+	/** minimal constructor */
+	public DdBack(String barcode, Integer amount, String type) {
+		this.barcode = barcode;
 		this.amount = amount;
+		this.type = type;
+	}
+
+	/** full constructor */
+	public DdBack(String barcode, String transaction, Integer amount,
+			String type, String reason, String operator, Timestamp date) {
+		this.barcode = barcode;
+		this.transaction = transaction;
+		this.amount = amount;
+		this.type = type;
 		this.reason = reason;
 		this.operator = operator;
 		this.date = date;
@@ -47,28 +54,20 @@ public class DdBack implements java.io.Serializable {
 		this.id = id;
 	}
 
-	public Integer getTopperid() {
-		return this.topperid;
+	public String getBarcode() {
+		return this.barcode;
 	}
 
-	public void setTopperid(Integer topperid) {
-		this.topperid = topperid;
+	public void setBarcode(String barcode) {
+		this.barcode = barcode;
 	}
 
-	public String getUserid() {
-		return this.userid;
+	public String getTransaction() {
+		return this.transaction;
 	}
 
-	public void setUserid(String userid) {
-		this.userid = userid;
-	}
-
-	public String getName() {
-		return this.name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
+	public void setTransaction(String transaction) {
+		this.transaction = transaction;
 	}
 
 	public Integer getAmount() {
@@ -77,6 +76,14 @@ public class DdBack implements java.io.Serializable {
 
 	public void setAmount(Integer amount) {
 		this.amount = amount;
+	}
+
+	public String getType() {
+		return this.type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	public String getReason() {

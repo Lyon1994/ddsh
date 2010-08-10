@@ -31,13 +31,7 @@
 			    for (var i=0;i<sel.length;i++ )
 		    		sel[i].checked = b;  
 			}
-			function sale()
-			{
-				var returnstr;
-        		returnstr = window.showModalDialog('../html/sale.jsp','',"dialogHeight: 350px; dialogWidth: 650px;center: yes; help: no;resizable: no; status: no;");
-				load('');
-			}
-			
+
 			function deletes()
 			{
 				var str="";
@@ -112,7 +106,6 @@
 		<table border="0" width="100%" cellspacing="0" cellpadding=" height="30">
 			<tr>
 				<td height="30" valign="bottom">
-					<img src="${images}/sale.gif" onclick="sale()" style="cursor:hand" />
 					<img src="${images}/delete.gif" onclick="deletes()" style="cursor:hand" />
 					<img src="${images}/export.gif"  onclick="exports()" style="cursor:hand"/>
 					<img src="${images}/printer.gif" style="cursor:hand"/>

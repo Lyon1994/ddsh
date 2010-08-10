@@ -12,29 +12,29 @@
     <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
 	<link href="../css/mainstyle.css" rel="stylesheet" type="text/css" />
 	<script language="javascript" src="../js/jquery/jquery-1.4.2.min.js"></script>
+	<script language="javascript" src="../js/jquery/jquery-plugins/jQuery.FillOptions.js"></script>
+	<script language="javascript" src="../js/jquery/jquery-plugins/validation/jquery.validate.js"></script>
 	<script language="javascript">
 		$(document).ready(
 			function(){
+					$("#reason").FillOptions("../system/dic!load.zf?parent=reason",{datatype:"json",textfield:"name",valuefiled:"value"});
+					$("#regedit").validate();
 					$.ajax({
-					 	url: '../system/topper!load.zf?id='+<%=id%>+'&t='+new Date().getTime(),
+					 	url: '../system/inventory!load.zf?id='+<%=id%>+'&t='+new Date().getTime(),
 					 	type: 'POST',
 					 	dataType: 'json',
 					 	error: function(){alert('error');},
 					 	success: function(json){
-							$('#name').attr('value',json[0].name);
-							$('#userid').attr('value',json[0].userid);
+							$('#barcode').attr('value',json[0].barcode);
 							$('#amount').attr('value',json[0].amount);
-							$('#id').attr('value',json[0].id);
 					 	}
 					});
 					$('#ok').click( 
 						function(){	
-							var topperid=$('#id').attr('value');
 							var reason=$('#reason').attr('value');
 							var amount=$('#amount').attr('value');
-							var userid=$('#userid').attr('value');
-							var name=$('#name').attr('value');
-							var para='topperid='+topperid+'&name='+name+'&amount='+amount+'&reason='+reason+'&userid='+userid+'&t='+new Date().getTime();
+							var barcode=$('#barcode').attr('value');
+							var para='type=02&amount='+amount+'&reason='+reason+'&barcode='+barcode+'&t='+new Date().getTime();
 							
 							$.ajax({
 								 	url: '../system/back!add.zf',
@@ -55,8 +55,7 @@
   </head>
   
   <body>
-	<form name="regedit" action="#" method="post">
-	<input type="hidden" id="id" name="id"/>
+	<form id="regedit" name="regedit" action="#" method="post">
 	<table border="0" width="100%" cellspacing="0" cellpadding="0" height="25">
 	<tr class="tree_title_txt">
 	<td nowrap width="100%" class="tree_title_txt" valign="middle" id="cwCellTopTitTxt">
@@ -70,23 +69,24 @@
 			<td class="maintab_kuang">
 			<table border="0" width="100%" cellspacing="0" cellpadding="0" class="tab_table_title">
 				<tr>
-					<td>商品名称：</td>
-					<td><input type="text" id="name" name="name" size="20" class="readonly" readonly="readonly" /></td>
-					<td>用户ID：</td>
-					<td><input type="text" id="userid" name="userid" size="20" class="readonly" readonly="readonly" /></td>
+					<td>条形码：</td>
+					<td><input type="text" id="barcode" name="barcode" size="20" class="text" readonly="readonly" /></td>
+					<td></td>
+					<td></td>
 				</tr>
 				<tr>
 					<td>数量：</td>
-					<td><input type="text" id="amount" name="amount" size="20" class="text"/></td>
+					<td><input type="text" id="amount" name="amount" size="20" class="text required digits" minlength="1"/></td>
 					<td></td>
 					<td></td>
 				</tr>
 				
 				<tr>
 					<td>退回原因：</td>
-					<td colspan="3"><textarea rows="6" id="reason" name="reason" cols="100" class="text"></textarea></td>
-
-				</tr>
+					<td><select id="reason" name="reason"></select></td>
+					<td></td>
+					<td></td>
+				</tr>		
 				<tr>
 					<td colspan="4"><hr size="1"/></td>
 				</tr>

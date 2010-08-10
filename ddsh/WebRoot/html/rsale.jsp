@@ -9,20 +9,44 @@
     <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
 	<link href="../css/mainstyle.css" rel="stylesheet" type="text/css" />
 	<script language="javascript" src="../js/jquery/jquery-1.4.2.min.js"></script>
+	<script language="javascript" src="../js/jquery/jquery-plugins/jQuery.FillOptions.js"></script>
 	<script language="javascript">
 		$(document).ready(
 			function(){
+					$("#reason").FillOptions("../system/dic!load.zf?parent=reason",{datatype:"json",textfield:"name",valuefiled:"value"});
+					$("#barcode").focus();
+					$('#barcode').keydown(function(event){
+							//alert(event.keyCode);
+							//return false;
+							if(event.keyCode==13){//扫描枪,回车
+								var barcode=$("#barcode").attr('value');
+								$.ajax({
+								 	url: '../system/inventory!load.zf?barcode='+barcode+'&t='+new Date().getTime(),
+								 	type: 'POST',
+								 	dataType: 'json',
+								 	error: function(){alert('error');},
+								 	success: function(json){
+								 		if(json.length>0)
+								 		{
+								 			$("#name").attr('value',json[0].name);
+								 			$("#price").attr('value',json[0].price);
+								 		}else
+								 			alert('商品不存在！');
+								 	}
+								});
+							}
+						}
+					);
 					$('#ok').click( 
 						function(){	
 							var transaction=$('#transaction').attr('value');
 							var barcode=$('#barcode').attr('value');
-							var name=$('#name').attr('value');
 							var amount=$('#amount').attr('value');
 							var reason=$('#reason').attr('value');
-							var para='transaction='+transaction+'&name='+name+'&amount='+amount+'&barcode='+barcode+'&reason='+reason+'&t='+new Date().getTime();
+							var para='type=03&transaction='+transaction+'&amount='+amount+'&barcode='+barcode+'&reason='+reason+'&t='+new Date().getTime();
 							
 							$.ajax({
-								 	url: '../system/rsale!add.zf',
+								 	url: '../system/back!add.zf',
 								 	type: 'POST',
 								 	dataType: 'json',
 								 	data:para,//参数设置
@@ -55,27 +79,27 @@
 			<td class="maintab_kuang">
 			<table border="0" width="100%" cellspacing="0" cellpadding="0" class="tab_table_title">
 				<tr>
-					<td>交易号：</td>
-					<td><input type="text" id="transaction" name="transaction" size="20" class="text"/></td>
-					<td></td>
-					<td></td>
-				</tr>
-				<tr>
 					<td>条形码：</td>
 					<td><input type="text" id="barcode" name="barcode" size="20" class="text"/></td>
+					<td>交易号：</td>
+					<td><input type="text" id="transaction" name="transaction" size="20" class="text"/></td>
+				</tr>
+				<tr>
 					<td>商品名称：</td>
-					<td><input type="text" id="name" name="name" size="20" class="text"/></td>
+					<td><input type="text" id="name" name="name" size="20" class="text" readonly/></td>
+					<td>单价：</td>
+					<td><input type="text" id="price" name="price"  size="20" class="text" readonly/></td>
 				</tr>
 				<tr>
 					<td>数量：</td>
-					<td><input type="text" id="amount" name="amount" size="20" class="text"/></td>
+					<td><input type="text" id="amount" name="amount" value='1' size="20" class="text"/></td>
 					<td></td>
 					<td></td>
 				</tr>
 				<tr>
 					<td>退回原因：</td>
-					<td colspan="3"><textarea rows="6" id="reason" name="reason" cols="100" class="text"></textarea></td>
-
+					<td><select id="reason" name="reason"></select></td>
+					<td colspan="2"></td>
 				</tr>
 				<tr>
 					<td colspan="4"><hr size="1"/></td>

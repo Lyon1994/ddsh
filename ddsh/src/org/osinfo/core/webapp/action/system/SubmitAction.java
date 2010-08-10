@@ -8,38 +8,31 @@
  */
 package org.osinfo.core.webapp.action.system;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.osinfo.core.webapp.action.CrudAction;
 import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
+import org.osinfo.core.webapp.model.DdInventory;
 import org.osinfo.core.webapp.model.DdSubmit;
+import org.osinfo.core.webapp.model.custom.Submit;
 import org.osinfo.core.webapp.util.DBUtil;
 import org.osinfo.core.webapp.util.ExcelUtil;
 import org.osinfo.core.webapp.util.JsonUtil;
 import org.osinfo.core.webapp.util.PageUtil;
 @Results({
-	 @Result(name="list",location = "/WEB-INF/result/system/submit/list.ftl")
+	 @Result(name="list",location = "/WEB-INF/result/system/submit/list.ftl"),
+	 @Result(name="list2",location = "/WEB-INF/result/system/submit/list2.ftl")
 })
 /**
  * @Author Lucifer.Zhou 4:29:47 PM Jan 6, 2010
@@ -59,8 +52,13 @@ public class SubmitAction<T> extends CrudAction{
 	 */
 	private static final long serialVersionUID = 1L;
 
+	//管理员审批商品
 	public String list() {
 		return "list";
+	}
+	//设计师待批商品
+	public String list2() {
+		return "list2";
 	}
 
 	//商品递交
@@ -71,6 +69,8 @@ public class SubmitAction<T> extends CrudAction{
 		String amount=getParameter("amount");
 		
 		String place=getParameter("place");
+		String type_=getParameter("types");
+		String serialnumber=getParameter("serialnumber");
 		String ems=getParameter("ems");
 		String begin=getParameter("begin");		
 		
@@ -81,17 +81,69 @@ public class SubmitAction<T> extends CrudAction{
 		String memo=getParameter("memo");
 		String submitdate=getCurrentTime();
 
-	    String sql="insert into dd_submit (barcode,amount,place,ems,begin,end,pay,money,memo,submitdate) " +
-		"values ('"+barcode+"',"+amount+",'"+place+"','"+ems+"','"+begin+"','"+end+"','"+pay+"',"+money+",'"+memo+"','"+submitdate+"')";
+	    String sql="insert into dd_submit (barcode,amount,status,type,place,begin,end,ems,receipt,pay,money,memo,submitdate) " +
+		"values ('"+barcode+"',"+amount+",'0','"+type_+"','"+place+"','"+begin+"','"+end+"','"+ems+"','"+serialnumber+"','"+pay+"',"+money+",'"+memo+"','"+submitdate+"')";
 	    
 		int v=CommonDAO.executeUpdate(sql);
 		if(v>0)
-			return "success";
+			return "success2";
 		else
-			return "error";
+			return "error2";
 	}
+	public String load() {
+		// TODO Auto-generated method stub
+		if(logger.isDebugEnabled())
+			logger.debug("加载装入页面...");
+		String id=getParameter("id");
+		String sql="select * from dd_submit where id ="+id;
+		List l=CommonDAO.executeQuery(sql,DdSubmit.class);
+		String json = JsonUtil.list2json(l);
+    	renderJson(json.toString());
+        return null;
+	}
+	//商品退回-接收
+	public String back() {
+		// TODO Auto-generated method stub
+		String barcode=getParameter("barcode");
+		String amount=getParameter("amount");
+		String reason=getParameter("reason");
+		String submitdate=getCurrentTime();
+		String operator=(String) getSession().getAttribute("userid");
+		String id=getParameter("id");
+		String sql="insert into dd_back (barcode,amount,type,reason,operator,date) " +
+				"values ('"+barcode+"',"+amount+",'01','"+reason+"','"+operator+"','"+submitdate+"')";
+		int v=CommonDAO.executeUpdate(sql);
+		//更新商品接收表数量
+		String sql2="select * from dd_submit where id ="+id;
+    	List l=CommonDAO.executeQuery(sql2,DdSubmit.class);
+    	for(int i=0;i<l.size();i++)
+    	{
+    		DdSubmit t=(DdSubmit)l.get(i);
+    		sql="update dd_submit set  amount="+(t.getAmount()-Integer.valueOf(amount))+" where id ="+id;
+	    	CommonDAO.executeUpdate(sql);
+    	}
+    	renderSimpleResult(true,"处理完毕");
+	    return null;
+	}
+	//批量退回
+	public String batchAdd() {
+		// TODO Auto-generated method stub
+	    String ids=getParameter("ids");
+	    ids=ids.substring(0,ids.length()-1);
+	    if(!"".equals(ids.trim())){
+	    		String submitdate=getCurrentTime();
 
-
+	    		String operator=(String) getSession().getAttribute("userid");
+		    	String sql2="insert into dd_back (barcode,amount,type,reason,operator,date) " +
+		    			"select barcode,amount,'01','01','"+operator+"','"+submitdate+"' from dd_submit where id in ("+ids+")";
+		    	CommonDAO.executeUpdate(sql2);
+		    	
+	    		String sql="update dd_submit set amount=0 where id in ("+ids+")";
+	    		CommonDAO.executeUpdate(sql);
+	    }
+	    renderSimpleResult(true,"处理完毕");
+	    return null;
+	}
 	//审核通过,入库
 	public String apply() {
 		// TODO Auto-generated method stub
@@ -104,19 +156,17 @@ public class SubmitAction<T> extends CrudAction{
 	    if(!"".equals(ids.trim())){
 	    	String[] idList = ids.split("\\,");
     		for(String id:idList){
-    			String sql="select barcode,type,amount from dd_topper where id ="+id;
+    			String sql="select barcode,amount from dd_submit where id ="+id;
     			ResultSet rs = null;
     			Statement stmt = null;
     			Connection conn=DBUtil.getConnection();
-    			String type="1";
     			String barcode="";
-    			String amount="";
+    			String amount="0";
     			try {
     				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
     				rs=stmt.executeQuery(sql);
     				while (rs.next())
     				{
-    					type=rs.getString("type");
     					barcode=rs.getString("barcode");
     					amount=rs.getString("amount");
     				}
@@ -126,47 +176,27 @@ public class SubmitAction<T> extends CrudAction{
     			}finally {
     				DBUtil.close(rs, stmt, conn);
     			}
-    			if(type==null)
-    				type="1";
-    			if(type.equals("1"))
-    			{
-    				sql="update dd_topper set status='1',barcode='"+getRandomBarCode()+"',date='"+submitdate+"',operator='"+operator+"' where id ="+id;
-    				CommonDAO.executeUpdate(sql);
-    		    	
-    		    	String sql2="insert into dd_inventory (barcode,name,amount,price,discount,totalprice,userid,spec,material,grade,location,operator,date) " +
-    		    			"select barcode,name,amount,price,"+1+",totalprice,userid,spec,material,grade,location,operator,date from dd_topper where id ="+id;
-    		    	CommonDAO.executeUpdate(sql2);
-    			}else
-    			{
-    				sql="update dd_topper set status='1',date='"+submitdate+"',operator='"+operator+"' where id ="+id;
-    				CommonDAO.executeUpdate(sql);
-    				sql="select amount from dd_inventory  where barcode='"+barcode+"'";
 
-        			conn=DBUtil.getConnection();
-    				String amount_="";
-        			try {
-        				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
-        				rs=stmt.executeQuery(sql);
-        				while (rs.next())
-        				{
-        					amount_=rs.getString("amount");
-        				}
-        			} catch (SQLException e) {
-        				// TODO Auto-generated catch block
-        				e.printStackTrace();
-        			}finally {
-        				DBUtil.close(rs, stmt, conn);
-        			}
-    				sql="update dd_inventory set amount="+(Integer.valueOf(amount)+Integer.valueOf(amount_))+" where barcode='"+barcode+"'";
-    		    	CommonDAO.executeUpdate(sql);
-    			}
+    				sql="update dd_submit set status='1',date='"+submitdate+"',operator='"+operator+"' where id ="+id;
+    				CommonDAO.executeUpdate(sql);
+    				sql="select * from dd_inventory  where barcode='"+barcode+"'";
+    				List l=CommonDAO.executeQuery(sql, DdInventory.class);
+    				if(l.size()==1)
+    				{
+    					DdInventory i=(DdInventory)l.get(0);
+    					
+    					sql="update dd_inventory set amount="+(Integer.valueOf(amount)+Integer.valueOf(i.getAmount()))+" where barcode='"+barcode+"'";
+    				}else if(l.size()==0)
+    				{
+    					sql="insert into  dd_inventory (barcode,amount,discount,operator,date) value ('"+barcode+"','"+amount+"',1,'"+operator+"','"+submitdate+"')";
+        				
+    				}else
+    				    renderSimpleResult(true,"操作失败：库存存在相同条码的物品！");
+    				CommonDAO.executeUpdate(sql);
+
     		}
-	    	//
-	    	//String sql2="insert into dd_inventory (barcode,name,amount,price,discount,totalprice,userid,spec,material,grade,location,operator,date) " +
-	    			//"select barcode,name,amount,price,"+1+",totalprice,userid,spec,material,grade,location,operator,date from dd_topper where id in ("+ids+")";
-	    	//CommonDAO.executeUpdate(sql2);
 	    }
-	    renderSimpleResult(true,"ok");
+	    renderSimpleResult(true,"操作成功！");
         return null;
 	}
 
@@ -193,7 +223,7 @@ public class SubmitAction<T> extends CrudAction{
 
 		String operator=(String) getSession().getAttribute("userid");
 		
-		String sql="update dd_submit set "+tdid+"="+value+",date='"+submitdate+"',operator='"+operator+"' where id ="+trid;
+		String sql="update dd_submit set "+tdid+"='"+value+"',date='"+submitdate+"',operator='"+operator+"' where id ="+trid;
 		CommonDAO.executeUpdate(sql);
 		renderSimpleResult(true,"修改成功");
 		return null;
@@ -211,24 +241,24 @@ public class SubmitAction<T> extends CrudAction{
 			name2 = URLEncoder.encode(name, "UTF-8");//IE浏览器 终极解决文件名乱码
 
 		getResponse().setHeader("Content-disposition","attachment;filename=" +name2+"-"+getCurrentTime() + ".xls");
-		String[] headers = { "序号","条形码", "名称", "图片","数量", "价格", "总计", "设计师","规格","材料","尺寸","产地","状态","备注","提交日期","验证日期","操作者"};
+		String[] headers = { "序号","条形码","名称","数量", "状态", "送货方式", "发货日","到货日","发货地","快递单号", "快递方式","付款方式","快递费","备注","提交日期"};
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
 		String sql;
 		if(t.equals("2"))
 		{
 			if(type.equals("1"))
-				sql="select * from dd_submit where status='1' and amount>0 and userid='"+userid+"' order by date desc";
+				sql="select s.id,s.barcode,p.name,s.amount,s.status,s.type,s.place,s.begin,s.end,(select d.value from dd_dic d where d.parent='ems' and d.child=s.ems) as ems,s.receipt,(select d.value from dd_dic d where d.parent='pay' and d.child=s.pay) as pay,s.money,s.memo,s.date from dd_submit s left join dd_product p on s.barcode=p.barcode where s.status='1' and p.userid='"+userid+"'  and s.amount>0 order by s.date desc";
 			else
-				sql="select * from dd_submit where status='0' and amount>0 and userid='"+userid+"' order by date desc";
+				sql="select s.id,s.barcode,p.name,s.amount,s.status,s.type,s.place,s.begin,s.end,(select d.value from dd_dic d where d.parent='ems' and d.child=s.ems) as ems,s.receipt,(select d.value from dd_dic d where d.parent='pay' and d.child=s.pay) as pay,s.money,s.memo,s.submitdate from dd_submit s left join dd_product p on s.barcode=p.barcode where s.status='0' and p.userid='"+userid+"'  and s.amount>0 order by s.submitdate desc";
 		}else
 		{
 			if(type.equals("1"))
-				sql="select * from dd_submit where status='1' and amount>0 order by date desc";
+				sql="select s.id,s.barcode,p.name,s.amount,s.status,s.type,s.place,s.begin,s.end,(select d.value from dd_dic d where d.parent='ems' and d.child=s.ems) as ems,s.receipt,(select d.value from dd_dic d where d.parent='pay' and d.child=s.pay) as pay,s.money,s.memo,s.date from dd_submit s left join dd_product p on s.barcode=p.barcode where s.status='1'  and s.amount>0 order by s.date desc";
 			else
-				sql="select * from dd_submit where status='0' and amount>0 order by date desc";
+				sql="select s.id,s.barcode,p.name,s.amount,s.status,s.type,s.place,s.begin,s.end,(select d.value from dd_dic d where d.parent='ems' and d.child=s.ems) as ems,s.receipt,(select d.value from dd_dic d where d.parent='pay' and d.child=s.pay) as pay,s.money,s.memo,s.submitdate from dd_submit s left join dd_product p on s.barcode=p.barcode where s.status='0'  and s.amount>0 order by s.submitdate desc";
 		}
-		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,DdSubmit.class);
+		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,Submit.class);
 		Collection<T> l = (Collection<T>) p.getResult();
 		return ExcelUtil.exportExcel(workbook,name, headers, l);
 	}
@@ -251,17 +281,17 @@ public class SubmitAction<T> extends CrudAction{
 		if(t.equals("2"))
 		{
 			if(type.equals("1"))
-				sql="select * from dd_submit where status='1' and amount>0 and userid='"+userid+"' order by date desc";
+				sql="select s.id,s.barcode,p.name,s.amount,s.status,s.type,s.place,s.begin,s.end,(select d.value from dd_dic d where d.parent='ems' and d.child=s.ems) as ems,s.receipt,(select d.value from dd_dic d where d.parent='pay' and d.child=s.pay) as pay,s.money,s.memo,s.date from dd_submit s left join dd_product p on s.barcode=p.barcode where s.status='1' and p.userid='"+userid+"'  and s.amount>0 order by s.date desc";
 			else
-				sql="select * from dd_submit where status='0' and amount>0 and userid='"+userid+"' order by date desc";
+				sql="select s.id,s.barcode,p.name,s.amount,s.status,s.type,s.place,s.begin,s.end,(select d.value from dd_dic d where d.parent='ems' and d.child=s.ems) as ems,s.receipt,(select d.value from dd_dic d where d.parent='pay' and d.child=s.pay) as pay,s.money,s.memo,s.submitdate as date from dd_submit s left join dd_product p on s.barcode=p.barcode where s.status='0' and p.userid='"+userid+"'  and s.amount>0 order by s.submitdate desc";
 		}else
 		{
 			if(type.equals("1"))
-				sql="select * from dd_submit where status='1' and amount>0 order by date desc";
+				sql="select s.id,s.barcode,p.name,s.amount,s.status,s.type,s.place,s.begin,s.end,(select d.value from dd_dic d where d.parent='ems' and d.child=s.ems) as ems,s.receipt,(select d.value from dd_dic d where d.parent='pay' and d.child=s.pay) as pay,s.money,s.memo,s.date from dd_submit s left join dd_product p on s.barcode=p.barcode where s.status='1'  and s.amount>0 order by s.date desc";
 			else
-				sql="select * from dd_submit where status='0' and amount>0 order by date desc";
+				sql="select s.id,s.barcode,p.name,s.amount,s.status,s.type,s.place,s.begin,s.end,(select d.value from dd_dic d where d.parent='ems' and d.child=s.ems) as ems,s.receipt,(select d.value from dd_dic d where d.parent='pay' and d.child=s.pay) as pay,s.money,s.memo,s.submitdate as date from dd_submit s left join dd_product p on s.barcode=p.barcode where s.status='0'  and s.amount>0 order by s.submitdate desc";
 		}
-		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,DdSubmit.class);
+		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,Submit.class);
 		
 		String content = "totalPage = " + p.getTotalPageCount() + ";";
 		content += "dataStore = [";
@@ -269,24 +299,26 @@ public class SubmitAction<T> extends CrudAction{
 		List l=(List)p.getResult();
 		for(int i=0;i<l.size();i++)
 		{
-			DdSubmit d=(DdSubmit)l.get(i);
-			Timestamp date;
+			Submit d=(Submit)l.get(i);
+			String status=d.getStatus();
 			String type_=d.getType();
-			if(type_==null)
-				type_="新商品";
+			String pay=d.getPay();
+			if(status.equals("0"))
+				status="<font color='red'>待审核</font>";
+			else if(status.equals("1"))
+				status="<font color='green'>已审核</font>";
+			if(type_.equals("01"))
+				type_="<font color='red'>快递送货</font>";
+			else if(type_.equals("02"))
+			{
+				type_="<font color='green'>上门送货</font>";
+				pay="";
+			}
+
 			if(type.equals("1"))
-				date=d.getDate();
+				content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td class='editbox' id='amount'>"+d.getAmount()+"</td><td>"+status+"</td><td>"+type_+"</td><td>"+d.getPlace()+"</td><td>"+d.getBegin()+"</td><td>"+d.getEnd()+"</td><td>"+d.getEms()+"</td><td>"+d.getReceipt()+"</td><td>"+pay+"</td><td>"+d.getMoney()+"</td><td>"+d.getMemo()+"</td><td>"+d.getDate()+"</td></tr>\",";
 			else
-				date=d.getSubmitdate();
-			
-			if(type_.equals("2"))
-				type_="老商品";
-			else
-				type_="新商品";
-			if(type.equals("1"))
-				content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td>"+type_+"</td><td>"+d.getUserid()+"</td><td><img src='../upload/"+d.getImage()+"' width=50 height=20/></td><td class='editbox' id='amount'>"+d.getAmount()+"</td><td class='editbox' id='price'>"+d.getPrice()+"</td><td>"+d.getPrice()*d.getAmount()+"</td><td>"+d.getSpec()+"</td><td>"+d.getGrade()+"</td><td>"+d.getMaterial()+"</td><td>"+d.getLocation()+"</td><td>"+date+"</td><td>"+d.getMemo()+"</td></tr>\",";
-			else
-				content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getName()+"</td><td>"+type_+"</td><td>"+d.getUserid()+"</td><td><img src='../upload/"+d.getImage()+"' width=50 height=20/></td><td class='editbox' id='amount'>"+d.getAmount()+"</td><td class='editbox' id='price'>"+d.getPrice()+"</td><td>"+d.getPrice()*d.getAmount()+"</td><td>"+d.getSpec()+"</td><td>"+d.getGrade()+"</td><td>"+d.getMaterial()+"</td><td>"+d.getLocation()+"</td><td>"+date+"</td><td>"+d.getMemo()+"</td></tr>\",";
+				content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td class='editbox' id='amount'>"+d.getAmount()+"</td><td>"+status+"</td><td>"+type_+"</td><td>"+d.getPlace()+"</td><td>"+d.getBegin()+"</td><td>"+d.getEnd()+"</td><td>"+d.getEms()+"</td><td>"+d.getReceipt()+"</td><td>"+pay+"</td><td>"+d.getMoney()+"</td><td>"+d.getMemo()+"</td><td>"+d.getSubmitdate()+"</td></tr>\",";
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";
@@ -302,15 +334,15 @@ public class SubmitAction<T> extends CrudAction{
 		if(t.equals("2"))
 		{
 			if(type.equals("1"))
-				sql="select * from dd_topper where status='1' and amount>0 and userid='"+userid+"'";
+				sql="select s.id from dd_submit  s left join dd_product p on s.barcode=p.barcode where s.status='1' and p.userid='"+userid+"' and s.amount>0";
 			else
-				sql="select * from dd_topper where status='0' and amount>0 and userid='"+userid+"'";
+				sql="select s.id from dd_submit  s left join dd_product p on s.barcode=p.barcode where s.status='0' and p.userid='"+userid+"' and s.amount>0";
 		}else
 		{
 			if(type.equals("1"))
-				sql="select * from dd_topper where status='1' and amount>0";
+				sql="select s.id from dd_submit  s left join dd_product p on s.barcode=p.barcode where s.status='1' and s.amount>0";
 			else
-				sql="select * from dd_topper where status='0' and amount>0";
+				sql="select s.id from dd_submit  s left join dd_product p on s.barcode=p.barcode where s.status='0' and s.amount>0";
 		}
 		
 		

@@ -48,13 +48,15 @@
 				var tdid=$obj.attr("id");
 				var trid = $obj.parent().attr("id"); //取得该行数据的ID，此例ID绑定在tr中
 				var value = $obj.find("input:text")[0].value; //取得文本框的值，即新数据
+				var param='trid='+trid+'&tdid='+tdid+'&value='+value+'&t='+new Date().getTime();
 				//alert(tdid);
 				//alert(trid);
 				//alert(value);
 				$.ajax({
-					 	url: 'dic!edit.zf?trid='+trid+'&tdid='+tdid+'&value='+value+'&t='+new Date().getTime(),
+					 	url: 'dic!edit.zf',
 					 	type: 'POST',
 					 	dataType: 'json',
+					 	data:param,
 					 	error: function(){alert('error');},
 					 	success: function(json){
 							alert(json.info); 

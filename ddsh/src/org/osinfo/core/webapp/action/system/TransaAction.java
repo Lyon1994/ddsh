@@ -9,7 +9,15 @@
 package org.osinfo.core.webapp.action.system;
 
 import java.net.URLEncoder;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -20,11 +28,14 @@ import org.osinfo.core.webapp.action.CrudAction;
 import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
 import org.osinfo.core.webapp.model.DdTransaction;
+import org.osinfo.core.webapp.util.DBUtil;
 import org.osinfo.core.webapp.util.ExcelUtil;
 import org.osinfo.core.webapp.util.PageUtil;
 @Results({
 	 @Result(name="list",location = "/WEB-INF/result/system/transa/list.ftl"),
 	 @Result(name="list2",location = "/WEB-INF/result/system/transa/list2.ftl"),
+	 @Result(name="list3",location = "/WEB-INF/result/system/transa/list3.ftl"),
+	 @Result(name="list4",location = "/WEB-INF/result/system/transa/list4.ftl")
 })
 /**
  * @Author Lucifer.Zhou 4:29:47 PM Jan 6, 2010
@@ -49,7 +60,14 @@ public class TransaAction<T> extends CrudAction{
 		}
 		return "list";
 	}
-
+	public String list2() {
+		String t=(String) getSession().getAttribute("type");
+		if(t.equals("2"))
+		{
+			return "list3";
+		}
+		return "list4";
+	}
 	//商品退回
 	@Override
 	public String add() {
@@ -88,7 +106,57 @@ public class TransaAction<T> extends CrudAction{
 	    		String sql="delete from dd_transaction where id in ("+ids.substring(0,ids.length()-1)+")";
 	    		CommonDAO.executeUpdate(sql);
 	    }
-	    renderSimpleResult(true,"ok");
+	    renderSimpleResult(true,"处理成功");
+        return null;
+	}
+	//处理交易-修改钱包
+	public String enable() {
+		// TODO Auto-generated method stub
+		if(logger.isDebugEnabled())
+			logger.debug("加载启用页面...");
+	    String ids=getParameter("ids");
+	    ids=ids.substring(0,ids.length()-1);
+	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");//可以方便地修改日期格式   
+	    String operator=(String) getSession().getAttribute("userid");
+		String date=dateFormat.format(new Date()); 
+	    if(!"".equals(ids.trim())){
+	    		String[] tmp=ids.split("\\,");
+	    		for(int i=0;i<tmp.length;i++)
+	    		{
+	    			String sql="update dd_transaction set status='1' ,operator='"+operator+"', date='"+date+"' where id ="+tmp[i];
+		    		CommonDAO.executeUpdate(sql);
+		    		sql="select userid,type,money from dd_transaction where id="+tmp[i];
+		    		ResultSet rs = null;
+		    		Statement stmt = null;
+		    		String userid = null;
+		    		String type = null;
+		    		float money = 0;
+		    		Connection conn=DBUtil.getConnection();
+		    		try {
+		    			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+		    			rs=stmt.executeQuery(sql);
+		    			while(rs.next())
+		    			{
+		    				userid=rs.getString("userid");
+		    				type=rs.getString("type");
+		    				money=Float.parseFloat(rs.getString("money"));
+		    			}
+		    		} catch (SQLException e) {
+		    			// TODO Auto-generated catch block
+		    			e.printStackTrace();
+		    		}finally {
+		    			DBUtil.close(rs, stmt, conn);
+		    		}
+		    		sql="select money as sum from dd_wallet where userid='"+userid+"'";
+		    		float wallet=CommonDAO.sum(sql);
+		    		if(type.equals("01"))//充值
+		    			sql="update dd_wallet set money="+(wallet+money)+" ,operator='"+operator+"', date='"+date+"' where userid='"+userid+"'";
+		    		else
+		    			sql="update dd_wallet set money="+(wallet-money)+" ,operator='"+operator+"', date='"+date+"' where userid='"+userid+"'";
+		    		CommonDAO.executeUpdate(sql);
+	    		}
+	    }
+	    renderSimpleResult(true,"处理成功");
         return null;
 	}
 	@Override
@@ -109,11 +177,21 @@ public class TransaAction<T> extends CrudAction{
 			name2 = URLEncoder.encode(name, "UTF-8");//IE浏览器 终极解决文件名乱码
 
 		getResponse().setHeader("Content-disposition","attachment;filename=" +name2+"-"+getCurrentTime() + ".xls");
-		String[] headers = { "序号","用户编号","门店名称", "门店账号", "用户账号", "交易类型","金额","备注","操作人","日期"};
+		String[] headers = { "序号","用户编号","目标用户", "交易类型","状态","金额","备注","提交日期","操作人","日期"};
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
+		String type=getParameter("type");
 		String sql;
-		sql="select * from dd_transaction";
+		if(t.equals("2"))
+			if(type.equals("0"))
+				sql="select t.id,t.userid,t.user,(select d.value from dd_dic d where d.parent='trans' and d.child=t.type) as type,t.status,t.money,t.memo,t.submitdate,t.operator,t.date from dd_transaction t where (t.userid='"+userid+"' or t.user='"+userid+"') and t.status='0' order by t.userid";
+			else
+				sql="select t.id,t.userid,t.user,(select d.value from dd_dic d where d.parent='trans' and d.child=t.type) as type,t.status,t.money,t.memo,t.submitdate,t.operator,t.date from dd_transaction t where (t.userid='"+userid+"' or t.user='"+userid+"') and t.status='1' order by t.userid";
+		else
+			if(type.equals("0"))
+				sql="select t.id,t.userid,t.user,(select d.value from dd_dic d where d.parent='trans' and d.child=t.type) as type,t.status,t.money,t.memo,t.submitdate,t.operator,t.date from dd_transaction t where t.status='0' order by t.userid";
+			else
+				sql="select t.id,t.userid,t.user,(select d.value from dd_dic d where d.parent='trans' and d.child=t.type) as type,t.status,t.money,t.memo,t.submitdate,t.operator,t.date from dd_transaction t where t.status='1' order by t.userid";
 		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,DdTransaction.class);
 		Collection<T> l = (Collection<T>) p.getResult();
 		return ExcelUtil.exportExcel(workbook,name, headers, l);
@@ -135,10 +213,15 @@ public class TransaAction<T> extends CrudAction{
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
 		if(t.equals("2"))
-			sql="select * from dd_transaction where userid='"+userid+"'";
+			if(type.equals("0"))
+				sql="select t.id,t.userid,t.user,(select d.value from dd_dic d where d.parent='trans' and d.child=t.type) as type,t.status,t.money,t.memo,t.operator,t.submitdate from dd_transaction t where (t.userid='"+userid+"' or t.user='"+userid+"') and t.status='0' order by t.userid";
+			else
+				sql="select t.id,t.userid,t.user,(select d.value from dd_dic d where d.parent='trans' and d.child=t.type) as type,t.status,t.money,t.memo,t.operator,t.date from dd_transaction t where (t.userid='"+userid+"' or t.user='"+userid+"') and t.status='1' order by t.userid";
 		else
-			sql="select * from dd_transaction";
-		
+			if(type.equals("0"))
+				sql="select t.id,t.userid,t.user,(select d.value from dd_dic d where d.parent='trans' and d.child=t.type) as type,t.status,t.money,t.memo,t.operator,t.submitdate from dd_transaction t where t.status='0' order by t.userid";
+			else
+				sql="select t.id,t.userid,t.user,(select d.value from dd_dic d where d.parent='trans' and d.child=t.type) as type,t.status,t.money,t.memo,t.operator,t.date from dd_transaction t where t.status='1' order by t.userid";
 		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,DdTransaction.class);
 		
 		String content = "totalPage = " + p.getTotalPageCount() + ";";
@@ -149,15 +232,18 @@ public class TransaAction<T> extends CrudAction{
 		{
 			DdTransaction d=(DdTransaction)l.get(i);
 			String type=d.getType();
-			if(type.equals("1"))
-				type="收入";
-			else if(type.equals("2"))
-				type="支出";
-			else if(type.equals("3"))
-				type="快递";
-			else
-				type="其他";
-			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getUserid()+"</td><td>"+d.getShop()+"</td><td>"+d.getFrom()+"</td><td>"+d.getTo()+"</td><td>"+type+"</td><td>"+d.getMoney()+"</td><td>"+d.getMemo()+"</td><td>"+d.getOperator()+"</td><td>"+d.getDate()+"</td></tr>\",";
+			String status=d.getStatus();
+			Timestamp date=d.getSubmitdate();
+			if(status.equals("0"))
+				status="<font color='red'>待处理</font>";
+			else if(status.equals("1"))
+			{
+				status="<font color='green'>已处理</font>";
+				date=d.getDate();
+			}
+				
+			
+			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getUserid()+"</td><td>"+d.getUser()+"</td><td>"+type+"</td><td>"+status+"</td><td>"+d.getMoney()+"</td><td>"+d.getMemo()+"</td><td>"+date+"</td></tr>\",";
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";
@@ -171,10 +257,15 @@ public class TransaAction<T> extends CrudAction{
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
 		if(t.equals("2"))
-			sql="select * from dd_transaction where userid='"+userid+"'";
+			if(type.equals("0"))
+				sql="select  * from dd_transaction t where (t.userid='"+userid+"' or t.user='"+userid+"') and t.status='0' order by t.userid";
+			else
+				sql="select * from dd_transaction t where (t.userid='"+userid+"' or t.user='"+userid+"') and t.status='1' order by t.userid";
 		else
-			sql="select * from dd_transaction";
-		
+			if(type.equals("0"))
+				sql="select * from dd_transaction t where t.status='0' order by t.userid";
+			else
+				sql="select * from dd_transaction t where t.status='1' order by t.userid";
 		
 		int count=CommonDAO.count(sql);
 		return count;

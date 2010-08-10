@@ -117,11 +117,10 @@ public class LoginAction extends BaseAction{
 					else if(user.getType().equals("2"))
 						getSession().setAttribute("typename", "设计师");
 					else if(user.getType().equals("3"))
-						getSession().setAttribute("typename", "店员");
+						getSession().setAttribute("typename", "收银员");
 					else if(user.getType().equals("4"))
-						getSession().setAttribute("typename", "测试人员");
-					else
-						getSession().setAttribute("typename", "未知用户");
+						getSession().setAttribute("typename", "上货员");
+
 					try {
 						getResponse().sendRedirect("workbench_.zf");
 					} catch (IOException e) {

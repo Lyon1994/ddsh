@@ -19,14 +19,12 @@ import org.apache.struts2.convention.annotation.Results;
 import org.osinfo.core.webapp.action.CrudAction;
 import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
-import org.osinfo.core.webapp.model.DdBack;
-import org.osinfo.core.webapp.model.DdGrid;
-import org.osinfo.core.webapp.model.DdTopper;
+import org.osinfo.core.webapp.model.DdInventory;
+import org.osinfo.core.webapp.model.custom.Back;
 import org.osinfo.core.webapp.util.ExcelUtil;
 import org.osinfo.core.webapp.util.PageUtil;
 @Results({
-	 @Result(name="list",location = "/WEB-INF/result/system/back/list.ftl"),
-	 @Result(name="list2",location = "/WEB-INF/result/system/back/list2.ftl"),
+	 @Result(name="list",location = "/WEB-INF/result/system/back/list.ftl")
 })
 /**
  * @Author Lucifer.Zhou 4:29:47 PM Jan 6, 2010
@@ -46,56 +44,54 @@ public class BackAction<T> extends CrudAction{
 	public String list() {
 		return "list";
 	}
-	//退回商品记录
-	public String list2() {
-		return "list2";
-	}
-	//商品退回
+	//商品退回-只针对库存和售后退回02和03
 	@Override
 	public String add() {
 		// TODO Auto-generated method stub
-		String userid=getParameter("userid");
-		String name=getParameter("name");
+		
+		String barcode=getParameter("barcode");
+		String transaction=getParameter("transaction");
+		
+		String type=getParameter("type");
 		String amount=getParameter("amount");
 		String reason=getParameter("reason");
 		String submitdate=getCurrentTime();
-		String topperid=getParameter("topperid");
+
 		String operator=(String) getSession().getAttribute("userid");
-
-		String sql="insert into dd_back (topperid,userid,name,amount,reason,date,operator) " +
-				"values ("+topperid+",'"+userid+"','"+name+"',"+amount+",'"+reason+"','"+submitdate+"','"+operator+"')";
-		int v=CommonDAO.executeUpdate(sql);
-		//更新商品接收表数量
-		String sql2="select * from dd_topper where id ="+topperid;
-    	List l=CommonDAO.executeQuery(sql2,DdTopper.class);
-    	for(int i=0;i<l.size();i++)
-    	{
-    		DdTopper t=(DdTopper)l.get(i);
-    		sql="update dd_topper set  amount="+(t.getAmount()-Integer.valueOf(amount))+" where id ="+topperid;
-	    	CommonDAO.executeUpdate(sql);
-    	}
-    	renderSimpleResult(true,"ok");
+		String sql="";
+		if(type.equals("02"))//库存退回，则库存数量减少
+		{
+			sql="insert into dd_back (barcode,amount,type,reason,operator,date) " +
+			"values ('"+barcode+"',"+amount+",'02','"+reason+"','"+operator+"','"+submitdate+"')";
+			CommonDAO.executeUpdate(sql);
+			
+			String sql2="select * from dd_inventory where barcode ='"+barcode+"'";
+	    	List l=CommonDAO.executeQuery(sql2,DdInventory.class);
+	    	for(int i=0;i<l.size();i++)
+	    	{
+	    		DdInventory t=(DdInventory)l.get(i);
+	    		sql="update dd_inventory set  amount="+(t.getAmount()-Integer.valueOf(amount))+" where id ="+t.getId();
+		    	CommonDAO.executeUpdate(sql);
+	    	}
+		}else if(type.equals("03"))//售后退回，则一律先进入库存
+		{
+			sql="insert into dd_back (barcode,transaction,amount,type,reason,operator,date) " +
+			"values ('"+barcode+"','"+transaction+"',"+amount+",'03','"+reason+"','"+operator+"','"+submitdate+"')";
+			CommonDAO.executeUpdate(sql);
+			
+			String sql2="select * from dd_inventory where barcode ='"+barcode+"'";
+	    	List l=CommonDAO.executeQuery(sql2,DdInventory.class);
+	    	for(int i=0;i<l.size();i++)
+	    	{
+	    		DdInventory t=(DdInventory)l.get(i);
+	    		sql="update dd_inventory set  amount="+(t.getAmount()+Integer.valueOf(amount))+" where id ="+t.getId();
+		    	CommonDAO.executeUpdate(sql);
+	    	}
+		}
+    	renderSimpleResult(true,"处理完毕");
 	    return null;
 	}
-	//批量删除
-	public String batchAdd() {
-		// TODO Auto-generated method stub
-	    String ids=getParameter("ids");
-	    ids=ids.substring(0,ids.length()-1);
-	    if(!"".equals(ids.trim())){
-	    		String submitdate=getCurrentTime();
 
-	    		String operator=(String) getSession().getAttribute("userid");
-		    	String sql2="insert into dd_back (topperid,userid,name,amount,reason,operator,date) " +
-		    			"select id,userid,name,amount,'批量退回','"+operator+"','"+submitdate+"' from dd_topper where id in ("+ids+")";
-		    	CommonDAO.executeUpdate(sql2);
-		    	
-	    		String sql="update dd_topper set amount=0 where id in ("+ids+")";
-	    		CommonDAO.executeUpdate(sql);
-	    }
-	    renderSimpleResult(true,"ok");
-	    return null;
-	}
 	@Override
 	public String del() {
 		// TODO Auto-generated method stub
@@ -106,7 +102,7 @@ public class BackAction<T> extends CrudAction{
 	    		String sql="delete from dd_back where id in ("+ids.substring(0,ids.length()-1)+")";
 	    		CommonDAO.executeUpdate(sql);
 	    }
-	    renderSimpleResult(true,"ok");
+	    renderSimpleResult(true,"处理完毕");
         return null;
 	}
 	@Override
@@ -127,24 +123,15 @@ public class BackAction<T> extends CrudAction{
 			name2 = URLEncoder.encode(name, "UTF-8");//IE浏览器 终极解决文件名乱码
 
 		getResponse().setHeader("Content-disposition","attachment;filename=" +name2+"-"+getCurrentTime() + ".xls");
-		String[] headers = { "序号","上货编号","设计师","名称","数量","理由","操作人","日期"};
+		String[] headers = { "序号","条形码","交易号","名称","数量","退回类型","原因","操作人","日期"};
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
 		String sql;
 		if(t.equals("2"))
-		{
-			if(type.equals("1"))
-				sql="select * from dd_back where userid='"+userid+"' and amount>0 order by date desc";
-			else
-				sql="select * from dd_back where userid='"+userid+"' and amount>0 order by date desc";
-		}else
-		{
-			if(type.equals("1"))
-				sql="select * from dd_back order by date desc";
-			else
-				sql="select * from dd_back order by date desc";
-		}
-		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,DdBack.class);
+				sql="select b.id,b.barcode,b.transaction,p.name,b.amount,(select value from dd_dic d where d.parent='back' and d.child=b.type) as type,(select value from dd_dic d where d.parent='reason' and d.child=b.reason) as reason,b.operator,b.date from dd_back b left join dd_product p on b.barcode=p.barcode where p.userid='"+userid+"' and b.amount>0 order by b.date desc";
+		else
+				sql="select b.id,b.barcode,b.transaction,p.name,b.amount,(select value from dd_dic d where d.parent='back' and d.child=b.type) as type,(select value from dd_dic d where d.parent='reason' and d.child=b.reason) as reason,b.operator,b.date from dd_back b left join dd_product p on b.barcode=p.barcode where b.amount>0 order by b.date desc";
+		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,Back.class);
 		Collection<T> l = (Collection<T>) p.getResult();
 		return ExcelUtil.exportExcel(workbook,name, headers, l);
 	}
@@ -165,19 +152,10 @@ public class BackAction<T> extends CrudAction{
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
 		if(t.equals("2"))
-		{
-			if(type.equals("1"))
-				sql="select * from dd_back where userid='"+userid+"' and amount>0 order by date desc";
-			else
-				sql="select * from dd_back where userid='"+userid+"' and amount>0 order by date desc";
-		}else
-		{
-			if(type.equals("1"))
-				sql="select * from dd_back order by date desc";
-			else
-				sql="select * from dd_back order by date desc";
-		}
-		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,DdBack.class);
+			sql="select b.id,b.barcode,b.transaction,p.name,b.amount,(select value from dd_dic d where d.parent='back' and d.child=b.type) as type,(select value from dd_dic d where d.parent='reason' and d.child=b.reason) as reason,b.operator,b.date from dd_back b left join dd_product p on b.barcode=p.barcode where p.userid='"+userid+"' and b.amount>0 order by b.date desc";
+		else
+				sql="select b.id,b.barcode,b.transaction,p.name,b.amount,(select value from dd_dic d where d.parent='back' and d.child=b.type) as type,(select value from dd_dic d where d.parent='reason' and d.child=b.reason) as reason,b.operator,b.date from dd_back b left join dd_product p on b.barcode=p.barcode where b.amount>0 order by b.date desc";
+		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,Back.class);
 		
 		String content = "totalPage = " + p.getTotalPageCount() + ";";
 		content += "dataStore = [";
@@ -185,9 +163,9 @@ public class BackAction<T> extends CrudAction{
 		List l=(List)p.getResult();
 		for(int i=0;i<l.size();i++)
 		{
-			DdBack d=(DdBack)l.get(i);
+			Back d=(Back)l.get(i);
 
-			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getName()+"</td><td>"+d.getUserid()+"</td><td>"+d.getAmount()+"</td><td>"+d.getReason()+"</td><td>"+d.getOperator()+"</td><td>"+d.getDate()+"</td></tr>\",";
+			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td>"+d.getTransaction()+"</td><td>"+d.getName()+"</td><td>"+d.getAmount()+"</td><td>"+d.getType()+"</td><td>"+d.getReason()+"</td><td>"+d.getOperator()+"</td><td>"+d.getDate()+"</td></tr>\",";
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";
@@ -201,20 +179,9 @@ public class BackAction<T> extends CrudAction{
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
 		if(t.equals("2"))
-		{
-			if(type.equals("1"))
-				sql="select * from dd_back where userid='"+userid+"' and amount>0";
-			else
-				sql="select * from dd_back where userid='"+userid+"' and amount>0";
-		}else
-		{
-			if(type.equals("1"))
-				sql="select * from dd_back";
-			else
-				sql="select * from dd_back";
-		}
-		
-		
+				sql="select b.id from dd_back b left join dd_product p on b.barcode=p.barcode   where p.userid='"+userid+"' and b.amount>0";
+		else
+				sql="select id from dd_back where amount>0";
 		int count=CommonDAO.count(sql);
 		return count;
 	}

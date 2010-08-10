@@ -14,8 +14,6 @@
 		<link href="${css}/mainstyle.css" rel="stylesheet" type="text/css">
 				
 		<script language="javascript" src="${jquery}/jquery-1.4.2.min.js"></script>
-		<script language="javascript" src="${js}/zDialog/zDialog.js"></script>
-		
 		<script language="javascript" src="${jquery_lib}/jquery.cookie.min.js"></script>
     	<script language="javascript" src="${jquery_jpage}/jquery.jpage.js"></script>
 
@@ -52,7 +50,7 @@
 				//alert(trid);
 				//alert(value);
 				$.ajax({
-					 	url: 'topper!edit.zf?trid='+trid+'&tdid='+tdid+'&value='+value+'&t='+new Date().getTime(),
+					 	url: 'submit!edit.zf?trid='+trid+'&tdid='+tdid+'&value='+value+'&t='+new Date().getTime(),
 					 	type: 'POST',
 					 	dataType: 'json',
 					 	error: function(){alert('error');},
@@ -110,7 +108,7 @@
 				}
 				if(window.confirm("确定要批量退回这些记录吗？")){
 					$.ajax({
-					 	url: 'back!batchAdd.zf?ids='+str+'&t='+new Date().getTime(),
+					 	url: 'submit!batchAdd.zf?ids='+str+'&t='+new Date().getTime(),
 					 	type: 'POST',
 					 	dataType: 'json',
 					 	error: function(){alert('error');},
@@ -146,7 +144,7 @@
 					return false;
 			    }
 				var returnstr;
-        		returnstr = window.showModalDialog('../html/topper_back.jsp?id='+str.replace(',',''),'',"dialogHeight: 500px; dialogWidth: 750px;center: yes; help: no;resizable: no; status: no;");
+        		returnstr = window.showModalDialog('../html/back_submit.jsp?type=01&id='+str.replace(',',''),'',"dialogHeight: 300px; dialogWidth: 500px;center: yes; help: no;resizable: no; status: no;");
 				load('');
 
 			}
@@ -165,7 +163,7 @@
 				}
 				if(window.confirm("确定要删除这些记录吗？")){
 					$.ajax({
-					 	url: 'topper!del.zf?ids='+str+'&t='+new Date().getTime(),
+					 	url: 'submit!del.zf?ids='+str+'&t='+new Date().getTime(),
 					 	type: 'POST',
 					 	dataType: 'json',
 					 	error: function(){alert('error');},
@@ -191,7 +189,7 @@
 				}
 				if(window.confirm("确定要接收这些产品吗？")){
 					$.ajax({
-					 	url: 'topper!apply.zf?ids='+str+'&t='+new Date().getTime(),
+					 	url: 'submit!apply.zf?ids='+str+'&t='+new Date().getTime(),
 					 	type: 'POST',
 					 	dataType: 'json',
 					 	error: function(){alert('error');},
@@ -204,23 +202,23 @@
 			}
 			function load(param)
 			{
-				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th width='1%'><input type='checkbox' name='select' onclick='ck()'/></th><th>物品名称</th><th>类型</th><th>设计师</th><th>图片</th><th>数量</th><th>单价</th><th>总价</th><th>型号</th><th>规格</th><th>材料</th><th>产地</th><th>提交日期</th><th>备注</th></tr></thead><tbody>";
+				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th width='1%'><input type='checkbox' name='select' onclick='ck()'/></th><th>条形码</th><th>名称</th><th>数量</th><th>状态</th><th>送货方式</th><th>发货地</th><th>发货日</th><th>到货日</th><th>快递公司</th><th>快递单号</th><th>付款方式</th><th>快递费</th><th>备注</th><th>提交日期</th></tr></thead><tbody>";
 				var a="</tbody></table>";
 				$.ajax({
-					 	url: 'topper!count.zf?type=0&t='+new Date().getTime(),
+					 	url: 'submit!count.zf?type=0&t='+new Date().getTime(),
 					 	type: 'POST',
 					 	dataType: 'json',
 					 	error: function(){alert('error');},
 					 	success: function(json){
 							//蓝色主题
-							$('#list').jpage({dataBefore:b,dataAfter:a,dataStore: null,themeName:'blue',totalRecord:json[0],proxyUrl:'topper!result.zf?t='+new Date().getTime()+'&type=0',openCookies:false,
+							$('#list').jpage({dataBefore:b,dataAfter:a,dataStore: null,themeName:'blue',totalRecord:json[0],proxyUrl:'submit!result.zf?t='+new Date().getTime()+'&type=0',openCookies:false,
 							showMode:'full',ajaxParam:param,actionAfter:editbox}); 
 					 	}
 					}); 
 			}
 			function exports()
 			{
-				window.open('topper!export.zf?type=0&t='+new Date().getTime());
+				window.open('submit!export.zf?type=0&t='+new Date().getTime());
 			}
 			$(document).ready(
 				function(){
@@ -253,7 +251,6 @@
 					<img src="${images}/pass.gif" onclick="apply()" alt="通过" style="cursor:hand"/>
 					<img src="${images}/delete.gif" onclick="deletes()" style="cursor:hand" />
 					<img src="${images}/export.gif" onclick="exports()" style="cursor:hand" />
-					<img src="${images}/printer.gif" style="cursor:hand" />
 				</td>
 			</tr>
 		</table>

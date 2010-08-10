@@ -3,13 +3,22 @@
   <head>
     <title>钱包注册</title>
     <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
-    
+	<script language="javascript" src="../js/jquery/jquery-1.4.2.min.js"></script>
+	<script language="javascript" src="../js/jquery/jquery-plugins/validation/jquery.validate.js"></script>
     <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
 	<link href="../css/mainstyle.css" rel="stylesheet" type="text/css"/>
+	<script language="javascript">
+		$(document).ready(
+			function(){
+				$("#regedit").validate();
+			}
+		)
+
+	</script>
   </head>
   
   <body>
-  	<form name="regedit" action="/ddsh/system/wallet!add.zf" method="post">
+  	<form name="regedit" id="regedit" action="../system/wallet!add.zf" method="post">
 	<!--标题开始-->
 	<table border="0" width="100%" cellspacing="0" cellpadding="0" height="25">
 	<tr class="tree_title_txt">
@@ -29,21 +38,21 @@
 				<table border="0" width="100%" id="table3" cellspacing="0" cellpadding="0" class="tab_table_title">
 					<tr>
 						<td>用户ID：</td>
-						<td><input type="text" name="userid" size="20" class="text"/></td>
+						<td><input type="text" name="userid" size="20"  class="text required"/></td>
 						<td>银行账号：</td>
-						<td><input type="text" name="account" size="20" class="text"/></td>
+						<td><input type="text" name="account" size="20" class="text required"/></td>
 					</tr>
 					<tr>
 						<td>银行名称：</td>
-						<td><input type="text" name="bankname" size="20" class="text"/></td>
+						<td><input type="text" name="bankname" size="20" class="text required"/></td>
 						<td>开户人：</td>
-						<td><input type="text" name="accounter" size="20" class="text"/></td>
+						<td><input type="text" name="accounter" size="20" class="text required"/></td>
 					</tr>
 					<tr>
 						<td>开户地：</td>
-						<td><input type="text" name="location" size="20" class="text"/></td>
+						<td><input type="text" name="location" size="20" class="text required"/></td>
 						<td>初始金额：</td>
-						<td><input type="text" name="money" size="20" class="text"/></td>
+						<td><input type="text" name="money" size="20" class="text required" value='0'/></td>
 					</tr>
 					<tr>
 						<td colspan="4"><hr size="1"/></td>
@@ -67,7 +76,6 @@
 	</td>
 	</tr>
 	</table>
-	 说明：通过邮件、电话、上门等方式需要门店开通账号的，就可以在这个页面进行人工注册，直接开通各种账号
 	</div>
 	</form>
   </body>

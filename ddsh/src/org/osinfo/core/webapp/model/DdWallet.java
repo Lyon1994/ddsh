@@ -1,5 +1,7 @@
 package org.osinfo.core.webapp.model;
 
+import java.sql.Timestamp;
+
 /**
  * DdWallet entity. @author MyEclipse Persistence Tools
  */
@@ -15,6 +17,8 @@ public class DdWallet implements java.io.Serializable {
 	private String accounter;
 	private String location;
 	private Float money;
+	private String operator;
+	private Timestamp date;
 
 	// Constructors
 
@@ -22,15 +26,23 @@ public class DdWallet implements java.io.Serializable {
 	public DdWallet() {
 	}
 
+	/** minimal constructor */
+	public DdWallet(String userid) {
+		this.userid = userid;
+	}
+
 	/** full constructor */
 	public DdWallet(String userid, String account, String bankname,
-			String accounter, String location, Float money) {
+			String accounter, String location, Float money, String operator,
+			Timestamp date) {
 		this.userid = userid;
 		this.account = account;
 		this.bankname = bankname;
 		this.accounter = accounter;
 		this.location = location;
 		this.money = money;
+		this.operator = operator;
+		this.date = date;
 	}
 
 	// Property accessors
@@ -89,6 +101,22 @@ public class DdWallet implements java.io.Serializable {
 
 	public void setMoney(Float money) {
 		this.money = money;
+	}
+
+	public String getOperator() {
+		return this.operator;
+	}
+
+	public void setOperator(String operator) {
+		this.operator = operator;
+	}
+
+	public Timestamp getDate() {
+		return this.date;
+	}
+
+	public void setDate(Timestamp date) {
+		this.date = date;
 	}
 
 }

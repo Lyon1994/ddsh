@@ -24,6 +24,15 @@ public class DdBill implements java.io.Serializable {
 	public DdBill() {
 	}
 
+	/** minimal constructor */
+	public DdBill(String transaction, Float receive, Float changes,
+			Float totalprice) {
+		this.transaction = transaction;
+		this.receive = receive;
+		this.changes = changes;
+		this.totalprice = totalprice;
+	}
+
 	/** full constructor */
 	public DdBill(String transaction, Float receive, Float changes,
 			Float totalprice, String operator, Timestamp date) {

@@ -9,11 +9,18 @@
 package org.osinfo.core.webapp.action.system;
 
 import java.net.URLEncoder;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -23,7 +30,10 @@ import org.osinfo.core.webapp.action.CrudAction;
 import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
 import org.osinfo.core.webapp.model.DdUser;
+import org.osinfo.core.webapp.model.DdWallet;
+import org.osinfo.core.webapp.util.DBUtil;
 import org.osinfo.core.webapp.util.ExcelUtil;
+import org.osinfo.core.webapp.util.JsonUtil;
 import org.osinfo.core.webapp.util.PageUtil;
 @Results({
 	 @Result(name="list",location = "/WEB-INF/result/system/user/list.ftl"),
@@ -55,10 +65,12 @@ public class UserAction<T> extends CrudAction{
 	public String add() {
 		// TODO Auto-generated method stub
 		String userid=getParameter("userid");
+		System.out.println(userid);
 		String password=getParameter("password");
 		String type=getParameter("type");
 		
 		String name=getParameter("name");
+		System.out.println(name);
 		String sex=getParameter("sex");
 		String idcard=getParameter("idcard");		
 		
@@ -78,9 +90,11 @@ public class UserAction<T> extends CrudAction{
 		if(type==null)//等待开通
 		{
 			type="2";//默认设计师
-			sql="insert into dd_user (userid,name,brand,password,type,status,idcard,sex,address,mobile,telephone,fax,mail,submitdate) values ('"+userid+"','"+name+"','"+brand+"','"+password+"','"+type+"','0','"+idcard+"','"+sex+"','"+address+"','"+mobile+"','"+telephone+"','"+fax+"','"+mail+"','"+submitdate+"')";
+			sql="insert into dd_user (userid,name,brand,password,type,status,idcard,sex,address,mobile,telephone,fax,mail,submitdate) values " +
+					"('"+userid+"','"+name+"','"+brand+"','"+password+"','"+type+"','0','"+idcard+"','"+sex+"','"+address+"','"+mobile+"','"+telephone+"','"+fax+"','"+mail+"','"+submitdate+"')";
 		}else
-			sql="insert into dd_user (userid,name,brand,password,type,status,idcard,sex,address,mobile,telephone,fax,mail,submitdate,operator,date) values ('"+userid+"','"+name+"','"+brand+"','"+password+"','"+type+"','1','"+idcard+"','"+sex+"','"+address+"','"+mobile+"','"+telephone+"','"+fax+"','"+mail+"','"+submitdate+"','"+operator+"','"+submitdate+"')";
+			sql="insert into dd_user (userid,name,brand,password,type,status,idcard,sex,address,mobile,telephone,fax,mail,submitdate,operator,date) values " +
+					"('"+userid+"','"+name+"','"+brand+"','"+password+"','"+type+"','1','"+idcard+"','"+sex+"','"+address+"','"+mobile+"','"+telephone+"','"+fax+"','"+mail+"','"+submitdate+"','"+operator+"','"+submitdate+"')";
 
 		int v=CommonDAO.executeUpdate(sql);
 		if(v>0)
@@ -95,6 +109,7 @@ public class UserAction<T> extends CrudAction{
 			else
 				return "error2";
 	}
+	//启用用户
 	public String enable() {
 		// TODO Auto-generated method stub
 		if(logger.isDebugEnabled())
@@ -107,7 +122,41 @@ public class UserAction<T> extends CrudAction{
 	    		String sql="update dd_user set status='1' ,operator='"+operator+"', date='"+date+"' where id in ("+ids.substring(0,ids.length()-1)+")";
 	    		CommonDAO.executeUpdate(sql);
 	    }
-	    renderSimpleResult(true,"ok");
+	    renderSimpleResult(true,"处理成功");
+        return null;
+	}
+	//暂时不用
+	public String load() {
+		// TODO Auto-generated method stub
+		if(logger.isDebugEnabled())
+			logger.debug("加载装入页面...");
+	    String sql="select userid from dd_user";
+	    ResultSet rs = null;
+		Statement stmt = null;
+		Connection conn=DBUtil.getConnection();
+		Map m=new HashMap();
+		try {
+			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+			rs=stmt.executeQuery(sql);
+			while(rs.next())
+			{
+				m.put(rs.getString("userid"), rs.getString("userid"));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			DBUtil.close(rs, stmt, conn);
+		}
+	    try
+	    {
+	    	String json = JsonUtil.map2json(m);
+	    	renderJson(json.toString());
+		    System.out.println(json.toString());
+	    }catch(Exception e)
+	    {
+	    	e.printStackTrace();
+	    }
         return null;
 	}
 	@Override
@@ -121,7 +170,7 @@ public class UserAction<T> extends CrudAction{
 	    		String sql="delete from dd_user where id in ("+ids.substring(0,ids.length()-1)+")";
 	    		CommonDAO.executeUpdate(sql);
 	    }
-	    renderSimpleResult(true,"ok");
+	    renderSimpleResult(true,"处理成功");
         return null;
 	}
 	@Override
@@ -131,7 +180,7 @@ public class UserAction<T> extends CrudAction{
 		String tdid=getParameter("tdid");
 		String value=getParameter("value");
 		
-		String sql="update dd_user set "+tdid+"="+value+" where id ='"+trid+"'";
+		String sql="update dd_user set "+tdid+"='"+value+"' where id ='"+trid+"'";
 		CommonDAO.executeUpdate(sql);
 		renderSimpleResult(true,"修改成功");
 		return null;
@@ -152,9 +201,9 @@ public class UserAction<T> extends CrudAction{
 		String[] headers = { "序号", "用户编号", "名称", "品牌", "密码", "类型", "状态","身份证", "性别", "地址", "手机号码","电话","传真","邮件","提交日期","操作者","验证日期"};
 		String sql;
 		if(type.equals("1"))
-			sql="select * from dd_user where status='1' order by date desc";
+			sql="select * from dd_user where status='1' order by userid desc";
 		else
-			sql="select * from dd_user where status='0' order by date desc";
+			sql="select * from dd_user where status='0' order by userid desc";
 		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,DdUser.class);
 		Collection<T> l = (Collection<T>) p.getResult();
 		return ExcelUtil.exportExcel(workbook,name, headers, l);
@@ -174,9 +223,9 @@ public class UserAction<T> extends CrudAction{
 		// TODO Auto-generated method stub
 		String sql;
 		if(type.equals("1"))
-			sql="select * from dd_user where status='1' order by date desc";
+			sql="select * from dd_user where status='1' order by userid desc";
 		else
-			sql="select * from dd_user where status='0' order by date desc";
+			sql="select * from dd_user where status='0' order by userid desc";
 		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,DdUser.class);
 		
 		String content = "totalPage = " + p.getTotalPageCount() + ";";
@@ -205,7 +254,7 @@ public class UserAction<T> extends CrudAction{
 				date=d.getDate();
 			else
 				date=d.getSubmitdate();
-			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getUserid()+"</td><td>"+d.getName()+"</td><td>"+d.getBrand()+"</td><td>"+t+"</td><td>"+s+"</td><td class='editbox' id='mobile'>"+d.getMobile()+"</td><td class='editbox' id='telephone'>"+d.getTelephone()+"</td><td class='editbox' id='fax'>"+d.getFax()+"</td><td class='editbox' id='mail'>"+d.getMail()+"</td><td class='editbox' id='address'>"+d.getAddress()+"</td><td>"+date+"</td></tr>\",";
+			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getUserid()+"</td><td>"+d.getName()+"</td><td>"+d.getBrand()+"</td><td class='editbox' id='password'>"+d.getPassword()+"</td><td>"+t+"</td><td>"+s+"</td><td class='editbox' id='mobile'>"+d.getMobile()+"</td><td class='editbox' id='telephone'>"+d.getTelephone()+"</td><td class='editbox' id='fax'>"+d.getFax()+"</td><td class='editbox' id='mail'>"+d.getMail()+"</td><td class='editbox' id='address'>"+d.getAddress()+"</td><td>"+date+"</td></tr>\",";
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";

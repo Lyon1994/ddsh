@@ -1,0 +1,201 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>东东钱包</title>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
+    
+    <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+	<link href="../css/mainstyle.css" rel="stylesheet" type="text/css"/>
+	<script language="javascript" src="../js/jquery/jquery-1.4.2.min.js"></script>
+	<script language="javascript" src="../js/jquery/jquery-plugins/jQuery.FillOptions.js"></script>
+	<script language="javascript" src="../js/jquery/jquery-plugins/validation/jquery.validate.js"></script>
+	<style type="text/css">
+	<!--
+	body,div,ul,li{
+	 padding:0;
+	 text-align:center;
+	}
+	body{
+	 font:12px "宋体";
+	 text-align:center;
+	}
+	a:link{
+	 color:#00F;
+	 text-decoration:none;
+	}
+	a:visited {
+	 color: #00F;
+	 text-decoration:none;
+	}
+	a:hover {
+	 color: #c00;
+	 text-decoration:underline;
+	}
+	ul{ list-style:none;}
+	/*选项卡1*/
+	#Tab1{
+	width:100%;
+	margin:0px;
+	padding:0px;
+	margin:0 auto;
+	}
+
+	/*菜单class*/
+	.Menubox {
+	width:100%;
+	
+	height:28px;
+	line-height:28px;
+	}
+	.Menubox ul{
+	margin:0px;
+	padding:0px;
+	}
+	.Menubox li{
+	 float:left;
+	 display:block;
+	 cursor:pointer;
+	 width:114px;
+	 text-align:center;
+	 color:#949694;
+	 font-weight:bold;
+	 background:#DEB887;
+	 border-left:1px solid #A8C29F;
+	 border-top:1px solid #A8C29F;
+	 border-right:1px solid #A8C29F;
+	 }
+	.Menubox li.hover{
+	 padding:0px;
+	 background:#fff;
+	 width:116px;
+	 border-left:1px solid #A8C29F;
+	 border-top:1px solid #A8C29F;
+	 border-right:1px solid #A8C29F;
+	
+	 color:#739242;
+	 font-weight:bold;
+	 height:27px;
+	 line-height:27px;
+	}
+	.Contentbox{
+	 clear:both;
+	 margin-top:1px;
+	 border:0px solid #A8C29F;
+	 border-top:none;
+	 height:281px;
+	 text-align:center;
+	 padding-top:8px;
+	}
+	-->
+	</style>
+	<script>
+	<!--
+	/*第一种形式 第二种形式 更换显示样式*/
+	function setTab(name,cursel,n){
+	 for(i=1;i<=n;i++){
+	  var menu=document.getElementById(name+i);
+	  var con=document.getElementById("con_"+name+"_"+i);
+	  menu.className=i==cursel?"hover":"";
+	  con.style.display=i==cursel?"block":"none";
+	 }
+	}
+	//-->
+	</script>
+	<script language="javascript">
+		$(document).ready(
+			function(){
+				$("#trans").validate();
+				$("#type").FillOptions("../system/dic!load.zf?parent=trans",{datatype:"json",textfield:"name",valuefiled:"value"});
+				$.ajax({
+						url: '../system/wallet!money.zf',
+						type: 'POST',
+						dataType: 'json',
+						error: function(){alert('处理错误！');},
+						success: function(json){
+								 $("#money_").append(json.money);   
+								 $("#sale_").append(json.sale);
+								 $("#chongzhi_").append(json.chongzhi);
+								 $("#tixian_").append(json.tixian);
+						}
+				});
+			}
+		)
+
+	</script>
+<style> 
+.mytable {border-collapse:collapse;border:solid #6AA70B;border-width:0px 0 0 0px;width:50%;}
+.mytable ul li {padding-top:5px;text-indent:2em;list-style:none;background:url(../images/new_flash.gif) 3px 50% no-repeat;border-bottom:#6AA70B 1px dotted ;font-family: "Verdana,宋体";font-size: 12px;color:#008000;text-align:left;height:25px;}
+.mytable ul li.t1 {background-color:#EFFEDD;}/* 第一行的背景色 */
+.mytable ul li.t2{background-color:#ffffff;}/* 第二行的背景色 */
+.mytable ul li.t3 {padding-top:5px;text-indent:2em;list-style:none;background:url(../images/new.gif) #D2FCA0 3px 50% no-repeat;border-bottom:#6AA70B 1px dotted ;font-family: "Verdana,宋体";font-size: 12px;color:#008000;text-align:left;height:25px;}/* 鼠标经过时的背景色 */
+</style>
+
+  </head>
+  
+  <body>
+	<div id="Tab1">
+	<div class="Menubox">
+	<ul>
+	   <li id="one1" onclick="setTab('one',1,2)"  class="hover">账户首页</li>
+	   <li id="one2" onclick="setTab('one',2,2)" >充值/提现</li>
+	</ul>
+	</div>
+	 <div class="Contentbox">
+		<div id="con_one_1" class="hover">
+			<div class=mytable id=tab>
+			<ul>
+			    <li><a href="#">所有设计师钱包余额：￥<span id='money_'></span></a></li>
+				<li>所有设计师累计销售额：￥<span id='sale_'></span></li>
+				<li><a href="#">所有设计师累计提现额：￥<span id='tixian_'></span></a></li>
+				<li>所有设计师累计充值额：￥<span id='chongzhi_'></span></li>
+			</ul></div>
+
+		</div>
+	   <div id="con_one_2" style="display:none">
+	   		<form name="trans" id="trans" action="../system/wallet!trans.zf" method="post">
+	   		<input type="hidden" name='isadmin' value='1'/>
+			<div>
+				<table border="0" width="100%" id="table2" cellspacing="0" cellpadding="0">
+					<tr>
+						<td class="maintab_kuang">
+						<table border="0" width="100%" id="table3" cellspacing="0" cellpadding="0" class="tab_table_title">
+							<tr>
+								<td>交易方式：</td>
+								<td><select name="types" id="type"></select></td>
+								<td></td>
+								<td></td>
+							</tr>
+							<tr>
+								<td>设计师编号：</td>
+								<td><input type="text" id="userid" name="userid"  size="20" class="text required"/></td>
+								<td>充值金额：</td>
+								<td><input type="text" id="money" name="money"  size="20" class="text required digits"/></td>
+							</tr>
+							<tr>
+								<td colspan="4"><hr size="1"/></td>
+							</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			<table border="0" width="100%" cellspacing="0" cellpadding="0" style="margin-top:2px;" class="maintab2">
+				<tr class="maintab">
+				<td style="padding:0px 10px 0px 10px" align="center" >
+					<table border="0" cellspacing="0" cellpadding="0">
+						<tr>
+						<td nowrap><input type="submit" value="保 存" name="B5" class="com_button2"/>
+						&nbsp;&nbsp;<input type="reset" value="重 置" name="B3" class="com_button2"/>
+						 	</td>
+						</tr>
+					</table>	
+				</td>
+				</tr>
+			</table>
+			</div>
+			</form>
+	   </div>
+	 </div>
+	</div>
+	<br/>
+  </body>
+</html>
