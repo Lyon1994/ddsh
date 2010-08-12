@@ -8,8 +8,8 @@
 	<frameset framespacing="0" border="0" frameborder="0" rows="101,*,40">
 		<frame name="banner" scrolling="no" noresize target="contents" src="header.zf">
 		<frameset cols="240,*">
-			<frame name="contents" src="left.zf">
-			<frame name="main" src="main.zf" scrolling="no">
+			<frame id='contents' name="contents" src="left.zf">
+			<frame id='main' name="main" src="main.zf" scrolling="no">
 		</frameset>
 		<frame name="bottom" scrolling="no" noresize target="contents" src="html/foot.html">
 		<noframes>

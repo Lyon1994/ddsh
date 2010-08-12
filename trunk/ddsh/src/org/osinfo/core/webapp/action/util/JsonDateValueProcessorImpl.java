@@ -21,7 +21,8 @@ import net.sf.json.processors.JsonValueProcessor;
  * 
  */
 public class JsonDateValueProcessorImpl implements JsonValueProcessor {
-	private String format="yyyy-MM-dd HH:mm:ss";//默认日期时间
+	private String format="yyyy/MM/dd";//默认日期时间
+	//private String format="yyyy-MM-dd HH:mm:ss";//默认日期时间
 	/**
 	 * @Author Lucifer.Zhou 4:52:31 PM Jan 13, 2009
 	 * JsonValueProcessorImpl

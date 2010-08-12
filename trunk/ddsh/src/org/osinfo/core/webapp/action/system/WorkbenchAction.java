@@ -108,7 +108,7 @@ public class WorkbenchAction extends BaseAction {
 			//m.put("格子管理", "system/grid!list.zf");
 			
 			m.put("公告管理", "system/notice!list.zf");
-			m.put("活动管理", "system/notice!list.zf");
+			m.put("活动管理", "system/active!list.zf");
 			m.put("用户管理", "system/user!list.zf");
 			m.put("東東钱柜", "html/wallet2.html");
 			m.put("账号管理", "system/wallet!list.zf");

@@ -33,7 +33,7 @@
 			
 			function load(param)
 			{
-				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th width='1%'><input type='checkbox' name='select' onclick='ck()'/></th><th>用户编号</th><th>银行账号</th><th>银行名称</th><th>开户人</th><th>开户地址</th><th>余额</th></tr></thead><tbody>";
+				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th width='1%'><input type='checkbox' name='select' onclick='ck()'/></th><th>用户编号</th><th>银行账号</th><th>银行名称</th><th>开户人</th><th>开户地址</th><th>余额</th><th>分成比例</th><th>修改人</th><th>日期</th></tr></thead><tbody>";
 				var a="</tbody></table>";
 				$.ajax({
 					 	url: 'wallet!count.zf?type=1&t='+new Date().getTime(),

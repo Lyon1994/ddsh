@@ -65,14 +65,14 @@ public class WalletAction<T> extends CrudAction{
 		String accounter=getParameter("accounter");
 		String location=getParameter("location");
 		String money=getParameter("money");		
-		
+
 
 		String date=getCurrentTime();
 
 		String operator=(String) getSession().getAttribute("userid");
 
-		String sql="insert into dd_wallet (userid,account,bankname,accounter,location,money,operator,date) " +
-				"values ('"+userid+"','"+account+"','"+bankname+"','"+accounter+"','"+location+"',"+money+",'"+operator+"','"+date+"')";
+		String sql="insert into dd_wallet (userid,account,bankname,accounter,location,money,balance,operator,date) " +
+				"values ('"+userid+"','"+account+"','"+bankname+"','"+accounter+"','"+location+"',"+money+",0.5,'"+operator+"','"+date+"')";
 
 		int v=CommonDAO.executeUpdate(sql);
 		if(v>0)
@@ -87,7 +87,7 @@ public class WalletAction<T> extends CrudAction{
 		String money=getParameter("money");		
 		String user=getParameter("userid");		
 		String isadmin=getParameter("isadmin");		
-		//String memo=getParameter("memo");		
+		String memo=getParameter("memo");
 		String submitdate=getCurrentTime();
 		String operator=(String) getSession().getAttribute("userid");
 		String sql="";
@@ -95,13 +95,13 @@ public class WalletAction<T> extends CrudAction{
 		if(isadmin==null)//设计师发起提现和充值需处理
 		{
 			sql="insert into dd_transaction (userid,user,type,status,money,memo,submitdate) " +
-			"values ('"+operator+"','東東設會','"+type+"','0',"+money+",'','"+submitdate+"')";
+			"values ('"+operator+"','東東設會','"+type+"','0',"+money+",'"+memo+"','"+submitdate+"')";
 			v=CommonDAO.executeUpdate(sql);
 		}
 		else
 		{
 			sql="insert into dd_transaction (userid,user,type,status,money,memo,submitdate,operator,date) " +
-			"values ('東東設會','"+user+"','"+type+"','1',"+money+",'','"+submitdate+"','"+operator+"','"+submitdate+"')";
+			"values ('東東設會','"+user+"','"+type+"','1',"+money+",'"+memo+"','"+submitdate+"','"+operator+"','"+submitdate+"')";
 			v=CommonDAO.executeUpdate(sql);
 			sql="select money as sum from dd_wallet where userid='"+user+"'";
     		float wallet=CommonDAO.sum(sql);
@@ -233,6 +233,13 @@ public class WalletAction<T> extends CrudAction{
 	@Override
 	public String edit() {
 		// TODO Auto-generated method stub
+		String trid=getParameter("trid");
+		String tdid=getParameter("tdid");
+		String value=getParameter("value");
+		
+		String sql="update dd_wallet set "+tdid+"='"+value+"' where id ='"+trid+"'";
+		CommonDAO.executeUpdate(sql);
+		renderSimpleResult(true,"修改成功");
 		return null;
 	}
 	@Override
@@ -248,14 +255,14 @@ public class WalletAction<T> extends CrudAction{
 			name2 = URLEncoder.encode(name, "UTF-8");//IE浏览器 终极解决文件名乱码
 
 		getResponse().setHeader("Content-disposition","attachment;filename=" +name2+"-"+getCurrentTime() + ".xls");
-		String[] headers = { "序号","用户编号","账号", "银行名称", "开户人", "开户地址","余额","操作人","日期"};
+		String[] headers = { "序号","用户编号","账号", "银行名称", "开户人", "开户地址","余额","分成比例","操作人","日期"};
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
 		String sql;
 		if(t.equals("2"))
-			sql="select * from dd_wallet where userid='"+userid+"' order by userid";
+			sql="select * from dd_wallet where userid='"+userid+"' order by date desc";
 		else
-			sql="select * from dd_wallet order by userid";
+			sql="select * from dd_wallet order by date desc";
 		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,DdWallet.class);
 		Collection<T> l = (Collection<T>) p.getResult();
 		return ExcelUtil.exportExcel(workbook,name, headers, l);
@@ -277,9 +284,9 @@ public class WalletAction<T> extends CrudAction{
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
 		if(t.equals("2"))
-			sql="select * from dd_wallet where userid='"+userid+"' order by userid";
+			sql="select * from dd_wallet where userid='"+userid+"' order by date desc";
 		else
-			sql="select * from dd_wallet order by userid";
+			sql="select * from dd_wallet order by date desc";
 		
 		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,DdWallet.class);
 		
@@ -291,7 +298,7 @@ public class WalletAction<T> extends CrudAction{
 		{
 			DdWallet d=(DdWallet)l.get(i);
 
-			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getUserid()+"</td><td>"+d.getAccount()+"</td><td>"+d.getBankname()+"</td><td>"+d.getAccounter()+"</td><td>"+d.getLocation()+"</td><td>"+d.getMoney()+"</td></tr>\",";
+			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getUserid()+"</td><td>"+d.getAccount()+"</td><td>"+d.getBankname()+"</td><td>"+d.getAccounter()+"</td><td>"+d.getLocation()+"</td><td>"+d.getMoney()+"</td><td class='editbox' id='balance'>"+d.getBalance()+"</td><td>"+d.getOperator()+"</td><td>"+d.getDate()+"</td></tr>\",";
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";

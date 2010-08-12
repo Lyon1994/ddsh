@@ -10,5 +10,7 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/proxool-cglib-0.9.1.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/poi-3.6-20091214.jar" sourcepath="C:/Documents and Settings/Administrator/.m2/repository/org/apache/poi/poi/3.6/poi-3.6-sources.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/ezmorph-1.0.3.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/junit.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/xom-1.0.jar"/>
 	<classpathentry kind="output" path="WebRoot/WEB-INF/classes"/>
 </classpath>

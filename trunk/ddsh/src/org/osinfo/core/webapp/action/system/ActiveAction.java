@@ -13,33 +13,27 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import net.sf.json.JSON;
-import net.sf.json.JSONObject;
-import net.sf.json.JSONSerializer;
-import net.sf.json.JsonConfig;
-
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.osinfo.core.webapp.action.CrudAction;
 import org.osinfo.core.webapp.action.util.DynamicGrid;
-import org.osinfo.core.webapp.action.util.JsonDateValueProcessorImpl;
 import org.osinfo.core.webapp.dao.CommonDAO;
-import org.osinfo.core.webapp.model.DdNotice;
+import org.osinfo.core.webapp.model.DdActive;
 import org.osinfo.core.webapp.util.ExcelUtil;
 import org.osinfo.core.webapp.util.JsonUtil;
 import org.osinfo.core.webapp.util.PageUtil;
 @Results({
-	 @Result(name="list",location = "/WEB-INF/result/system/notice/list.ftl")
+	 @Result(name="list",location = "/WEB-INF/result/system/active/list.ftl")
 })
 /**
  * @Author Lucifer.Zhou 4:29:47 PM Jan 6, 2010
  * @Description
- * 公告管理
+ * 打印票据上显示的活动
  */
-public class NoticeAction<T> extends CrudAction{
-	private static Logger logger = Logger.getLogger ( NoticeAction.class.getName () ) ;
+public class ActiveAction<T> extends CrudAction{
+	private static Logger logger = Logger.getLogger ( ActiveAction.class.getName () ) ;
 	/**
 	 * @Author Lucifer.Zhou 4:30:01 PM Jan 6, 2010
 	 * long LoginAction.java
@@ -59,45 +53,23 @@ public class NoticeAction<T> extends CrudAction{
 	public String add() {
 		// TODO Auto-generated method stub
 		String name=getParameter("name");
-		String detail=getParameter("detail");
-		String location=getParameter("location");
 		String submitdate=getCurrentTime();
 
 		String operator=(String) getSession().getAttribute("userid");
 
-		String sql="insert into dd_notice (name,detail,operator,date) " +
-				"values ('"+name+"','"+detail+"','"+operator+"','"+submitdate+"')";
+		String sql="insert into dd_active (name,operator,date) " +
+				"values ('"+name+"','"+operator+"','"+submitdate+"')";
 		CommonDAO.executeUpdate(sql);
 		return "success2";
 	}
-	public String loadAll() {
+	public String loadOne() {
 		// TODO Auto-generated method stub
 		if(logger.isDebugEnabled())
 			logger.debug("加载装入页面...");
 	    List l=new ArrayList();
-	    String sql="select * from dd_notice order by date desc limit 10";
-	    l=CommonDAO.executeQuery(sql,DdNotice.class);
-
-		cfg=new JsonConfig();
-		/*
-		cfg.setJsonPropertyFilter(new PropertyFilter(){
-		    public boolean apply(Object source, String name, Object value) {
-		        if(name.equals("zfSysOrganizeLeaderses")||name.equals("zfSysUserOrganizes")||name.equals("zfSysUserRoles")||name.equals("zfSysOrganizeRoles")) {
-		        	return true;
-		        } else {
-		        	return false;
-		        }
-		    }
-		});
-		 */
-		cfg.registerJsonValueProcessor(java.util.Date.class, new JsonDateValueProcessorImpl());
-		cfg.registerJsonValueProcessor(java.sql.Date.class, new JsonDateValueProcessorImpl());
-		cfg.registerJsonValueProcessor(java.sql.Timestamp.class, new JsonDateValueProcessorImpl());
-		
-	    JSON json = JSONSerializer.toJSON( l,cfg);
-	    renderJson(json.toString());
-	    
-	    /*try
+	    String sql="select * from dd_active order by date desc limit 1";
+	    l=CommonDAO.executeQuery(sql,DdActive.class);
+	    try
 	    {
 	    	String json = JsonUtil.list2json(l);
 	    	renderJson(json.toString());
@@ -105,27 +77,11 @@ public class NoticeAction<T> extends CrudAction{
 	    }catch(Exception e)
 	    {
 	    	e.printStackTrace();
-	    }*/
+	    }
 	    
         return null;
 	}
-	//公告内容显示
-	public String load() {
-		// TODO Auto-generated method stub
-		if(logger.isDebugEnabled())
-			logger.debug("加载装入页面...");
-	    List l=new ArrayList();
-	    String id=getParameter("id");
-	    String sql="select * from dd_notice where id="+id;
-	    l=CommonDAO.executeQuery(sql,DdNotice.class);
-	    cfg=new JsonConfig();
-		cfg.registerJsonValueProcessor(java.sql.Timestamp.class, new JsonDateValueProcessorImpl());
-		
-	    JSON json = JSONSerializer.toJSON( l,cfg);
-	    renderJson(json.toString());
-	    
-        return null;
-	}
+	
 	@Override
 	public String del() {
 		// TODO Auto-generated method stub
@@ -133,7 +89,7 @@ public class NoticeAction<T> extends CrudAction{
 			logger.debug("加载删除页面...");
 	    String ids=getParameter("ids");
 	    if(!"".equals(ids.trim())){
-	    		String sql="delete from dd_notice where id in ("+ids.substring(0,ids.length()-1)+")";
+	    		String sql="delete from dd_active where id in ("+ids.substring(0,ids.length()-1)+")";
 	    		CommonDAO.executeUpdate(sql);
 	    }
 	    renderSimpleResult(true,"处理成功");
@@ -146,7 +102,7 @@ public class NoticeAction<T> extends CrudAction{
 		String tdid=getParameter("tdid");
 		String value=getParameter("value");
 		
-		String sql="update dd_topper set "+tdid+"="+value+" where id ="+trid;
+		String sql="update dd_active set "+tdid+"="+value+" where id ="+trid;
 		CommonDAO.executeUpdate(sql);
 		renderSimpleResult(true,"修改成功");
 		return null;
@@ -164,12 +120,12 @@ public class NoticeAction<T> extends CrudAction{
 			name2 = URLEncoder.encode(name, "UTF-8");//IE浏览器 终极解决文件名乱码
 
 		getResponse().setHeader("Content-disposition","attachment;filename=" +name2+"-"+getCurrentTime() + ".xls");
-		String[] headers = { "序号", "名称","内容", "操作者","日期"};
+		String[] headers = { "序号", "名称","操作者","日期"};
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
 		String sql;
-		sql="select * from dd_notice order by date desc";
-		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,DdNotice.class);
+		sql="select * from dd_active order by date desc";
+		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,DdActive.class);
 		Collection<T> l = (Collection<T>) p.getResult();
 		return ExcelUtil.exportExcel(workbook,name, headers, l);
 	}
@@ -190,9 +146,9 @@ public class NoticeAction<T> extends CrudAction{
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
 
-			sql="select * from dd_notice order by date desc";
+			sql="select * from dd_active order by date desc";
 		
-		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,DdNotice.class);
+		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,DdActive.class);
 		
 		String content = "totalPage = " + p.getTotalPageCount() + ";";
 		content += "dataStore = [";
@@ -200,9 +156,9 @@ public class NoticeAction<T> extends CrudAction{
 		List l=(List)p.getResult();
 		for(int i=0;i<l.size();i++)
 		{
-			DdNotice d=(DdNotice)l.get(i);
+			DdActive d=(DdActive)l.get(i);
 
-			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getName()+"</td><td>"+d.getDetail()+"</td><td>"+d.getOperator()+"</td><td>"+d.getDate()+"</td></tr>\",";
+			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getName()+"</td><td>"+d.getOperator()+"</td><td>"+d.getDate()+"</td></tr>\",";
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";
@@ -216,7 +172,7 @@ public class NoticeAction<T> extends CrudAction{
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
 
-			 sql="select * from dd_notice";
+			 sql="select * from dd_active";
 		
 		int count=CommonDAO.count(sql);
 		return count;

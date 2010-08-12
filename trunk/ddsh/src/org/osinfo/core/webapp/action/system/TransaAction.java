@@ -184,14 +184,14 @@ public class TransaAction<T> extends CrudAction{
 		String sql;
 		if(t.equals("2"))
 			if(type.equals("0"))
-				sql="select t.id,t.userid,t.user,(select d.value from dd_dic d where d.parent='trans' and d.child=t.type) as type,t.status,t.money,t.memo,t.submitdate,t.operator,t.date from dd_transaction t where (t.userid='"+userid+"' or t.user='"+userid+"') and t.status='0' order by t.userid";
+				sql="select t.id,t.userid,t.user,(select d.value from dd_dic d where d.parent='trans' and d.child=t.type) as type,t.status,t.money,t.memo,t.submitdate,t.operator,t.submitdate from dd_transaction t where (t.userid='"+userid+"' or t.user='"+userid+"') and t.status='0' order by t.submitdate desc";
 			else
-				sql="select t.id,t.userid,t.user,(select d.value from dd_dic d where d.parent='trans' and d.child=t.type) as type,t.status,t.money,t.memo,t.submitdate,t.operator,t.date from dd_transaction t where (t.userid='"+userid+"' or t.user='"+userid+"') and t.status='1' order by t.userid";
+				sql="select t.id,t.userid,t.user,(select d.value from dd_dic d where d.parent='trans' and d.child=t.type) as type,t.status,t.money,t.memo,t.submitdate,t.operator,t.date from dd_transaction t where (t.userid='"+userid+"' or t.user='"+userid+"') and t.status='1' order by t.date desc";
 		else
 			if(type.equals("0"))
-				sql="select t.id,t.userid,t.user,(select d.value from dd_dic d where d.parent='trans' and d.child=t.type) as type,t.status,t.money,t.memo,t.submitdate,t.operator,t.date from dd_transaction t where t.status='0' order by t.userid";
+				sql="select t.id,t.userid,t.user,(select d.value from dd_dic d where d.parent='trans' and d.child=t.type) as type,t.status,t.money,t.memo,t.submitdate,t.operator,t.submitdate from dd_transaction t where t.status='0' order by t.submitdate desc";
 			else
-				sql="select t.id,t.userid,t.user,(select d.value from dd_dic d where d.parent='trans' and d.child=t.type) as type,t.status,t.money,t.memo,t.submitdate,t.operator,t.date from dd_transaction t where t.status='1' order by t.userid";
+				sql="select t.id,t.userid,t.user,(select d.value from dd_dic d where d.parent='trans' and d.child=t.type) as type,t.status,t.money,t.memo,t.submitdate,t.operator,t.date from dd_transaction t where t.status='1' order by t.date desc";
 		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,DdTransaction.class);
 		Collection<T> l = (Collection<T>) p.getResult();
 		return ExcelUtil.exportExcel(workbook,name, headers, l);
@@ -214,14 +214,14 @@ public class TransaAction<T> extends CrudAction{
 		String t=(String) getSession().getAttribute("type");
 		if(t.equals("2"))
 			if(type.equals("0"))
-				sql="select t.id,t.userid,t.user,(select d.value from dd_dic d where d.parent='trans' and d.child=t.type) as type,t.status,t.money,t.memo,t.operator,t.submitdate from dd_transaction t where (t.userid='"+userid+"' or t.user='"+userid+"') and t.status='0' order by t.userid";
+				sql="select t.id,t.userid,t.user,(select d.value from dd_dic d where d.parent='trans' and d.child=t.type) as type,t.status,t.money,t.memo,t.operator,t.submitdate from dd_transaction t where (t.userid='"+userid+"' or t.user='"+userid+"') and t.status='0' order by t.submitdate desc";
 			else
-				sql="select t.id,t.userid,t.user,(select d.value from dd_dic d where d.parent='trans' and d.child=t.type) as type,t.status,t.money,t.memo,t.operator,t.date from dd_transaction t where (t.userid='"+userid+"' or t.user='"+userid+"') and t.status='1' order by t.userid";
+				sql="select t.id,t.userid,t.user,(select d.value from dd_dic d where d.parent='trans' and d.child=t.type) as type,t.status,t.money,t.memo,t.operator,t.date from dd_transaction t where (t.userid='"+userid+"' or t.user='"+userid+"') and t.status='1' order by t.date desc";
 		else
 			if(type.equals("0"))
-				sql="select t.id,t.userid,t.user,(select d.value from dd_dic d where d.parent='trans' and d.child=t.type) as type,t.status,t.money,t.memo,t.operator,t.submitdate from dd_transaction t where t.status='0' order by t.userid";
+				sql="select t.id,t.userid,t.user,(select d.value from dd_dic d where d.parent='trans' and d.child=t.type) as type,t.status,t.money,t.memo,t.operator,t.submitdate from dd_transaction t where t.status='0' order by t.submitdate desc";
 			else
-				sql="select t.id,t.userid,t.user,(select d.value from dd_dic d where d.parent='trans' and d.child=t.type) as type,t.status,t.money,t.memo,t.operator,t.date from dd_transaction t where t.status='1' order by t.userid";
+				sql="select t.id,t.userid,t.user,(select d.value from dd_dic d where d.parent='trans' and d.child=t.type) as type,t.status,t.money,t.memo,t.operator,t.date from dd_transaction t where t.status='1' order by t.date desc";
 		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,DdTransaction.class);
 		
 		String content = "totalPage = " + p.getTotalPageCount() + ";";

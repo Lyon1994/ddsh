@@ -10,7 +10,7 @@
         <meta http-equiv="Expires" content="0"/>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-    	<title>公告列表</title>
+    	<title>活动列表</title>
 		<link href="${css}/mainstyle.css" rel="stylesheet" type="text/css">
 		<script language="javascript" src="${jquery}/jquery-1.4.2.min.js"></script>
 		<script language="javascript" src="${jquery_lib}/jquery.cookie.min.js"></script>
@@ -43,9 +43,9 @@
 					alert("请至少选择一条记录");
 					return false;
 				}
-				if(window.confirm("确定要删除这些公告吗？")){
+				if(window.confirm("确定要删除这些活动吗？")){
 					$.ajax({
-					 	url: 'notice!del.zf?ids='+str+'&t='+new Date().getTime(),
+					 	url: 'active!del.zf?ids='+str+'&t='+new Date().getTime(),
 					 	type: 'POST',
 					 	dataType: 'json',
 					 	error: function(){alert('error');},
@@ -58,16 +58,16 @@
 			}
 			function load(param)
 			{
-				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th width='1%'><input type='checkbox' name='select' onclick='ck()'/></th><th>名称</th><th>内容</th><th>处理人</th><th>处理日期</th></tr></thead><tbody>";
+				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th width='1%'><input type='checkbox' name='select' onclick='ck()'/></th><th>名称</th><th>处理人</th><th>处理日期</th></tr></thead><tbody>";
 				var a="</tbody></table>";
 				$.ajax({
-					 	url: 'notice!count.zf?type=1&t='+new Date().getTime(),
+					 	url: 'active!count.zf?type=1&t='+new Date().getTime(),
 					 	type: 'POST',
 					 	dataType: 'json',
 					 	error: function(){alert('error');},
 					 	success: function(json){
 							//蓝色主题
-							$('#list').jpage({dataBefore:b,dataAfter:a,dataStore: null,themeName:'blue',totalRecord:json[0],proxyUrl:'notice!result.zf?t='+new Date().getTime()+'&type=1',openCookies:false,
+							$('#list').jpage({dataBefore:b,dataAfter:a,dataStore: null,themeName:'blue',totalRecord:json[0],proxyUrl:'active!result.zf?t='+new Date().getTime()+'&type=1',openCookies:false,
 							showMode:'full',ajaxParam:param}); 
 					 	}
 					}); 
@@ -102,7 +102,7 @@
 		<table border="0" width="100%" cellspacing="0" cellpadding=" height="30">
 			<tr>
 				<td>
-					<a href="${base}/html/regedit_notice.html"><img src="${images}/add.gif" style="cursor:hand" /></a>
+					<a href="${base}/html/regedit_active.html"><img src="${images}/add.gif" style="cursor:hand" /></a>
 					<img src="${images}/delete.gif" onclick="deletes()" style="cursor:hand" />
 					<img src="${images}/export.gif" onclick="exports()" style="cursor:hand" />
 					<img src="${images}/printer.gif" style="cursor:hand" />
