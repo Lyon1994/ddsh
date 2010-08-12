@@ -27,6 +27,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.osinfo.core.webapp.Constants;
 import org.osinfo.core.webapp.action.util.DynamicGrid;
+import org.osinfo.core.webapp.action.util.JsonDateValueProcessorImpl;
 
 /**
  * @Author Lucifer.Zhou 1:29:33 PM Jan 29, 2010
@@ -276,6 +277,8 @@ public abstract class CrudAction extends BaseAction {
 		}*/
 		
 		cfg=new JsonConfig();
+		cfg.registerJsonValueProcessor(java.util.Date.class, new JsonDateValueProcessorImpl());
+		cfg.registerJsonValueProcessor(java.sql.Date.class, new JsonDateValueProcessorImpl());
 		//具体实现类
 		String content=this.myResult();
 		//System.out.println(content);

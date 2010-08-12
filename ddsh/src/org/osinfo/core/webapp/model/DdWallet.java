@@ -17,6 +17,7 @@ public class DdWallet implements java.io.Serializable {
 	private String accounter;
 	private String location;
 	private Float money;
+	private Float balance;
 	private String operator;
 	private Timestamp date;
 
@@ -33,14 +34,15 @@ public class DdWallet implements java.io.Serializable {
 
 	/** full constructor */
 	public DdWallet(String userid, String account, String bankname,
-			String accounter, String location, Float money, String operator,
-			Timestamp date) {
+			String accounter, String location, Float money, Float balance,
+			String operator, Timestamp date) {
 		this.userid = userid;
 		this.account = account;
 		this.bankname = bankname;
 		this.accounter = accounter;
 		this.location = location;
 		this.money = money;
+		this.balance = balance;
 		this.operator = operator;
 		this.date = date;
 	}
@@ -101,6 +103,14 @@ public class DdWallet implements java.io.Serializable {
 
 	public void setMoney(Float money) {
 		this.money = money;
+	}
+
+	public Float getBalance() {
+		return this.balance;
+	}
+
+	public void setBalance(Float balance) {
+		this.balance = balance;
 	}
 
 	public String getOperator() {

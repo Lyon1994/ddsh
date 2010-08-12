@@ -16,7 +16,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import net.sf.json.JSON;
+import net.sf.json.JSONSerializer;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -73,6 +78,30 @@ public class QueryAction<T> extends CrudAction{
 
 	    renderSimpleResult(true,"ok");
         return null;
+	}
+	//最新销售记录
+	public String latest()
+	{
+		String sql="select p.name as name,(select u.brand from dd_user u where u.userid=p.userid) as brand,s.amount as amount from dd_sales s left join dd_product p on s.barcode=p.barcode order by s.date desc limit 30";
+		ResultSet rs = null;
+		Statement stmt = null;
+		Connection conn=DBUtil.getConnection();
+		List l=new ArrayList();
+		try {
+			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+			rs=stmt.executeQuery(sql);
+			while(rs.next())
+				l.add("<li>售出&nbsp;&nbsp;&nbsp;<font color='green'>"+rs.getString("name")+"</font>&nbsp;&nbsp;&nbsp;"+rs.getString("amount")+"件&nbsp;&nbsp;&nbsp;5分钟前</li>");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			DBUtil.close(rs, stmt, conn);
+		}
+	    JSON json = JSONSerializer.toJSON( l);
+	    renderJson(json.toString());
+		
+		return null;
 	}
 	//按今日、本周、本月、本季、今年以条状图显示
 	public String total() {
@@ -154,7 +183,7 @@ public class QueryAction<T> extends CrudAction{
 			chart.append("</chart>"); 
 		}else if(type.equals("3"))//按本月销售额
 		{
-			String sql="select DATE_FORMAT(date,'%m-%d') as year,ROUND(sum(discount*price*amount),2) as sum  from dd_sales where DATE_FORMAT(date,'%Y-%m')=DATE_FORMAT(now(),'%Y-%m') group by DATE_FORMAT(date,'%Y-%m-%d')";
+			String sql="select DATE_FORMAT(s.date,'%m-%d') as year,ROUND(sum(s.discount*p.price*s.amount),2) as sum  from dd_sales s left join dd_product p on s.barcode=p.barcode where DATE_FORMAT(s.date,'%Y-%m')=DATE_FORMAT(now(),'%Y-%m') group by DATE_FORMAT(s.date,'%Y-%m-%d')";
 			ResultSet rs = null;
 			Statement stmt = null;
 			Connection conn=DBUtil.getConnection();
@@ -462,19 +491,23 @@ public class QueryAction<T> extends CrudAction{
 			chart.append("</dataset>"); 
 			
 			chart.append("</chart>"); 
-		}else if(type.equals("13"))//按本月销售量TOP10
+		}else if(type.equals("13"))//按本月销售量TOP10 饼图
 		{
-			String sql="select name,sum(amount) as sum  from dd_sales where DATE_FORMAT(date,'%Y-%m')=DATE_FORMAT(now(),'%Y-%m') group by name limit 10";
+			String sql="select p.name,sum(s.amount) as sum  from dd_sales s left join dd_product p on s.barcode=p.barcode where DATE_FORMAT(s.date,'%Y-%m')=DATE_FORMAT(now(),'%Y-%m') group by s.barcode limit 10";
 			ResultSet rs = null;
 			Statement stmt = null;
 			Connection conn=DBUtil.getConnection();
 			try {
 				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
 				rs=stmt.executeQuery(sql);
+				int i=0;
 				while(rs.next())
 				{
-					categories.append("<category label='"+rs.getString("name")+"' />");
-					dataset.append("<set value='"+rs.getString("sum")+"' />");
+					if(i<3)
+						categories.append("<set label='"+rs.getString("name")+"' value='"+rs.getString("sum")+"' isSliced='1'/>");
+					else
+						categories.append("<set label='"+rs.getString("name")+"' value='"+rs.getString("sum")+"'/>");
+					i++;
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -482,16 +515,8 @@ public class QueryAction<T> extends CrudAction{
 			}finally {
 				DBUtil.close(rs, stmt, conn);
 			}
-			chart.append("<chart palette='2' caption='本月销售TOP10分析' formatNumberScale='0' shownames='1' showvalues='1'>");   
-			
-			chart.append("<categories>"); 
+			chart.append("<chart palette='4' decimals='0' enableSmartLabels='1' enableRotation='0' bgColor='99CCFF,FFFFFF' bgAlpha='40,100' bgRatio='0,100' bgAngle='360' showBorder='1' startingAngle='70'>");   
 			chart.append(categories.toString()); 
-			chart.append("</categories>"); 
-			
-			chart.append("<dataset seriesName='销售量' color='AFD8F8' decimalSeparator=',' thousandSeparator='.' formatNumber='1' showValues='1'>"); 
-			chart.append(dataset.toString()); 
-			chart.append("</dataset>"); 
-			
 			chart.append("</chart>"); 
 		}else if(type.equals("14"))//按今年销售量TOP10
 		{
@@ -649,8 +674,6 @@ public class QueryAction<T> extends CrudAction{
 			
 			chart.append("</chart>"); 
 		}
-
-
 
 
 		System.out.println(chart.toString());
