@@ -24,12 +24,13 @@ public class Query  implements java.io.Serializable{
 	private String transaction;
 	private String barcode;
 	private String name;
+	private String userid;
 	private Float discount;
 	private Integer amount;
 	private Float price;
 	private String operator;
 	private Timestamp date;
-	private String userid;
+
 	public Integer getId() {
 		return id;
 	}

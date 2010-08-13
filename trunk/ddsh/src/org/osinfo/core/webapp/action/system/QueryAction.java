@@ -16,9 +16,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import net.sf.json.JSON;
 import net.sf.json.JSONSerializer;
@@ -30,7 +28,6 @@ import org.apache.struts2.convention.annotation.Results;
 import org.osinfo.core.webapp.action.CrudAction;
 import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
-import org.osinfo.core.webapp.model.DdBack;
 import org.osinfo.core.webapp.model.custom.Query;
 import org.osinfo.core.webapp.util.DBUtil;
 import org.osinfo.core.webapp.util.ExcelUtil;
@@ -183,7 +180,14 @@ public class QueryAction<T> extends CrudAction{
 			chart.append("</chart>"); 
 		}else if(type.equals("3"))//按本月销售额
 		{
-			String sql="select DATE_FORMAT(s.date,'%m-%d') as year,ROUND(sum(s.discount*p.price*s.amount),2) as sum  from dd_sales s left join dd_product p on s.barcode=p.barcode where DATE_FORMAT(s.date,'%Y-%m')=DATE_FORMAT(now(),'%Y-%m') group by DATE_FORMAT(s.date,'%Y-%m-%d')";
+			String sql;
+			String userid=(String) getSession().getAttribute("userid");
+			String t=(String) getSession().getAttribute("type");
+			if(t.equals("2"))
+				sql="select DATE_FORMAT(s.date,'%d') as year,ROUND(sum(s.discount*p.price*s.amount),2) as sum  from dd_sales s left join dd_product p on s.barcode=p.barcode where DATE_FORMAT(s.date,'%Y-%m')=DATE_FORMAT(now(),'%Y-%m') and p.userid='"+userid+"' group by p.userid,DATE_FORMAT(s.date,'%Y-%m-%d')";
+			else
+				sql="select DATE_FORMAT(s.date,'%d') as year,ROUND(sum(s.discount*p.price*s.amount),2) as sum  from dd_sales s left join dd_product p on s.barcode=p.barcode where DATE_FORMAT(s.date,'%Y-%m')=DATE_FORMAT(now(),'%Y-%m') group by DATE_FORMAT(s.date,'%Y-%m-%d')";
+
 			ResultSet rs = null;
 			Statement stmt = null;
 			Connection conn=DBUtil.getConnection();
@@ -712,7 +716,7 @@ public class QueryAction<T> extends CrudAction{
 			name2 = URLEncoder.encode(name, "UTF-8");//IE浏览器 终极解决文件名乱码
 
 		getResponse().setHeader("Content-disposition","attachment;filename=" +name2+"-"+getCurrentTime() + ".xls");
-		String[] headers = { "序号","交易号","条形码","名称","折扣","数量","单价","操作人","日期","设计师"};
+		String[] headers = { "序号","交易号","条形码","名称","设计师","折扣","数量","单价","操作人","日期"};
 		String transaction=getParameter("transaction");
 		String userid=getParameter("userid");
 		String barcode=getParameter("barcode");
@@ -724,7 +728,7 @@ public class QueryAction<T> extends CrudAction{
 		StringBuffer sql=new StringBuffer();
 		String uid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
-		sql.append("select s.*,t.userid from dd_sales s left join dd_topper t on s.barcode=t.barcode where 1=1 and s.amount>0 ");
+		sql.append("select s.*,p.userid,p.name,p.price from dd_sales s left join dd_product p on s.barcode=p.barcode where 1=1 and s.amount>0 ");
 		if(!barcode.trim().equals(""))
 		{
 			sql.append(" and s.barcode like '%"+barcode+"%'");
@@ -735,7 +739,7 @@ public class QueryAction<T> extends CrudAction{
 		}
 		if(!name.trim().equals(""))
 		{
-			sql.append(" and s.name like '%"+name_+"%'");
+			sql.append(" and p.name like '%"+name_+"%'");
 		}
 		if(!begin.trim().equals(""))
 		{
@@ -747,13 +751,13 @@ public class QueryAction<T> extends CrudAction{
 		}
 		if(t.equals("2"))
 		{
-			sql.append(" and t.userid='"+uid+"'");
+			sql.append(" and p.userid='"+uid+"'");
 			
 		}else
 		{
 			if(!userid.trim().equals(""))
 			{
-				sql.append(" and t.userid like '%"+userid+"%'");
+				sql.append(" and p.userid like '%"+userid+"%'");
 			}
 		}
 		sql.append(" order by s.date desc");
@@ -785,7 +789,7 @@ public class QueryAction<T> extends CrudAction{
 		StringBuffer sql=new StringBuffer();
 		String uid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
-		sql.append("select s.*,t.userid from dd_sales s left join dd_topper t on s.barcode=t.barcode where 1=1 and s.amount>0 ");
+		sql.append("select s.*,p.userid,p.name,p.price from dd_sales s left join dd_product p on s.barcode=p.barcode where 1=1 and s.amount>0 ");
 		if(!barcode.trim().equals(""))
 		{
 			sql.append(" and s.barcode like '%"+barcode+"%'");
@@ -796,7 +800,7 @@ public class QueryAction<T> extends CrudAction{
 		}
 		if(!name.trim().equals(""))
 		{
-			sql.append(" and s.name like '%"+name+"%'");
+			sql.append(" and p.name like '%"+name+"%'");
 		}
 		if(!begin.trim().equals(""))
 		{
@@ -808,13 +812,13 @@ public class QueryAction<T> extends CrudAction{
 		}
 		if(t.equals("2"))
 		{
-			sql.append(" and t.userid='"+uid+"'");
+			sql.append(" and p.userid='"+uid+"'");
 			
 		}else
 		{
 			if(!userid.trim().equals(""))
 			{
-				sql.append(" and t.userid like '%"+userid+"%'");
+				sql.append(" and p.userid like '%"+userid+"%'");
 			}
 		}
 		sql.append(" order by s.date desc");
@@ -828,7 +832,7 @@ public class QueryAction<T> extends CrudAction{
 		{
 			Query d=(Query)l.get(i);
 
-			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getTransaction()+"</td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td>"+d.getDiscount()+"</td><td>"+d.getAmount()+"</td><td>"+d.getPrice()+"</td><td>"+d.getOperator()+"</td><td>"+d.getDate()+"</td><td>"+d.getUserid()+"</td></tr>\",";
+			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getTransaction()+"</td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td>"+d.getUserid()+"</td><td>"+d.getDiscount()+"</td><td>"+d.getAmount()+"</td><td>"+d.getPrice()+"</td><td>"+d.getDate()+"</td></tr>\",";
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";
@@ -848,7 +852,7 @@ public class QueryAction<T> extends CrudAction{
 
 		String uid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
-		sql.append("select s.*,t.userid from dd_sales s left join dd_topper t on s.barcode=t.barcode where 1=1 and s.amount>0 ");
+		sql.append("select s.*,p.userid,p.name,p.price from dd_sales s left join dd_product p on s.barcode=p.barcode where 1=1 and s.amount>0 ");
 		if(!barcode.trim().equals(""))
 		{
 			sql.append(" and s.barcode like '%"+barcode+"%'");
@@ -859,7 +863,7 @@ public class QueryAction<T> extends CrudAction{
 		}
 		if(!name.trim().equals(""))
 		{
-			sql.append(" and s.name like '%"+name+"%'");
+			sql.append(" and p.name like '%"+name+"%'");
 		}
 		if(!begin.trim().equals(""))
 		{
@@ -871,13 +875,13 @@ public class QueryAction<T> extends CrudAction{
 		}
 		if(t.equals("2"))
 		{
-			sql.append(" and t.userid='"+uid+"'");
+			sql.append(" and p.userid='"+uid+"'");
 			
 		}else
 		{
 			if(!userid.trim().equals(""))
 			{
-				sql.append(" and t.userid like '%"+userid+"%'");
+				sql.append(" and p.userid like '%"+userid+"%'");
 			}
 		}
 		
