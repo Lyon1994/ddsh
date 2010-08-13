@@ -44,9 +44,9 @@
 				</tr>
 				<tr>
 					<td>开始时间：</td>
-					<td><input id="begin" name="begin" class="Wdate" type="text" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})"/></td>
+					<td><input id="begin" name="begin" class="Wdate" type="text" onclick="WdatePicker()"/></td>
 					<td>结束时间：</td>
-					<td><input id="end" name="end" class="Wdate" type="text" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})"/></td>
+					<td><input id="end" name="end" class="Wdate" type="text" onclick="WdatePicker()"/></td>
 				</tr>
 				<tr>
 					<td colspan="4"><hr size="1"/></td>
@@ -72,7 +72,13 @@
 	</table>
 	 
 	</div>
-
+	<br/><br/><span style="font-size:x-large">快捷方式</span><br/><br/>
+	<div>
+		<a href="query_money.html"><span style="font-size:x-large">按销售额分析</span></a>
+		 | <a href="query_amount.html"><span style="font-size:x-large">按销售量分析</span></a>
+		  | <a href="query_designer.html"><span style="font-size:x-large">按设计师分析</span></a>
+		   | <a href="query_product.html"><span style="font-size:x-large">按产品分析</span></a>
+	</div>
 	</form>
   </body>
 </html>

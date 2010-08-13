@@ -59,7 +59,7 @@
 					 	dataType: 'json',
 					 	error: function(){alert('error');},
 					 	success: function(xml){
-							var myChart = new FusionCharts("../fusionCharts/Charts/Pie3D.swf","sale-analysis-total3","300","300");   
+							var myChart = new FusionCharts("../fusionCharts/Charts/Pie3D.swf","sale-analysis-total3","350","300");   
 					      	myChart.setDataURL('../system/query!total.zf?type=13&t='+new Date().getTime());   
 					      	myChart.render("sale-analysis-total-13");   
 						}
@@ -70,7 +70,7 @@
 					 	dataType: 'json',
 					 	error: function(){alert('error');},
 					 	success: function(xml){
-							var myChart = new FusionCharts("../fusionCharts/Charts/MSColumn3D.swf","sale-analysis-total3","659","300");   
+							var myChart = new FusionCharts("../fusionCharts/Charts/MSColumn3D.swf","sale-analysis-total3","760","300");   
 					      	myChart.setDataURL('../system/query!total.zf?type=3&t='+new Date().getTime());   
 					      	myChart.render("sale-analysis-total-3");   
 						}
@@ -90,19 +90,19 @@
 			}
 		)
 	</script>
-<style type="text/css">
-.scrollBox {
-	BACKGROUND: black;  color:white;
-}
-UL LI {
-	PADDING-BOTTOM: 0px; LINE-HEIGHT: 25px; PADDING-LEFT: 5px; PADDING-RIGHT: 5px; PADDING-TOP: 0px;
-}
-ul li {
-	overflow: hidden; text-overflow:ellipsis;white-space: nowrap;
-}
-UL LI.odd {
-	BACKGROUND: black;
-}</style>
+	<style type="text/css">
+	.scrollBox {
+		BACKGROUND: #ffffff;  color:black;height:300px;
+	}
+	UL LI {
+		PADDING-BOTTOM: 0px; LINE-HEIGHT: 25px; PADDING-LEFT: 5px; PADDING-RIGHT: 5px; PADDING-TOP: 0px;
+	}
+	ul li {
+		overflow: hidden; text-overflow:ellipsis;white-space: nowrap;
+	}
+	UL LI.odd {
+		BACKGROUND: black;
+	}</style>
 </head>
 
 <body>

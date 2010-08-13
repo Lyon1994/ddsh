@@ -6,7 +6,38 @@
 <link href="../css/mainstyle.css" rel="stylesheet" type="text/css"/>
 <title>欢迎页面</title>
 	<script language="javascript" src="../js/jquery/jquery-1.4.2.min.js"></script>
+	<script language="JavaScript" src="../fusionCharts/FusionCharts.js"></script>
 	<script language="javascript">
+	/*<![CDATA[*/
+	  (function($) {  // 滚动插件代码
+	    $.fn.scroll = function(options) {
+	      options = options || {};
+	      this.css('overflow', 'hidden');
+	      var scroll = (function(self) {
+	        return function() {
+	          if (self.data('scroll_stop')) {
+	            return;
+	          }
+	          var li = self.find('li:first');
+	          var t = parseInt(li.css('marginTop')) || 0;
+	          li.animate({
+	            'marginTop': (t - li.outerHeight()) + 'px'
+	          }, options.speed || 'slow', function() {
+	            self.append(li);
+	            li.css('marginTop', t + 'px');
+	          });
+	        };
+	      })(this);
+	      setInterval(scroll, options.delay || 2000);
+	      this.hover(function() {
+	        $(this).data('scroll_stop', true);
+	      }, function() {
+	        $(this).removeData('scroll_stop');
+	      });
+	    };
+	  })(jQuery);
+	/*]]>*/   
+
 		$(document).ready(
 			function(){
 					$.ajax({
@@ -17,13 +48,61 @@
 					 	success: function(json){
 					 		for(var i=0;i<json.length;i++)
 					 		{
-					 			$("<tr id="+json[i].id+"><td background=../images/k_09.gif></td><td>'"+json[i].name+"'</td><td background='../images/k_11.gif'></td></tr>").insertBefore($("#notice"));   
+					 			var id=json[i].id;
+					 			$("<tr id="+id+" height='30px' ><td background=../images/k_09.gif></td><td  style='position:relative'><a href='notice.jsp?id="+id+"'><span style='position:absolute;left:0;cursor:hand;'><img src='../images/c_bg2.gif'/>"+json[i].name+"</span></a>&nbsp;<span style='position:absolute;right:0'>"+json[i].date+"</span></td><td background='../images/kb_11.gif'></td></tr>").insertBefore($("#notice"));   
 					 		}
 						}
 					});
+					$.ajax({
+					 	url: '../system/query!test.zf?t='+new Date().getTime(),
+					 	type: 'POST',
+					 	dataType: 'json',
+					 	error: function(){alert('error');},
+					 	success: function(xml){
+							var myChart = new FusionCharts("../fusionCharts/Charts/Pie3D.swf","sale-analysis-total3","350","300");   
+					      	myChart.setDataURL('../system/query!total.zf?type=13&t='+new Date().getTime());   
+					      	myChart.render("sale-analysis-total-13");   
+						}
+					});
+					$.ajax({
+					 	url: '../system/query!test.zf?t='+new Date().getTime(),
+					 	type: 'POST',
+					 	dataType: 'json',
+					 	error: function(){alert('error');},
+					 	success: function(xml){
+							var myChart = new FusionCharts("../fusionCharts/Charts/MSColumn3D.swf","sale-analysis-total3","760","300");   
+					      	myChart.setDataURL('../system/query!total.zf?type=3&t='+new Date().getTime());   
+					      	myChart.render("sale-analysis-total-3");   
+						}
+					});
+					$.ajax({
+					 	url: '../system/query!latest.zf?t='+new Date().getTime(),
+					 	type: 'POST',
+					 	dataType: 'json',
+					 	error: function(){alert('error');},
+					 	success: function(json){
+							for(var i=0;i<json.length;i++)
+								$('#scrollBox').append(json[i]); 
+							$('.scrollBox:first').scroll();
+						}
+					});
+		
 			}
 		)
 	</script>
+	<style type="text/css">
+	.scrollBox {
+		BACKGROUND: #ffffff;  color:black;height:300px;
+	}
+	UL LI {
+		PADDING-BOTTOM: 0px; LINE-HEIGHT: 25px; PADDING-LEFT: 5px; PADDING-RIGHT: 5px; PADDING-TOP: 0px;
+	}
+	ul li {
+		overflow: hidden; text-overflow:ellipsis;white-space: nowrap;
+	}
+	UL LI.odd {
+		BACKGROUND: black;
+	}</style>
 </head>
 
 <body>
@@ -46,8 +125,6 @@
 				<img border="0" src="../images/k_07.gif" width="10" height="34"></td>
 			</tr>
 			<tbody>
-			
-			
 				<tr id="notice">
 					<td valign="top">
 					<img border="0" src="../images/k_14.gif" width="10" height="9"></td>
@@ -58,7 +135,7 @@
 			</tbody>
 		</table>
 		</td>
-		<td valign="top">
+		<td valign="top" width='30%'>
 		<table border="0" width="100%" id="table6" cellspacing="0" cellpadding="0">
 			<tr>
 				<td width="1%">
@@ -66,7 +143,7 @@
 				<td background="../images/kb_05.gif" width="100%">
 				<table border="0" width="100%" id="table7">
 					<tr>
-						<td><font color="#FFFFFF">热销商品</font></td>
+						<td><font color="#FFFFFF">销售热播</font></td>
 					</tr>
 				</table>
 				</td>
@@ -75,7 +152,7 @@
 			</tr>
 			<tr>
 				<td background="../images/kb_09.gif">　</td>
-				<td>bbb</td>
+				<td><div id="sale-analysis-total-14" style='height:300px;'><ul id='scrollBox' class="scrollBox"></ul></div></td>
 				<td background="../images/kb_11.gif">　</td>
 			</tr>
 			<tr>
@@ -89,37 +166,63 @@
 		</td>
 	</tr>
 	<tr>
-		<td valign="top">
-		<table border="0" width="100%" id="table10" cellspacing="0" cellpadding="0">
+		<td valign="top" width='300'>
+		<table border="0" width="100%" id="table6" cellspacing="0" cellpadding="0">
 			<tr>
 				<td width="1%">
-				<img border="0" src="../images/kc_03.gif" width="10" height="34"></td>
-				<td background="../images/kc_05.gif" width="100%">
-				<table border="0" width="100%" id="table11">
+				<img border="0" src="../images/kb_03.gif" width="10" height="34"></td>
+				<td background="../images/kb_05.gif" width="100%">
+				<table border="0" width="100%" id="table7">
 					<tr>
-						<td><font color="#FFFFFF">最新销售</font></td>
+						<td><font color="#FFFFFF">本月销售额分析</font></td>
 					</tr>
 				</table>
 				</td>
 				<td width="1%">
-				<img border="0" src="../images/kc_07.gif" width="10" height="34"></td>
+				<img border="0" src="../images/kb_07.gif" width="10" height="34"></td>
 			</tr>
 			<tr>
-				<td background="../images/kc_09.gif">　</td>
-				<td>ccc</td>
-				<td background="../images/kc_11.gif">　</td>
+				<td background="../images/kb_09.gif">　</td>
+				<td><div  id="sale-analysis-total-3" /></td>
+				<td background="../images/kb_11.gif">　</td>
 			</tr>
 			<tr>
 				<td valign="top">
-				<img border="0" src="../images/kc_14.gif" width="10" height="9"></td>
-				<td background="../images/kc_15.gif" valign="top"></td>
+				<img border="0" src="../images/kb_14.gif" width="10" height="9"></td>
+				<td background="../images/kb_15.gif" valign="top"></td>
 				<td valign="top">
-				<img border="0" src="../images/kc_16.gif" width="10" height="9"></td>
+				<img border="0" src="../images/kb_16.gif" width="10" height="9"></td>
 			</tr>
 		</table>
 		</td>
-		<td valign="top">
-
+		<td valign="top" width='300'>
+		<table border="0" width="100%" id="table6" cellspacing="0" cellpadding="0">
+			<tr>
+				<td width="1%">
+				<img border="0" src="../images/kb_03.gif" width="10" height="34"></td>
+				<td background="../images/kb_05.gif" width="100%">
+				<table border="0" width="100%" id="table7">
+					<tr>
+						<td><font color="#FFFFFF">本月销售量TOP10排名</font></td>
+					</tr>
+				</table>
+				</td>
+				<td width="1%">
+				<img border="0" src="../images/kb_07.gif" width="10" height="34"></td>
+			</tr>
+			<tr>
+				<td background="../images/kb_09.gif">　</td>
+				<td><div  id="sale-analysis-total-13" /></td>
+				<td background="../images/kb_11.gif">　</td>
+			</tr>
+			<tr>
+				<td valign="top">
+				<img border="0" src="../images/kb_14.gif" width="10" height="9"></td>
+				<td background="../images/kb_15.gif" valign="top"></td>
+				<td valign="top">
+				<img border="0" src="../images/kb_16.gif" width="10" height="9"></td>
+			</tr>
+		</table>
 		</td>
 	</tr>
 </table>
