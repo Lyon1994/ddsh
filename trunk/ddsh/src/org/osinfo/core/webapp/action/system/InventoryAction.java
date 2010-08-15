@@ -9,6 +9,10 @@
 package org.osinfo.core.webapp.action.system;
 
 import java.net.URLEncoder;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,6 +27,7 @@ import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
 import org.osinfo.core.webapp.model.DdInventory;
 import org.osinfo.core.webapp.model.custom.Inventory;
+import org.osinfo.core.webapp.util.DBUtil;
 import org.osinfo.core.webapp.util.ExcelUtil;
 import org.osinfo.core.webapp.util.JsonUtil;
 import org.osinfo.core.webapp.util.PageUtil;
@@ -160,25 +165,50 @@ public class InventoryAction<T> extends CrudAction{
 		String submitdate=getCurrentTime();
 		String operator=(String) getSession().getAttribute("userid");
 		int j=0;
+		Connection conn=DBUtil.getConnection();
+		ResultSet rs = null;
+		Statement stmt = null;
+		List list = new ArrayList();
 	    for(int i=0;i<tmp.length;i++)
 	    {
 	    	String[] t=tmp[i].split("\\,");
 		    	String barcode=t[0];
 		    	String amount=t[1];
-		    	String sql="select * from dd_inventory where barcode='"+barcode+"'";
-		    	List l=CommonDAO.executeQuery(sql, DdInventory.class);
-		    	if(l.size()==1)
-		    	{
-		    		DdInventory in=(DdInventory) l.get(0);
+		    	String sql="";
+				
+				try {
+					conn.setAutoCommit(false);// 更改JDBC事务的默认提交方式   
+					stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+					//sql="select * from dd_inventory where barcode='"+barcode+"'";
+					//rs=stmt.executeQuery(sql);
+					//list = DBUtil.populate(rs, DdInventory.class);
+					
+					//DdInventory in=(DdInventory) list.get(0);
 		    		sql="insert into dd_upload (barcode,amount,operator,date) " +
 					"values ('"+barcode+"',"+amount+",'"+operator+"','"+submitdate+"')";
-					CommonDAO.executeUpdate(sql);
-		    	}else
-		    		j++;
+		    		stmt.executeUpdate(sql);
+					conn.commit();//提交JDBC事务  
+					conn.setAutoCommit(true);// 恢复JDBC事务的默认提交方式   
+		    		j=1;
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					j=-1;
+					try {
+						conn.rollback();
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}//回滚JDBC事务   
+					e.printStackTrace();
+				}finally {
+					DBUtil.close(rs, stmt, conn);
+				}
+ 
 	    }
 	    if(j>0)
-	    	renderSimpleResult(true,"处理完成,其中"+j+"条处理异常");
-	    renderSimpleResult(true,"处理完成");
+	    	renderSimpleResult(true,"处理完成");
+	    else if(j<0)
+	    	renderSimpleResult(true,"处理异常");
 	    return null;
 	}
 	@Override
@@ -219,16 +249,16 @@ public class InventoryAction<T> extends CrudAction{
 			name2 = URLEncoder.encode(name, "UTF-8");//IE浏览器 终极解决文件名乱码
 
 		getResponse().setHeader("Content-disposition","attachment;filename=" +name2+"-"+getCurrentTime() + ".xls");
-		String[] headers = { "序号","条形码","名称","数量","价格","折扣", "操作者","日期"};
+		String[] headers = { "序号","条形码","名称","设计师","数量","价格","折扣", "操作者","日期"};
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
 		String sql;
 		if(t.equals("2"))
 		{
-			sql="select i.id,i.barcode,p.name,i.amount,p.price,i.discount,i.operator,i.date from dd_inventory i left join dd_product p on i.barcode=p.barcode where p.userid='"+userid+"' and i.amount>0 order by i.date desc";
+			sql="select i.id,i.barcode,p.name,p.userid,i.amount,p.price,i.discount,i.operator,i.date from dd_inventory i left join dd_product p on i.barcode=p.barcode where p.userid='"+userid+"' and i.amount>0 order by i.date desc";
 		}else
 		{
-			sql="select i.id,i.barcode,p.name,i.amount,p.price,i.discount,i.operator,i.date from dd_inventory i left join dd_product p on i.barcode=p.barcode where i.amount>0 order by i.date desc";
+			sql="select i.id,i.barcode,p.name,p.userid,i.amount,p.price,i.discount,i.operator,i.date from dd_inventory i left join dd_product p on i.barcode=p.barcode where i.amount>0 order by i.date desc";
 		}
 		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,Inventory.class);
 		Collection<T> l = (Collection<T>) p.getResult();
@@ -252,10 +282,10 @@ public class InventoryAction<T> extends CrudAction{
 		String t=(String) getSession().getAttribute("type");
 		if(t.equals("2"))
 		{
-			sql="select i.id,i.barcode,p.name,i.amount,p.price,i.discount,i.operator,i.date from dd_inventory i left join dd_product p on i.barcode=p.barcode where p.userid='"+userid+"' and i.amount>0 order by i.date desc";
+			sql="select i.id,i.barcode,p.name,p.userid,i.amount,p.price,i.discount,i.operator,i.date from dd_inventory i left join dd_product p on i.barcode=p.barcode where p.userid='"+userid+"' and i.amount>0 order by i.date desc";
 		}else
 		{
-			sql="select i.id,i.barcode,p.name,i.amount,p.price,i.discount,i.operator,i.date from dd_inventory i left join dd_product p on i.barcode=p.barcode where i.amount>0 order by i.date desc";
+			sql="select i.id,i.barcode,p.name,p.userid,i.amount,p.price,i.discount,i.operator,i.date from dd_inventory i left join dd_product p on i.barcode=p.barcode where i.amount>0 order by i.date desc";
 		}
 		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,Inventory.class);
 		
@@ -269,10 +299,10 @@ public class InventoryAction<T> extends CrudAction{
 			Timestamp date=d.getDate();
 			if(t.equals("1"))
 			{
-				content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td class='editbox' id='amount'>"+d.getAmount()+"</td><td>"+d.getPrice()+"</td><td class='editbox' id='discount'>"+d.getDiscount()+"</td><td>"+d.getOperator()+"</td><td>"+date+"</td></tr>\",";
+				content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td>"+d.getUserid()+"</td><td class='editbox' id='amount'>"+d.getAmount()+"</td><td>"+d.getPrice()+"</td><td class='editbox' id='discount'>"+d.getDiscount()+"</td><td>"+d.getOperator()+"</td><td>"+date+"</td></tr>\",";
 			}else
 			{
-				content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td>"+d.getAmount()+"</td><td>"+d.getPrice()+"</td><td>"+d.getDiscount()+"</td><td>"+d.getOperator()+"</td><td>"+date+"</td></tr>\",";
+				content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td>"+d.getUserid()+"</td><td>"+d.getAmount()+"</td><td>"+d.getPrice()+"</td><td>"+d.getDiscount()+"</td><td>"+d.getOperator()+"</td><td>"+date+"</td></tr>\",";
 			}
 			
 		}

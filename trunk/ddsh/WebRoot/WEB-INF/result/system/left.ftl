@@ -10,6 +10,7 @@
         <meta http-equiv="Expires" content="0"/>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <link href="${css}/mainstyle.css" rel="stylesheet" type="text/css">
+        <script src="${js}/Security.js"></script>
     	<title></title>
 	</head>
 <body topmargin="0" leftmargin="0" rightmargin="0" bottommargin="0">

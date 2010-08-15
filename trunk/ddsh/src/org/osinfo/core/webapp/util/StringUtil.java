@@ -35,4 +35,18 @@ public class StringUtil {
 		return result;
 
 	}
+	public static String convertUTF8(String s)
+	{
+		String result = null;
+		byte[] temp;
+		try {
+			temp=s.getBytes("iso-8859-1");
+			result=new String(temp,"UTF-8");
+		} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
+
+	}
 }

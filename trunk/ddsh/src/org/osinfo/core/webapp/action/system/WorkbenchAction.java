@@ -104,7 +104,7 @@ public class WorkbenchAction extends BaseAction {
 			//m.put("当前在售", "system/sell!list.zf");//这里有下架
 			//m.put("下架记录", "system/down!list.zf");
 			m.put("售货分析", "html/sale_query.html");
-			m.put("退货分析", "html/rsale_query.html");
+			//m.put("退货分析", "html/rsale_query.html");
 			//m.put("格子管理", "system/grid!list.zf");
 			
 			m.put("公告管理", "system/notice!list.zf");

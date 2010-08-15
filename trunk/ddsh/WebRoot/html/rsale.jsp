@@ -5,7 +5,9 @@
     <title>退货</title>
 
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
-    
+    <meta http-equiv="Expires" content="0"/> 
+	<meta http-equiv="Cache-Control" content="no-cache"/> 
+	<meta http-equiv="Pragma" content="no-cache"/> 
     <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
 	<link href="../css/mainstyle.css" rel="stylesheet" type="text/css" />
 	<script language="javascript" src="../js/jquery/jquery-1.4.2.min.js"></script>
@@ -34,6 +36,23 @@
 								 			alert('商品不存在！');
 								 	}
 								});
+							}else if(event.keyCode==46){//del键
+								var transaction=$('#transaction').attr('value');
+								var barcode=$('#barcode').attr('value');
+								var amount=$('#amount').attr('value');
+								var reason=$('#reason').attr('value');
+								var para='type=03&transaction='+transaction+'&amount='+amount+'&barcode='+barcode+'&reason='+reason+'&t='+new Date().getTime();
+								
+								$.ajax({
+									 	url: '../system/back!add.zf',
+									 	type: 'POST',
+									 	dataType: 'json',
+									 	data:para,//参数设置
+									 	error: function(){alert('error');},
+									 	success: function(json){
+											alert(json.info);
+									 	}
+								});
 							}
 						}
 					);
@@ -54,7 +73,7 @@
 								 	success: function(json){
 										alert(json.info);
 								 	}
-								});
+							});
 							return false;
 						}
 					);

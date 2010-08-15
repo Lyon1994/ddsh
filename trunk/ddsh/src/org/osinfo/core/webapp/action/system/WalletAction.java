@@ -9,6 +9,10 @@
 package org.osinfo.core.webapp.action.system;
 
 import java.net.URLEncoder;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +26,7 @@ import org.osinfo.core.webapp.action.CrudAction;
 import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
 import org.osinfo.core.webapp.model.DdWallet;
+import org.osinfo.core.webapp.util.DBUtil;
 import org.osinfo.core.webapp.util.ExcelUtil;
 import org.osinfo.core.webapp.util.FloatUtil;
 import org.osinfo.core.webapp.util.JsonUtil;
@@ -91,7 +96,7 @@ public class WalletAction<T> extends CrudAction{
 		String submitdate=getCurrentTime();
 		String operator=(String) getSession().getAttribute("userid");
 		String sql="";
-		int v;
+		int v = 0;
 		if(isadmin==null)//设计师发起提现和充值需处理
 		{
 			sql="insert into dd_transaction (userid,user,type,status,money,memo,submitdate) " +
@@ -100,16 +105,46 @@ public class WalletAction<T> extends CrudAction{
 		}
 		else
 		{
-			sql="insert into dd_transaction (userid,user,type,status,money,memo,submitdate,operator,date) " +
-			"values ('東東設會','"+user+"','"+type+"','1',"+money+",'"+memo+"','"+submitdate+"','"+operator+"','"+submitdate+"')";
-			v=CommonDAO.executeUpdate(sql);
-			sql="select money as sum from dd_wallet where userid='"+user+"'";
-    		float wallet=CommonDAO.sum(sql);
-    		if(type.equals("01"))//充值
-    			sql="update dd_wallet set money="+(wallet+Float.parseFloat(money))+" ,operator='"+operator+"', date='"+submitdate+"' where userid='"+user+"'";
-    		else
-    			sql="update dd_wallet set money="+(wallet-Float.parseFloat(money))+" ,operator='"+operator+"', date='"+submitdate+"' where userid='"+user+"'";
-    		v=CommonDAO.executeUpdate(sql);
+			Connection conn=DBUtil.getConnection();
+			Statement stmt = null;
+			ResultSet rs = null;
+			float wallet=0;
+			try {
+				conn.setAutoCommit(false);// 更改JDBC事务的默认提交方式   
+				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+				
+				sql="insert into dd_transaction (userid,user,type,status,money,memo,submitdate,operator,date) " +
+				"values ('東東設會','"+user+"','"+type+"','1',"+money+",'"+memo+"','"+submitdate+"','"+operator+"','"+submitdate+"')";
+				stmt.executeUpdate(sql);
+				
+				sql="select money as sum from dd_wallet where userid='"+user+"'";
+				rs=stmt.executeQuery(sql);
+				while(rs.next())
+					wallet=Float.parseFloat(rs.getString("sum"));
+				
+				if(type.equals("01"))//充值
+	    			sql="update dd_wallet set money="+(wallet+Float.parseFloat(money))+" ,operator='"+operator+"', date='"+submitdate+"' where userid='"+user+"'";
+	    		else
+	    			sql="update dd_wallet set money="+(wallet-Float.parseFloat(money))+" ,operator='"+operator+"', date='"+submitdate+"' where userid='"+user+"'";
+				stmt.executeUpdate(sql);
+				conn.commit();//提交JDBC事务  
+				conn.setAutoCommit(true);// 恢复JDBC事务的默认提交方式   
+				v=1;
+				
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				v=-1;
+				try {
+					conn.rollback();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}//回滚JDBC事务   
+				e.printStackTrace();
+				
+			}finally {
+				DBUtil.close(rs, stmt, conn);
+			}
 		}
 		if(v>0)
 			return "success2";

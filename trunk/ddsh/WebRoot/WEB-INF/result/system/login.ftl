@@ -13,6 +13,7 @@
     	<title>用户登录</title>
 		<link href="${css}/mainstyle.css" rel="stylesheet" type="text/css">
 		<script language="javascript" src="js/jquery/jquery-1.4.2.min.js"></script>
+
 		<script language="javascript">
 
 			$(document).ready(
