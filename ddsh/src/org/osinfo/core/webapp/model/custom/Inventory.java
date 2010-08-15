@@ -13,6 +13,13 @@ public class Inventory implements java.io.Serializable {
 	private Integer id;
 	private String barcode;
 	private String name;
+	private String userid;
+	public String getUserid() {
+		return userid;
+	}
+	public void setUserid(String userid) {
+		this.userid = userid;
+	}
 	private Integer amount;
 	private Float price;
 	private Float discount;

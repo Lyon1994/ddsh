@@ -14,6 +14,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -79,7 +80,7 @@ public class QueryAction<T> extends CrudAction{
 	//最新销售记录
 	public String latest()
 	{
-		String sql="select p.name as name,(select u.brand from dd_user u where u.userid=p.userid) as brand,s.amount as amount from dd_sales s left join dd_product p on s.barcode=p.barcode order by s.date desc limit 30";
+		String sql="select p.name,(select u.brand from dd_user u where u.userid=p.userid) as brand,s.date as date2,s.amount,time_format(timediff(now(),s.date),'%H,%i,%s') as date from dd_sales s left join dd_product p on s.barcode=p.barcode where s.date< now()  order by s.date desc limit 30";
 		ResultSet rs = null;
 		Statement stmt = null;
 		Connection conn=DBUtil.getConnection();
@@ -88,7 +89,27 @@ public class QueryAction<T> extends CrudAction{
 			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
 			rs=stmt.executeQuery(sql);
 			while(rs.next())
-				l.add("<li>售出&nbsp;&nbsp;&nbsp;<font color='green'>"+rs.getString("name")+"</font>&nbsp;&nbsp;&nbsp;"+rs.getString("amount")+"件&nbsp;&nbsp;&nbsp;5分钟前</li>");
+			{
+		        String time = rs.getString("date");
+		       // System.out.println(time);
+		        String t="";
+				String[] tmp=time.split("\\,");
+				int hours=Integer.parseInt(tmp[0]);
+				int minis=Integer.parseInt(tmp[1]);
+				int seconds=Integer.parseInt(tmp[2]);
+				
+				if(hours>0)
+				{
+					t=hours+"小时前";
+				}else if(minis>0)
+				{
+					t=minis+"分钟前";
+				}else
+					t=seconds+"秒钟前";
+					
+				l.add("<li>售出&nbsp;&nbsp;&nbsp;<font color='green'>"+rs.getString("name")+"</font>&nbsp;&nbsp;&nbsp;"+rs.getString("amount")+"件&nbsp;&nbsp;&nbsp;"+t+"</li>");
+			}
+				
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -149,7 +170,14 @@ public class QueryAction<T> extends CrudAction{
 			chart.append("</chart>"); 
 		}else if(type.equals("2"))//按月销售额
 		{
-			String sql="select DATE_FORMAT(date,'%Y-%m') as year,ROUND(sum(discount*price*amount),2) as sum  from dd_sales where DATE_FORMAT(date,'%Y')=DATE_FORMAT(now(),'%Y') group by DATE_FORMAT(date,'%Y-%m')";
+			String sql;
+			String userid=(String) getSession().getAttribute("userid");
+			String t=(String) getSession().getAttribute("type");
+			if(t.equals("2"))
+				sql="select DATE_FORMAT(s.date,'%m') as year,ROUND(sum(s.discount*p.price*s.amount),2) as sum  from dd_sales s left join dd_product p on s.barcode=p.barcode where DATE_FORMAT(s.date,'%Y')=DATE_FORMAT(now(),'%Y') and p.userid='"+userid+"' group by DATE_FORMAT(s.date,'%Y-%m')";
+			else
+				sql="select DATE_FORMAT(s.date,'%m') as year,ROUND(sum(s.discount*p.price*s.amount),2) as sum  from dd_sales s left join dd_product p on s.barcode=p.barcode where DATE_FORMAT(s.date,'%Y')=DATE_FORMAT(now(),'%Y') group by DATE_FORMAT(s.date,'%Y-%m')";
+			
 			ResultSet rs = null;
 			Statement stmt = null;
 			Connection conn=DBUtil.getConnection();
@@ -218,7 +246,13 @@ public class QueryAction<T> extends CrudAction{
 			chart.append("</chart>"); 
 		}else if(type.equals("4"))//按上月销售额
 		{
-			String sql="select DATE_FORMAT(date,'%m-%d') as year,ROUND(sum(discount*price*amount),2) as sum  from dd_sales where DATE_FORMAT(date,'%Y-%m')=DATE_FORMAT(DATE_SUB(curdate(), INTERVAL 1 MONTH),'%Y-%m') group by DATE_FORMAT(date,'%Y-%m-%d')";
+			String sql;
+			String userid=(String) getSession().getAttribute("userid");
+			String t=(String) getSession().getAttribute("type");
+			if(t.equals("2"))
+				sql="select DATE_FORMAT(s.date,'%d') as year,ROUND(sum(s.discount*p.price*s.amount),2) as sum  from dd_sales  s left join dd_product p on s.barcode=p.barcode where DATE_FORMAT(s.date,'%Y-%m')=DATE_FORMAT(DATE_SUB(curdate(), INTERVAL 1 MONTH),'%Y-%m') and p.userid='"+userid+"' group by DATE_FORMAT(s.date,'%Y-%m-%d')";
+			else
+				sql="select DATE_FORMAT(s.date,'%d') as year,ROUND(sum(s.discount*p.price*s.amount),2) as sum  from dd_sales  s left join dd_product p on s.barcode=p.barcode where DATE_FORMAT(s.date,'%Y-%m')=DATE_FORMAT(DATE_SUB(curdate(), INTERVAL 1 MONTH),'%Y-%m') group by DATE_FORMAT(s.date,'%Y-%m-%d')";
 			ResultSet rs = null;
 			Statement stmt = null;
 			Connection conn=DBUtil.getConnection();
@@ -677,6 +711,71 @@ public class QueryAction<T> extends CrudAction{
 			chart.append("</dataset>"); 
 			
 			chart.append("</chart>"); 
+		}else if(type.equals("19"))//最近15天销售额
+		{
+			String sql;
+			String userid=(String) getSession().getAttribute("userid");
+			String t=(String) getSession().getAttribute("type");
+			if(t.equals("2"))
+				sql="select DATE_FORMAT(s.date,'%m-%d') as year,ROUND(sum(s.discount*p.price*s.amount),2) as sum  from dd_sales s left join dd_product p on s.barcode=p.barcode where  (s.date>=DATE_SUB(CURDATE(), INTERVAL 15 DAY) and s.date <= date(now()))  and p.userid='"+userid+"' group by p.userid,DATE_FORMAT(s.date,'%Y-%m-%d')";
+			else
+				sql="select DATE_FORMAT(s.date,'%m-%d') as year,ROUND(sum(s.discount*p.price*s.amount),2) as sum  from dd_sales s left join dd_product p on s.barcode=p.barcode where  (s.date>=DATE_SUB(CURDATE(), INTERVAL 15 DAY) and s.date <= date(now())) group by DATE_FORMAT(s.date,'%Y-%m-%d')";
+
+			ResultSet rs = null;
+			Statement stmt = null;
+			Connection conn=DBUtil.getConnection();
+			try {
+				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+				rs=stmt.executeQuery(sql);
+				while(rs.next())
+				{
+					categories.append("<category label='"+rs.getString("year")+"' />");
+					dataset.append("<set value='"+rs.getString("sum")+"' />");
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}finally {
+				DBUtil.close(rs, stmt, conn);
+			}
+			chart.append("<chart palette='2' caption='立体柱状销售图' shownames='1' showvalues='1' decimals='2' numberPrefix='￥'>");   
+			
+			chart.append("<categories>"); 
+			chart.append(categories.toString()); 
+			chart.append("</categories>"); 
+			
+			chart.append("<dataset seriesName='销售收入' color='AFD8F8' decimalSeparator=',' thousandSeparator='.' formatNumber='1' showValues='1' decimalPrecision='2' numberPrefix='%A5'>"); 
+			chart.append(dataset.toString()); 
+			chart.append("</dataset>"); 
+			
+			chart.append("</chart>"); 
+		}else if(type.equals("20"))//按最近15天销售量TOP10 饼图
+		{
+			String sql="select p.name,sum(s.amount) as sum  from dd_sales s left join dd_product p on s.barcode=p.barcode where (s.date>=DATE_SUB(CURDATE(), INTERVAL 15 DAY) and s.date <= date(now())) group by s.barcode order by sum desc limit 10";
+			ResultSet rs = null;
+			Statement stmt = null;
+			Connection conn=DBUtil.getConnection();
+			try {
+				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+				rs=stmt.executeQuery(sql);
+				int i=0;
+				while(rs.next())
+				{
+					if(i<3)
+						categories.append("<set label='"+rs.getString("name")+"' value='"+rs.getString("sum")+"' isSliced='1'/>");
+					else
+						categories.append("<set label='"+rs.getString("name")+"' value='"+rs.getString("sum")+"'/>");
+					i++;
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}finally {
+				DBUtil.close(rs, stmt, conn);
+			}
+			chart.append("<chart palette='4' decimals='0' enableSmartLabels='1' enableRotation='0' bgColor='99CCFF,FFFFFF' bgAlpha='40,100' bgRatio='0,100' bgAngle='360' showBorder='1' startingAngle='70'>");   
+			chart.append(categories.toString()); 
+			chart.append("</chart>"); 
 		}
 
 
@@ -720,11 +819,10 @@ public class QueryAction<T> extends CrudAction{
 		String transaction=getParameter("transaction");
 		String userid=getParameter("userid");
 		String barcode=getParameter("barcode");
-		String name_=org.osinfo.core.webapp.util.StringUtil.convert(getParameter("name"));
+		String name_=org.osinfo.core.webapp.util.StringUtil.convertUTF8(getParameter("name"));
 		String begin=getParameter("begin");
 		String end_=getParameter("end");
-		
-		System.out.println("name_"+name_);
+
 		StringBuffer sql=new StringBuffer();
 		String uid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
@@ -737,7 +835,7 @@ public class QueryAction<T> extends CrudAction{
 		{
 			sql.append(" and s.transaction like '%"+transaction+"%'");
 		}
-		if(!name.trim().equals(""))
+		if(!name_.trim().equals(""))
 		{
 			sql.append(" and p.name like '%"+name_+"%'");
 		}
@@ -777,12 +875,12 @@ public class QueryAction<T> extends CrudAction{
 	}
 	@Override
 	public String myResult() {
-		System.out.println("....");
+
 		// TODO Auto-generated method stub
 		String transaction=getParameter("transaction");
 		String userid=getParameter("userid");
 		String barcode=getParameter("barcode");
-		String name=getParameter("name");
+		String name_=getParameter("name");
 		String begin=getParameter("begin");
 		String end_=getParameter("end");
 		
@@ -798,9 +896,9 @@ public class QueryAction<T> extends CrudAction{
 		{
 			sql.append(" and s.transaction like '%"+transaction+"%'");
 		}
-		if(!name.trim().equals(""))
+		if(!name_.trim().equals(""))
 		{
-			sql.append(" and p.name like '%"+name+"%'");
+			sql.append(" and p.name like '%"+name_+"%'");
 		}
 		if(!begin.trim().equals(""))
 		{

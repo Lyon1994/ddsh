@@ -139,9 +139,7 @@ public class UserAction<T> extends CrudAction{
 			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
 			rs=stmt.executeQuery(sql);
 			while(rs.next())
-			{
 				m.put(rs.getString("userid"), rs.getString("userid"));
-			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

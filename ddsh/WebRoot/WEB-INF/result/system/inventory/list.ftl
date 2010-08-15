@@ -169,7 +169,7 @@
 			}
 			function load(param)
 			{
-				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th width='1%'><input type='checkbox' name='select' onclick='ck()'/></th><th>条形码</th><th>名称</th><th>数量</th><th>单价</th><th>折扣</th><th>处理人</th><th>处理日期</th></tr></thead><tbody>";
+				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th width='1%'><input type='checkbox' name='select' onclick='ck()'/></th><th>条形码</th><th>名称</th><th>设计师</th><th>数量</th><th>单价</th><th>折扣</th><th>处理人</th><th>处理日期</th></tr></thead><tbody>";
 				var a="</tbody></table>";
 				$.ajax({
 					 	url: 'inventory!count.zf?type=1&t='+new Date().getTime(),
@@ -213,6 +213,7 @@
 		<table border="0" width="100%" cellspacing="0" cellpadding=" height="30">
 			<tr>
 				<td>
+					<a href="${base}/html/search_inventory.html"><img src='${images}/search.gif' id='search' alert='查询' style="cursor:hand" /></a>
 					<img src="${images}/mup.gif" onclick="uploadQuick()" alt="批量上架" style="cursor:hand"/>
 					<img src="${images}/sup.gif" onclick="upload()" alt="单品上架" style="cursor:hand"/>
 					<img src="${images}/return.gif" onclick="back()" alt="单件退回" style="cursor:hand"/>

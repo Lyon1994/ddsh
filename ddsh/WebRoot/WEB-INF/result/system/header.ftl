@@ -13,6 +13,7 @@
 		<link href="${css}/mainstyle.css" rel="stylesheet" type="text/css">
 		<script language="javascript" src="${js}/jquery/jquery-1.4.2.min.js"></script>
 		<script language="javascript" src="${js}/jquery/jquery-plugins/jQuery.FillOptions.js"></script>
+		<script src="${js}/Security.js"></script>
 		<script language="javascript">
 			$(document).ready(
 				function(){
@@ -64,7 +65,7 @@
 							<td align="right"><span id='time'></span>&nbsp;<span><font color="blue"><b>欢迎您：<#if Session.userid?exists>${Session.typename} ${Session.name}(${Session.userid})</#if></b></font></span></td>
 						</tr>
 						<tr>
-							<td align="right"><br>【<a href="#" onclick="window.parent.document.getElementById('main').contentWindow.location='main.zf'; ">商户首页</a>】&nbsp;<span>门 店：</span>&nbsp;<select name="store" id="store"></select>&nbsp;【<a href="javascript:parent.location='logout.zf'">退出系统</a>】</td>
+							<td align="right"><br>&nbsp;【<a href="#" onclick="window.parent.document.getElementById('main').contentWindow.location='main.zf'; ">商户首页</a>】&nbsp;<span>门 店：</span>&nbsp;<select name="store" id="store"></select>&nbsp;【<a href="javascript:parent.location='logout.zf'">退出系统</a>】</td>
 						</tr>
 					</table>
 					</td>

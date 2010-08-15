@@ -7,6 +7,7 @@
 <title>欢迎页面</title>
 	<script language="javascript" src="../js/jquery/jquery-1.4.2.min.js"></script>
 	<script language="JavaScript" src="../fusionCharts/FusionCharts.js"></script>
+	<script src="../js/Security.js"></script>
 	<script language="javascript">
 	/*<![CDATA[*/
 	  (function($) {  // 滚动插件代码
@@ -59,9 +60,9 @@
 					 	dataType: 'json',
 					 	error: function(){alert('error');},
 					 	success: function(xml){
-							var myChart = new FusionCharts("../fusionCharts/Charts/Pie3D.swf","sale-analysis-total3","350","300");   
-					      	myChart.setDataURL('../system/query!total.zf?type=13&t='+new Date().getTime());   
-					      	myChart.render("sale-analysis-total-13");   
+							var myChart = new FusionCharts("../fusionCharts/Charts/Pie3D.swf","sale-analysis-tota20","350","300");   
+					      	myChart.setDataURL('../system/query!total.zf?type=20&t='+new Date().getTime());   
+					      	myChart.render("sale-analysis-total-20");   
 						}
 					});
 					$.ajax({
@@ -70,9 +71,9 @@
 					 	dataType: 'json',
 					 	error: function(){alert('error');},
 					 	success: function(xml){
-							var myChart = new FusionCharts("../fusionCharts/Charts/MSColumn3D.swf","sale-analysis-total3","760","300");   
-					      	myChart.setDataURL('../system/query!total.zf?type=3&t='+new Date().getTime());   
-					      	myChart.render("sale-analysis-total-3");   
+							var myChart = new FusionCharts("../fusionCharts/Charts/MSColumn3D.swf","sale-analysis-total19","760","300");   
+					      	myChart.setDataURL('../system/query!total.zf?type=19&t='+new Date().getTime());   
+					      	myChart.render("sale-analysis-total-19");   
 						}
 					});
 					$.ajax({
@@ -174,7 +175,7 @@
 				<td background="../images/kb_05.gif" width="100%">
 				<table border="0" width="100%" id="table7">
 					<tr>
-						<td><font color="#FFFFFF">本月销售额分析</font></td>
+						<td><font color="#FFFFFF">近15天销售额分析</font></td>
 					</tr>
 				</table>
 				</td>
@@ -183,7 +184,7 @@
 			</tr>
 			<tr>
 				<td background="../images/kb_09.gif">　</td>
-				<td><div  id="sale-analysis-total-3" /></td>
+				<td><div  id="sale-analysis-total-19" /></td>
 				<td background="../images/kb_11.gif">　</td>
 			</tr>
 			<tr>
@@ -203,7 +204,7 @@
 				<td background="../images/kb_05.gif" width="100%">
 				<table border="0" width="100%" id="table7">
 					<tr>
-						<td><font color="#FFFFFF">本月销售量TOP10排名</font></td>
+						<td><font color="#FFFFFF">近15天销售量TOP10排名</font></td>
 					</tr>
 				</table>
 				</td>
@@ -212,7 +213,7 @@
 			</tr>
 			<tr>
 				<td background="../images/kb_09.gif">　</td>
-				<td><div  id="sale-analysis-total-13" /></td>
+				<td><div  id="sale-analysis-total-20" /></td>
 				<td background="../images/kb_11.gif">　</td>
 			</tr>
 			<tr>
