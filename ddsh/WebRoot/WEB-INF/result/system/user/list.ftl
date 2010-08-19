@@ -134,7 +134,7 @@
 							$('#list').jpage({dataBefore:b,dataAfter:a,dataStore: null,themeName:'blue',totalRecord:json[0],proxyUrl:'user!result.zf?t='+new Date().getTime()+'&type=1',openCookies:false,
 							showMode:'full',ajaxParam:param,actionAfter:editbox}); 
 					 	}
-					}); 
+				}); 
 			}
 			function exports()
 			{
