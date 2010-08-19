@@ -1,10 +1,4 @@
-/**
- * Copyright (c) 2005-2009 springside.org.cn
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * 
- * $Id: Struts2Utils.java 624 2009-11-05 13:31:47Z calvinxiu $
- */
+
 package org.osinfo.core.webapp.action.util;
 
 import java.io.IOException;
@@ -25,7 +19,6 @@ import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
-
 
 /**
  * Struts2 Utils类.
@@ -183,7 +176,7 @@ public class Struts2Utils {
 		String jsonString = JSONObject.fromObject(map).toString();
 		render(JSON_TYPE, jsonString, headers);
 	}
-
+	
 	/**
 	 * 直接输出JSON.
 	 * 
@@ -205,7 +198,7 @@ public class Struts2Utils {
 		String jsonString = JSONArray.fromObject(collection).toString();
 		render(JSON_TYPE, jsonString, headers);
 	}
-
+	
 	/**
 	 * 直接输出JSON.
 	 * 
@@ -216,7 +209,7 @@ public class Struts2Utils {
 		String jsonString = JSONArray.fromObject(array).toString();
 		render(JSON_TYPE, jsonString, headers);
 	}
-
+	
 	/**
 	 * 直接输出支持跨域Mashup的JSONP.
 	 * 
@@ -227,10 +220,9 @@ public class Struts2Utils {
 	@SuppressWarnings("unchecked")
 	public static void renderJsonp(final String callbackName, final Map contentMap, final String... headers) {
 		String jsonParam = JSONObject.fromObject(contentMap).toString();
-
 		StringBuilder result = new StringBuilder().append(callbackName).append("(").append(jsonParam).append(");");
-
 		//渲染Content-Type为javascript的返回内容,输出结果为javascript语句, 如callback197("{content:'Hello World!!!'}");
 		render(JS_TYPE, result.toString(), headers);
 	}
+	
 }

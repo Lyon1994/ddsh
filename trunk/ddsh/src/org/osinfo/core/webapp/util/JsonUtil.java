@@ -94,7 +94,18 @@ public class JsonUtil {
 		StringBuilder json = new StringBuilder();             
 		json.append("{");             
 		if (map != null && map.size() > 0) {               
-			for (Object key : map.keySet()) {                 json.append(object2json(key));                 json.append(":");                 json.append(object2json(map.get(key)));                 json.append(",");               }               json.setCharAt(json.length() - 1, '}');             } else {               json.append("}");             }             return json.toString();  }
+			for (Object key : map.keySet()) {                 
+				json.append(object2json(key));                 
+				json.append(":");                 
+				json.append(object2json(map.get(key)));                 
+				json.append(",");               
+			}               
+			json.setCharAt(json.length() - 1, '}');             
+		} else {               
+			json.append("}");            
+		}             
+		return json.toString();  
+	}
 	public static String set2json(Set<?> set) {             
 		StringBuilder json = new StringBuilder();             
 		json.append("[");             

@@ -14,15 +14,15 @@ function key(){
 	return false;
 }
 document.onkeydown=key;
-if (window.Event)
-	document.captureEvents(Event.MOUSEUP);
+if (window.event)
+	document.captureEvents(event.MOUSEUP);
 function nocontextmenu(){
 	event.cancelBubble = true
 	event.returnValue = false;
 	return false;
 }
 function norightclick(e){
-	if (window.Event){
+	if (window.event){
 		if (e.which == 2 || e.which == 3)
 			return false;
 	}
