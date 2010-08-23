@@ -287,8 +287,10 @@ public class InventoryAction<T> extends CrudAction{
 		{
 			sql="select i.id,i.barcode,p.name,p.userid,i.amount,p.price,i.discount,i.operator,i.date from dd_inventory i left join dd_product p on i.barcode=p.barcode where i.amount>0 order by i.date desc";
 		}
-		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,Inventory.class);
-		
+		long t1=System.currentTimeMillis();
+		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(this.total,sql,start,end,perpage,Inventory.class);
+		long t2=System.currentTimeMillis();
+		System.out.println("分页耗时："+(t2-t1));
 		String content = "totalPage = " + p.getTotalPageCount() + ";";
 		content += "dataStore = [";
 
@@ -324,7 +326,11 @@ public class InventoryAction<T> extends CrudAction{
 		{
 			 sql="select i.id from dd_inventory i where i.amount>0";
 		}
+		long t1=System.currentTimeMillis();
 		int count=CommonDAO.count(sql);
+		long t2=System.currentTimeMillis();
+		System.out.println("总计耗时："+(t2-t1));
+		this.total=count;
 		return count;
 	}
 }

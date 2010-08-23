@@ -95,7 +95,6 @@ public class SQLUtil {
         return newSql.toString();
         */
 		//System.out.println("select count(*) " + sql.substring(fLoc, oLoc));
-		System.out.println("select count(*) from (" + sql+") as t");
 		return "select count(*) from (" + sql+") as t";
 	}
 

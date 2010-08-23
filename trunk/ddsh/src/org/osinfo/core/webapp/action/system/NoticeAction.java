@@ -109,6 +109,7 @@ public class NoticeAction<T> extends CrudAction{
 	    
         return null;
 	}
+
 	//公告内容显示
 	public String load() {
 		// TODO Auto-generated method stub
