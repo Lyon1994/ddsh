@@ -88,7 +88,7 @@
 											window.returnValue='refresh';
 											window.close();
 									 	}
-									});
+								});
 
 							}
 						}

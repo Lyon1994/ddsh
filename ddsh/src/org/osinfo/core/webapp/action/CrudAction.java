@@ -80,6 +80,7 @@ public abstract class CrudAction extends BaseAction {
     protected long end;
     protected long perpage;
     protected String type="1";
+    protected static int total=0;//总记录数
     
 	/**
 	 * @Author Lucifer.Zhou 1:29:39 PM Jan 29, 2010

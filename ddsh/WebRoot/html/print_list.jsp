@@ -58,6 +58,17 @@
 						totalprice=ForDight(totalprice,2);
 						$("#begin").append("<tr><td align=\'center\' style='width:80px'>"+n[1]+"</td><td align=\'center\' style='width:30px'>"+n[2]+"</td><td align=\'center\' style='width:30px'>"+n[3]+"</td><td align=\'center\' style='width:30px'>"+n[4]+"</td></tr>");   
 					}
+					$.ajax({
+									 	url: '../system/active!loadOne.zf',
+									 	type: 'POST',
+									 	dataType: 'json',
+									 	data:para,//参数设置
+									 	error: function(){alert('处理错误！');},
+									 	success: function(json){
+											$('#active').append(json.name);
+
+									 	}
+				   });
 			}
 		)
 	</script>
@@ -121,7 +132,7 @@
 							<th colspan='5' align='left'>http://www.ddgowo.com</th>
 						</tr>
 						<tr>
-							<th colspan='5' align='left'>最近暂无任何活动</th>
+							<th colspan='5' align='left' id='active'></th>
 						</tr>
 						<tr>
 							<th colspan='5' align='left'>--------------------------------------------</th>
