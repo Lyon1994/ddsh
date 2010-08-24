@@ -57,7 +57,41 @@
 							//return false;
 							if(event.keyCode==13){//扫描枪,回车
 								var v = $("#receive").val()-$("#totalprice").val();
-								$("#change").attr('value',ForDight(v,2));
+								if($("#change").attr('value')!='')
+								{
+									var rowsvalue='<%=rowsvalue%>';
+									var totalprice='<%=totalprice%>';
+									var receive=$('#receive').attr('value');
+									var change=$('#change').attr('value');
+									var now= new Date();
+									var year=now.getYear();
+									var month=now.getMonth()+1;
+									var day=now.getDate();
+									var hour=now.getHours();
+									var minute=now.getMinutes();
+									var second=now.getSeconds();
+									var transaction="dd"+year+month+day+hour+minute+second+generateMixed(5);
+									var para='rowsvalue='+rowsvalue+'&totalprice='+totalprice+'&receive='+receive+'&change='+change+'&transaction='+transaction+'&t='+new Date().getTime();
+									if($("#print").attr('checked')==true)
+									{
+										//CreatePrintPage(rowsvalue,totalprice,receive,change,transaction);
+										//LODOP.PRINT();	
+									}
+									$.ajax({
+										 	url: '../system/sale!add.zf',
+										 	type: 'POST',
+										 	dataType: 'json',
+										 	data:para,//参数设置
+										 	error: function(){alert('处理错误！');},
+										 	success: function(json){
+												alert(json.info);
+												window.returnValue='refresh';
+												window.close();
+										 	}
+									});
+								}else
+									$("#change").attr('value',ForDight(v,2));
+								
 							}else if(event.keyCode==46){//del键
 								var rowsvalue='<%=rowsvalue%>';
 								var totalprice='<%=totalprice%>';
@@ -74,8 +108,8 @@
 								var para='rowsvalue='+rowsvalue+'&totalprice='+totalprice+'&receive='+receive+'&change='+change+'&transaction='+transaction+'&t='+new Date().getTime();
 								if($("#print").attr('checked')==true)
 								{
-									CreatePrintPage(rowsvalue,totalprice,receive,change,transaction);
-									LODOP.PRINT();	
+									//CreatePrintPage(rowsvalue,totalprice,receive,change,transaction);
+									//LODOP.PRINT();	
 								}
 								$.ajax({
 									 	url: '../system/sale!add.zf',
