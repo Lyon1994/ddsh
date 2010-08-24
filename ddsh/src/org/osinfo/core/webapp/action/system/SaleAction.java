@@ -44,7 +44,7 @@ public class SaleAction<T> extends CrudAction{
 		return "list";
 	}
 
-	//售货,插入销售明细，同时也记录销售交易记录表
+	//售货,插入销售明细，同时也记录销售交易记录表,应该开启事务
 	@Override
 	public String add() {
 		// TODO Auto-generated method stub

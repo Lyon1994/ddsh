@@ -38,23 +38,54 @@
 							//return false;
 							if(event.keyCode==13){//扫描枪,回车
 								var barcode=$("#barcode").attr('value');
-								$.ajax({
-								 	url: '../system/inventory!load.zf?barcode='+barcode+'&t='+new Date().getTime(),
-								 	type: 'POST',
-								 	dataType: 'json',
-								 	error: function(){alert('error');},
-								 	success: function(json){
-								 		if(json.length>0)
-								 		{
-								 			$("#begin").append("<tr id="+json[0].id+"><td align=\'center\'><img src='../images/delete.gif' onclick='delete_(this)' style='cursor:hand' /></td><td align=\'center\'><input type='text' name='barcode' value='"+json[0].barcode+"' readonly/></td><td align=\'center\'><input type='text' name='name' value='"+json[0].name+"' readonly/></td><td align=\'center\'><input type='text' name='price' value='"+json[0].price+"' readonly style='width:40px'/></td><td align=\'center\'><input type='text' name='discount' value='"+json[0].discount+"' style='width:40px'/></td><td align=\'center\'><input type='text' name='amount' value='1' style='width:40px'/></td></tr>");   
-								 			$("#barcode").attr('value','');
-								 		}else
-								 		{
-								 			alert('商品不存在！');
-								 			$("#barcode").attr('value','');
-								 		}	
-								 	}
-								});
+								if(barcode!='')
+								{
+									$.ajax({
+									 	url: '../system/inventory!load.zf?barcode='+barcode+'&t='+new Date().getTime(),
+									 	type: 'POST',
+									 	dataType: 'json',
+									 	error: function(){alert('error');},
+									 	success: function(json){
+									 		if(json.length>0)
+									 		{
+									 			$("#begin").append("<tr id="+json[0].id+"><td align=\'center\'><img src='../images/delete.gif' onclick='delete_(this)' style='cursor:hand' /></td><td align=\'center\'><input type='text' name='barcode' value='"+json[0].barcode+"' readonly/></td><td align=\'center\'><input type='text' name='name' value='"+json[0].name+"' readonly/></td><td align=\'center\'><input type='text' name='price' value='"+json[0].price+"' readonly style='width:40px'/></td><td align=\'center\'><input type='text' name='discount' value='"+json[0].discount+"' style='width:40px'/></td><td align=\'center\'><input type='text' name='amount' value='1' style='width:40px'/></td></tr>");   
+									 			$("#barcode").attr('value','');
+									 		}else
+									 		{
+									 			alert('商品不存在！');
+									 			$("#barcode").attr('value','');
+									 		}	
+									 	}
+									});
+								}else
+								{
+									var rows=$('#begin').find('tr').length;//提取表格数据行
+								    var rowsvalue='';
+								   	$.each($('#begin').find('tr'), function(i,item){ 
+								    	rowsvalue=rowsvalue+$('input[type="text"]',this).fieldArray();
+								    	if(rows>1)
+								    		rowsvalue=rowsvalue+'|';
+								    	rows--;
+								    });
+								   	if(rowsvalue!='')
+								   	{
+								   		var t=rowsvalue.split('|');
+								   		var totalprice=0;
+								   		for(var m=0;m<t.length;m++)
+								   		{
+								   			var n=t[m].split(',');;
+								   			totalprice=totalprice+(n[2]*n[3]*n[4]);
+								   		}
+										var returnstr;
+					        			returnstr = window.showModalDialog(encodeURI('../html/sale_ok.jsp?rowsvalue='+rowsvalue+'&totalprice='+ForDight(totalprice,2)+'&rnd='+Math.random()),'',"dialogHeight: 250px; dialogWidth: 500px;center: yes; help: no;resizable: no; status: no;");
+								   		
+								   		if (returnstr =="refresh")//这种是利用返回值来刷新父页面
+								   			$("#begin").empty();
+								   			
+								   	}else
+								   		alert('请先扫描结账物品！');
+								}
+
 							}else if(event.keyCode==46){//del键
 								var rows=$('#begin').find('tr').length;//提取表格数据行
 							    var rowsvalue='';
