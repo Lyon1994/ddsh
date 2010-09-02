@@ -751,7 +751,15 @@ public class QueryAction<T> extends CrudAction{
 			chart.append("</chart>"); 
 		}else if(type.equals("20"))//按最近15天销售量TOP10 饼图
 		{
-			String sql="select p.name,sum(s.amount) as sum  from dd_sales s left join dd_product p on s.barcode=p.barcode where (s.date>=DATE_SUB(CURDATE(), INTERVAL 15 DAY) and s.date <= now()) group by s.barcode order by sum desc limit 10";
+			String sql;
+			String userid=(String) getSession().getAttribute("userid");
+			String t=(String) getSession().getAttribute("type");
+			if(t.equals("2"))
+				sql="select p.name,sum(s.amount) as sum  from dd_sales s left join dd_product p on s.barcode=p.barcode where (s.date>=DATE_SUB(CURDATE(), INTERVAL 15 DAY) and s.date <= now()) and p.userid='"+userid+"' group by s.barcode order by sum desc limit 10";
+			else
+				sql="select p.name,sum(s.amount) as sum  from dd_sales s left join dd_product p on s.barcode=p.barcode where (s.date>=DATE_SUB(CURDATE(), INTERVAL 15 DAY) and s.date <= now()) group by s.barcode order by sum desc limit 10";
+
+			
 			ResultSet rs = null;
 			Statement stmt = null;
 			Connection conn=DBUtil.getConnection();

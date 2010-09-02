@@ -9,6 +9,11 @@
 package org.osinfo.core.webapp.action.system;
 
 import java.net.URLEncoder;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -21,10 +26,12 @@ import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
 import org.osinfo.core.webapp.model.DdInventory;
 import org.osinfo.core.webapp.model.custom.Back;
+import org.osinfo.core.webapp.util.DBUtil;
 import org.osinfo.core.webapp.util.ExcelUtil;
 import org.osinfo.core.webapp.util.PageUtil;
 @Results({
-	 @Result(name="list",location = "/WEB-INF/result/system/back/list.ftl")
+	 @Result(name="list",location = "/WEB-INF/result/system/back/list.ftl"),
+	 @Result(name="list2",location = "/WEB-INF/result/system/back/list2.ftl")
 })
 /**
  * @Author Lucifer.Zhou 4:29:47 PM Jan 6, 2010
@@ -42,6 +49,9 @@ public class BackAction<T> extends CrudAction{
 	private static final long serialVersionUID = 1L;
 	//退回商品
 	public String list() {
+		String t=(String) getSession().getAttribute("type");
+		if(t.equals("2"))
+			return "list2";
 		return "list";
 	}
 	//商品退回-只针对库存和售后退回02和03
@@ -59,36 +69,69 @@ public class BackAction<T> extends CrudAction{
 
 		String operator=(String) getSession().getAttribute("userid");
 		String sql="";
+		Connection conn=DBUtil.getConnection();
+		Statement stmt = null;
+		ResultSet rs = null;
+		List list = new ArrayList();
 		if(type.equals("02"))//库存退回，则库存数量减少
 		{
+			
 			sql="insert into dd_back (barcode,amount,type,reason,operator,date) " +
 			"values ('"+barcode+"',"+amount+",'02','"+reason+"','"+operator+"','"+submitdate+"')";
-			CommonDAO.executeUpdate(sql);
-			
 			String sql2="select * from dd_inventory where barcode ='"+barcode+"'";
-	    	List l=CommonDAO.executeQuery(sql2,DdInventory.class);
-	    	for(int i=0;i<l.size();i++)
-	    	{
-	    		DdInventory t=(DdInventory)l.get(i);
-	    		sql="update dd_inventory set  amount="+(t.getAmount()-Integer.valueOf(amount))+" where id ="+t.getId();
-		    	CommonDAO.executeUpdate(sql);
-	    	}
+			try {
+				conn.setAutoCommit(false);
+				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+				stmt.executeUpdate(sql);
+				rs=stmt.executeQuery(sql2);
+				list = DBUtil.populate(rs, DdInventory.class);
+
+		    	for(int i=0;i<list.size();i++)
+		    	{
+		    		DdInventory t=(DdInventory)list.get(i);
+		    		sql="update dd_inventory set  amount="+(t.getAmount()-Integer.valueOf(amount))+" where id ="+t.getId();
+		    		stmt.executeUpdate(sql);
+		    	}
+		    	conn.commit();
+		    	conn.setAutoCommit(true);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+		    	renderSimpleResult(false,"交易失败！");
+				e.printStackTrace();
+			}finally {
+				DBUtil.close(rs, stmt, conn);
+			}
+
 		}else if(type.equals("03"))//售后退回，则一律先进入库存
 		{
 			sql="insert into dd_back (barcode,transaction,amount,type,reason,operator,date) " +
 			"values ('"+barcode+"','"+transaction+"',"+amount+",'03','"+reason+"','"+operator+"','"+submitdate+"')";
-			CommonDAO.executeUpdate(sql);
 			
 			String sql2="select * from dd_inventory where barcode ='"+barcode+"'";
-	    	List l=CommonDAO.executeQuery(sql2,DdInventory.class);
-	    	for(int i=0;i<l.size();i++)
-	    	{
-	    		DdInventory t=(DdInventory)l.get(i);
-	    		sql="update dd_inventory set  amount="+(t.getAmount()+Integer.valueOf(amount))+" where id ="+t.getId();
-		    	CommonDAO.executeUpdate(sql);
-	    	}
+			try {
+				conn.setAutoCommit(false);
+				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+				stmt.executeUpdate(sql);
+				rs=stmt.executeQuery(sql2);
+				list = DBUtil.populate(rs, DdInventory.class);
+
+		    	for(int i=0;i<list.size();i++)
+		    	{
+		    		DdInventory t=(DdInventory)list.get(i);
+		    		sql="update dd_inventory set  amount="+(t.getAmount()+Integer.valueOf(amount))+" where id ="+t.getId();
+			    	stmt.executeUpdate(sql);
+		    	}
+		    	conn.commit();
+		    	conn.setAutoCommit(true);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				renderSimpleResult(false,"交易失败！");
+				e.printStackTrace();
+			}finally {
+				DBUtil.close(rs, stmt, conn);
+			}
 		}
-    	renderSimpleResult(true,"处理完毕");
+    	renderSimpleResult(true,"交易成功！");
 	    return null;
 	}
 

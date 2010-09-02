@@ -9,6 +9,10 @@
 package org.osinfo.core.webapp.action.system;
 
 import java.net.URLEncoder;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Collection;
 import java.util.List;
 
@@ -21,10 +25,12 @@ import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
 import org.osinfo.core.webapp.model.DdInventory;
 import org.osinfo.core.webapp.model.custom.Sales;
+import org.osinfo.core.webapp.util.DBUtil;
 import org.osinfo.core.webapp.util.ExcelUtil;
 import org.osinfo.core.webapp.util.PageUtil;
 @Results({
-	 @Result(name="list",location = "/WEB-INF/result/system/sale/list.ftl")
+	 @Result(name="list",location = "/WEB-INF/result/system/sale/list.ftl"),
+	 @Result(name="list2",location = "/WEB-INF/result/system/sale/list2.ftl")
 })
 /**
  * @Author Lucifer.Zhou 4:29:47 PM Jan 6, 2010
@@ -41,6 +47,9 @@ public class SaleAction<T> extends CrudAction{
 	 */
 	private static final long serialVersionUID = 1L;
 	public String list() {
+		String t=(String) getSession().getAttribute("type");
+		if(t.equals("2"))
+			return "list2";
 		return "list";
 	}
 
@@ -57,26 +66,40 @@ public class SaleAction<T> extends CrudAction{
 		String operator=(String) getSession().getAttribute("userid");
 		//记录明细表
 		String[] v=rowsvalue.split("\\|");
-		for(int i=0;i<v.length;i++)
-		{
-			String[] b=v[i].split("\\,");
-			String sql="insert into dd_sales (transaction,barcode,discount,amount,operator,date) " +
-			"values ('"+transaction+"','"+b[0]+"',"+b[3]+","+b[4]+",'"+operator+"','"+submitdate+"')";
-			CommonDAO.executeUpdate(sql);
-			sql="select * from dd_inventory where barcode='"+b[0]+"'";//获取库存数量
-			List l2=CommonDAO.executeQuery(sql, DdInventory.class);
-			if(l2.size()==1)
+		Connection conn=DBUtil.getConnection();
+		Statement stmt = null;
+		ResultSet rs = null;
+		try {
+			conn.setAutoCommit(false);
+			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+			for(int i=0;i<v.length;i++)
 			{
-				DdInventory vs=(DdInventory)l2.get(0);//更新库存数量
-				sql="update dd_inventory set amount="+(vs.getAmount()-Integer.valueOf(b[4]))+" where id ="+vs.getId();
-				CommonDAO.executeUpdate(sql);
-			}	
-
+				String[] b=v[i].split("\\,");
+				String sql="insert into dd_sales (transaction,barcode,discount,amount,operator,date) " +
+				"values ('"+transaction+"','"+b[0]+"',"+b[3]+","+b[4]+",'"+operator+"','"+submitdate+"')";
+				stmt.executeUpdate(sql);
+				sql="select * from dd_inventory where barcode='"+b[0]+"'";//获取库存数量
+				rs=stmt.executeQuery(sql);
+				List l2 = DBUtil.populate(rs, DdInventory.class);
+				if(l2.size()==1)
+				{
+					DdInventory vs=(DdInventory)l2.get(0);//更新库存数量
+					sql="update dd_inventory set amount="+(vs.getAmount()-Integer.valueOf(b[4]))+" where id ="+vs.getId();
+				}	
+			}
+			//记录交易记录表 
+			String sql="insert into dd_bill (transaction,receive,changes,totalprice,operator,date) " +
+			"values ('"+transaction+"',"+receive+","+change+","+totalprice+",'"+operator+"','"+submitdate+"')";
+			stmt.executeUpdate(sql);
+	    	conn.commit();
+	    	conn.setAutoCommit(true);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			renderSimpleResult(false,"交易失败！");
+			e.printStackTrace();
+		}finally {
+			DBUtil.close(rs, stmt, conn);
 		}
-		//记录交易记录表 
-		String sql="insert into dd_bill (transaction,receive,changes,totalprice,operator,date) " +
-		"values ('"+transaction+"',"+receive+","+change+","+totalprice+",'"+operator+"','"+submitdate+"')";
-		CommonDAO.executeUpdate(sql);
     	renderSimpleResult(true,"操作成功,交易号:"+transaction);
 	    return null;
 	}

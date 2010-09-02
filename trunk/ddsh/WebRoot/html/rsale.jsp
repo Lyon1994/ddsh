@@ -22,20 +22,49 @@
 							//return false;
 							if(event.keyCode==13){//扫描枪,回车
 								var barcode=$("#barcode").attr('value');
-								$.ajax({
-								 	url: '../system/inventory!load.zf?barcode='+barcode+'&t='+new Date().getTime(),
-								 	type: 'POST',
-								 	dataType: 'json',
-								 	error: function(){alert('error');},
-								 	success: function(json){
-								 		if(json.length>0)
-								 		{
-								 			$("#name").attr('value',json[0].name);
-								 			$("#price").attr('value',json[0].price);
-								 		}else
-								 			alert('商品不存在！');
-								 	}
-								});
+								if($("#name").attr('value')!='')
+								{
+									 var bln = window.confirm("确定要退回吗?");
+									 if(bln)
+									 {
+										var transaction=$('#transaction').attr('value');
+										var barcode=$('#barcode').attr('value');
+										var amount=$('#amount').attr('value');
+										var reason=$('#reason').attr('value');
+										var para='type=03&transaction='+transaction+'&amount='+amount+'&barcode='+barcode+'&reason='+reason+'&t='+new Date().getTime();
+										
+										$.ajax({
+											 	url: '../system/back!add.zf',
+											 	type: 'POST',
+											 	dataType: 'json',
+											 	data:para,//参数设置
+											 	error: function(){alert('error');},
+											 	success: function(json){
+													alert(json.info);
+													$("#barcode").attr('value','');
+													$("#barcode").focus();
+													$("#name").attr('value','');
+									 				$("#price").attr('value','');
+											 	}
+										});
+									 }
+								}else
+								{
+									$.ajax({
+									 	url: '../system/inventory!load.zf?barcode='+barcode+'&t='+new Date().getTime(),
+									 	type: 'POST',
+									 	dataType: 'json',
+									 	error: function(){alert('error');},
+									 	success: function(json){
+									 		if(json.length>0)
+									 		{
+									 			$("#name").attr('value',json[0].name);
+									 			$("#price").attr('value',json[0].price);
+									 		}else
+									 			alert('商品不存在！');
+									 	}
+									});
+								}
 							}else if(event.keyCode==46){//del键
 								var transaction=$('#transaction').attr('value');
 								var barcode=$('#barcode').attr('value');
@@ -51,6 +80,10 @@
 									 	error: function(){alert('error');},
 									 	success: function(json){
 											alert(json.info);
+											$("#barcode").attr('value','');
+											$("#barcode").focus();
+											$("#name").attr('value','');
+									 		$("#price").attr('value','');
 									 	}
 								});
 							}
@@ -72,6 +105,10 @@
 								 	error: function(){alert('error');},
 								 	success: function(json){
 										alert(json.info);
+										$("#barcode").attr('value','');
+										$("#barcode").focus();
+										$("#name").attr('value','');
+									 	$("#price").attr('value','');
 								 	}
 							});
 							return false;

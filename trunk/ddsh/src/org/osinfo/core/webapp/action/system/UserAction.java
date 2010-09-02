@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.osinfo.core.webapp.action.CrudAction;
@@ -33,11 +34,12 @@ import org.osinfo.core.webapp.util.DBUtil;
 import org.osinfo.core.webapp.util.ExcelUtil;
 import org.osinfo.core.webapp.util.JsonUtil;
 import org.osinfo.core.webapp.util.PageUtil;
+import org.osinfo.core.webapp.util.SecurityUtil;
 @Results({
 	 @Result(name="list",location = "/WEB-INF/result/system/user/list.ftl"),
 	 @Result(name="list2",location = "/WEB-INF/result/system/user/list2.ftl"),
 	 @Result(name="add",location = "/WEB-INF/result/system/user/add.ftl"),
-	 @Result(name="edit",location = "/WEB-INF/result/system/user/edit.ftl"),
+	 @Result(name="edit",location = "/WEB-INF/result/system/user/edit.ftl")
 })
 /**
  * @Author Lucifer.Zhou 4:29:47 PM Jan 6, 2010
@@ -59,16 +61,16 @@ public class UserAction<T> extends CrudAction{
 	public String list2() {
 		return "list2";
 	}
+
 	@Override
 	public String add() {
 		// TODO Auto-generated method stub
 		String userid=getParameter("userid");
-		System.out.println(userid);
 		String password=getParameter("password");
+		password=SecurityUtil.encodeMD5(password);//md5加密
 		String type=getParameter("type");
 		
 		String name=getParameter("name");
-		System.out.println(name);
 		String sex=getParameter("sex");
 		String idcard=getParameter("idcard");		
 		
@@ -106,6 +108,25 @@ public class UserAction<T> extends CrudAction{
 				return "error";
 			else
 				return "error2";
+	}
+	//修改密码
+	public String password() {
+		// TODO Auto-generated method stub
+		if(logger.isDebugEnabled())
+			logger.debug("加载启用页面...");
+	    String password2=getParameter("password2");
+	    password2=SecurityUtil.encodeMD5(password2);//md5加密
+	    String password1=getParameter("password1");
+	    password1=SecurityUtil.encodeMD5(password1);//md5加密
+	    String operator=(String) getSession().getAttribute("userid");
+	    
+	    String sql="update dd_user set password='"+password2+"' where userid ='"+operator+"' and password='"+password1+"'";
+	    int r=CommonDAO.executeUpdate(sql);
+	    if(r>0)
+	    	return "success2";
+	    else
+	    	return "error2";
+
 	}
 	//启用用户
 	public String enable() {
@@ -175,8 +196,11 @@ public class UserAction<T> extends CrudAction{
 		String trid=getParameter("trid");
 		String tdid=getParameter("tdid");
 		String value=getParameter("value");
-		
-		String sql="update dd_user set "+tdid+"='"+value+"' where id ='"+trid+"'";
+		String sql="";
+		if(tdid.equalsIgnoreCase("password"))
+			sql="update dd_user set "+tdid+"='"+SecurityUtil.encodeMD5(value)+"' where id ='"+trid+"'";
+		else
+			sql="update dd_user set "+tdid+"='"+value+"' where id ='"+trid+"'";
 		CommonDAO.executeUpdate(sql);
 		renderSimpleResult(true,"修改成功");
 		return null;
@@ -250,7 +274,7 @@ public class UserAction<T> extends CrudAction{
 				date=d.getDate();
 			else
 				date=d.getSubmitdate();
-			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getUserid()+"</td><td>"+d.getName()+"</td><td>"+d.getBrand()+"</td><td class='editbox' id='password'>"+d.getPassword()+"</td><td>"+t+"</td><td>"+s+"</td><td class='editbox' id='mobile'>"+d.getMobile()+"</td><td class='editbox' id='telephone'>"+d.getTelephone()+"</td><td class='editbox' id='fax'>"+d.getFax()+"</td><td class='editbox' id='mail'>"+d.getMail()+"</td><td class='editbox' id='address'>"+d.getAddress()+"</td><td>"+date+"</td></tr>\",";
+			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getUserid()+"</td><td>"+d.getName()+"</td><td>"+d.getBrand()+"</td><td class='editbox' id='password'>******</td><td>"+t+"</td><td>"+s+"</td><td class='editbox' id='mobile'>"+d.getMobile()+"</td><td class='editbox' id='telephone'>"+d.getTelephone()+"</td><td class='editbox' id='fax'>"+d.getFax()+"</td><td class='editbox' id='mail'>"+d.getMail()+"</td><td class='editbox' id='address'>"+d.getAddress()+"</td><td>"+date+"</td></tr>\",";
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";

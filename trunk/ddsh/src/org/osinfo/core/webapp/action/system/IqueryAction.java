@@ -21,7 +21,7 @@ import org.osinfo.core.webapp.action.CrudAction;
 import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
 import org.osinfo.core.webapp.model.DdInventory;
-import org.osinfo.core.webapp.model.custom.Total;
+import org.osinfo.core.webapp.model.custom.Inventory;
 import org.osinfo.core.webapp.util.ExcelUtil;
 import org.osinfo.core.webapp.util.PageUtil;
 @Results({
@@ -65,7 +65,7 @@ public class IqueryAction<T> extends CrudAction{
 			logger.debug("加载删除页面...");
 	    String ids=getParameter("ids");
 	    if(!"".equals(ids.trim())){
-	    		String sql="delete from dd_sales where id in ("+ids.substring(0,ids.length()-1)+")";
+	    		String sql="delete from dd_inventory where id in ("+ids.substring(0,ids.length()-1)+")";
 	    		CommonDAO.executeUpdate(sql);
 	    }
 	    renderSimpleResult(true,"操作成功");
@@ -96,13 +96,13 @@ public class IqueryAction<T> extends CrudAction{
 			name2 = URLEncoder.encode(name, "UTF-8");//IE浏览器 终极解决文件名乱码
 
 		getResponse().setHeader("Content-disposition","attachment;filename=" +name2+"-"+getCurrentTime() + ".xls");
-		String[] headers = { "序号","条形码","数量","折扣", "操作者","日期"};
+		String[] headers = { "序号","条形码","名称","设计师","数量","价格","折扣", "操作者","日期"};
 		String userid=getParameter("userid");
 		String barcode=getParameter("barcode");
 		String name_=org.osinfo.core.webapp.util.StringUtil.convertUTF8(getParameter("name"));
 		StringBuffer sql=new StringBuffer();
 
-			sql.append("select i.id,i.barcode,p.name,i.amount,p.price,i.discount,i.operator,i.date from dd_inventory i left join dd_product p on i.barcode=p.barcode where 1=1 ");
+			sql.append("select i.id,i.barcode,p.name,p.userid,i.amount,p.price,i.discount,i.operator,i.date from dd_inventory i left join dd_product p on i.barcode=p.barcode where 1=1 ");
 			if(!barcode.trim().equals(""))
 			{
 				sql.append(" and i.barcode like '%"+barcode+"%'");
@@ -116,7 +116,7 @@ public class IqueryAction<T> extends CrudAction{
 			{
 				sql.append(" and p.userid like '%"+userid+"%'");
 			}
-			PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql.toString(),DdInventory.class);
+			PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql.toString(),Inventory.class);
 		Collection<T> l = (Collection<T>) p.getResult();
 		return ExcelUtil.exportExcel(workbook,name, headers, l);
 	}
@@ -138,7 +138,7 @@ public class IqueryAction<T> extends CrudAction{
 		String name_=getParameter("name");
 		StringBuffer sql=new StringBuffer();
 
-			sql.append("select i.id,i.barcode,p.name,i.amount,p.price,i.discount,i.operator,i.date from dd_inventory i left join dd_product p on i.barcode=p.barcode where 1=1 ");
+			sql.append("select i.id,i.barcode,p.name,p.userid,i.amount,p.price,i.discount,i.operator,i.date from dd_inventory i left join dd_product p on i.barcode=p.barcode where 1=1 ");
 			if(!barcode.trim().equals(""))
 			{
 				sql.append(" and i.barcode like '%"+barcode+"%'");
@@ -152,7 +152,7 @@ public class IqueryAction<T> extends CrudAction{
 			{
 				sql.append(" and p.userid like '%"+userid+"%'");
 			}
-		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql.toString(),start,end,perpage,DdInventory.class);
+		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql.toString(),start,end,perpage,Inventory.class);
 		
 		String content = "totalPage = " + p.getTotalPageCount() + ";";
 		content += "dataStore = [";
@@ -160,9 +160,9 @@ public class IqueryAction<T> extends CrudAction{
 		List l=(List)p.getResult();
 		for(int i=0;i<l.size();i++)
 		{
-			DdInventory d=(DdInventory)l.get(i);
+			Inventory d=(Inventory)l.get(i);
 			Timestamp date=d.getDate();
-			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td class='editbox' id='amount'>"+d.getAmount()+"</td><td class='editbox' id='discount'>"+d.getDiscount()+"</td><td>"+d.getOperator()+"</td><td>"+date+"</td></tr>\",";
+			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td>"+d.getUserid()+"</td><td class='editbox' id='amount'>"+d.getAmount()+"</td><td>"+d.getPrice()+"</td><td class='editbox' id='discount'>"+d.getDiscount()+"</td><td>"+d.getOperator()+"</td><td>"+date+"</td></tr>\",";
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";

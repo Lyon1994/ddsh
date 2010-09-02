@@ -59,7 +59,12 @@ public class CommonDAO {
 			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
 			rs=stmt.executeQuery(sql);
 			while(rs.next())
-				sum=Float.parseFloat(rs.getString("sum"));
+			{
+				String sum_=rs.getString("sum");
+				if(sum_==null)
+					sum_="0";
+				sum=Float.parseFloat(sum_);
+			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -99,9 +104,7 @@ public class CommonDAO {
 			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
 			rs=stmt.executeQuery(sql);
 			while (rs.next())
-			{
 				count=rs.getInt(1);
-			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -112,20 +115,15 @@ public class CommonDAO {
 	}
 	public static PageUtil findPageByMultiTableSQLQuery(String sql, long start, long end,long pageSize,Class c)
 	{
-		System.out.println(sql);
 		ResultSet rs = null;
 		Statement stmt = null;
 		Connection conn=DBUtil.getConnection();
-		long t1=System.currentTimeMillis();
 		int totalCount=count(sql);
-		long t2=System.currentTimeMillis();
-		System.out.println("sql拼接统计："+(t2-t1));
 		List list = new ArrayList();
-		long t3=System.currentTimeMillis();
 		try {
 			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
 			rs=stmt.executeQuery(sql+" limit "+(start-1)+","+pageSize);
-
+			System.out.println(sql+" limit "+(start-1)+","+pageSize);
 			list = DBUtil.populate(rs, c);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -133,26 +131,20 @@ public class CommonDAO {
 		}finally {
 			DBUtil.close(rs, stmt, conn);
 		}
-		long t4=System.currentTimeMillis();
-		System.out.println("分页后："+(t4-t3));
 		return new PageUtil(start, totalCount, pageSize, list);
 	}
-	public static PageUtil findPageByMultiTableSQLQuery(int total,String sql, long start, long end,long pageSize,Class c)
+	public static PageUtil findPageByMultiTableSQLQuery(int total,String sql, long start,long pageSize,Class c)
 	{
-		System.out.println(sql);
+		
 		ResultSet rs = null;
 		Statement stmt = null;
 		Connection conn=DBUtil.getConnection();
-		long t1=System.currentTimeMillis();
 		int totalCount=total;
-		long t2=System.currentTimeMillis();
-		System.out.println("sql拼接统计："+(t2-t1));
 		List list = new ArrayList();
-		long t3=System.currentTimeMillis();
 		try {
 			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
-			rs=stmt.executeQuery(sql+" limit "+(start-1)+","+pageSize);
-
+			rs=stmt.executeQuery(sql+" limit "+pageSize);
+			System.out.println(sql+" limit "+pageSize);
 			list = DBUtil.populate(rs, c);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -160,8 +152,7 @@ public class CommonDAO {
 		}finally {
 			DBUtil.close(rs, stmt, conn);
 		}
-		long t4=System.currentTimeMillis();
-		System.out.println("分页后："+(t4-t3));
+
 		return new PageUtil(start, totalCount, pageSize, list);
 	}
 	public static PageUtil findByMultiTableSQLQuery(String sql,Class c)
