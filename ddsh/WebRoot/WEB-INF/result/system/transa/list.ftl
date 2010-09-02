@@ -103,7 +103,6 @@
 		<table border="0" width="100%" cellspacing="0" cellpadding=" height="30">
 			<tr>
 				<td>
-					<!--<a href="${base}/html/regedit_transa.html"><img src="${images}/add.gif" style="cursor:hand"/></a>-->
 					<img src="${images}/delete.gif" onclick="deletes()"  style="cursor:hand"/>
 					<img src="${images}/export.gif" onclick="exports()" style="cursor:hand" />
 					<img src="${images}/printer.gif" style="cursor:hand" />

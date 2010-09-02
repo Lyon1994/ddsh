@@ -30,33 +30,7 @@
 			    for (var i=0;i<sel.length;i++ )
 		    		sel[i].checked = b;  
 			}
-			function deletes()
-			{
-				var str="";
-				var sel = document.getElementsByName("row");
-			    for(var i=0;i<sel.length;i++)
-			    {
-			   		if(sel[i].checked==true)
-			   			str+=sel[i].value+",";
-			    }
-				if(str==""){
-					alert("请至少选择一条记录");
-					return false;
-				}
-				if(window.confirm("确定要删除这些记录吗？")){
-					$.ajax({
-					 	url: 'transa!del.zf?ids='+str+'&t='+new Date().getTime(),
-					 	type: 'POST',
-					 	dataType: 'json',
-					 	error: function(){alert('error');},
-					 	success: function(json){
-							alert(json.info); 
-							load('');
-					 	}
-					}); 
-				}
-			}
-			
+
 			function load(param)
 			{
 				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th width='1%'><input type='checkbox' name='select' onclick='ck()'/></th><th>用户编号</th><th>目标用户</th><th>交易类型</th><th>状态</th><th>金额</th><th>备注</th><th>提交日期</th></tr></thead><tbody>";
@@ -103,8 +77,6 @@
 		<table border="0" width="100%" cellspacing="0" cellpadding=" height="30">
 			<tr>
 				<td>
-					<!--<a href="${base}/html/regedit_transa.html"><img src="${images}/add.gif" style="cursor:hand"/></a>-->
-					<img src="${images}/delete.gif" onclick="deletes()"  style="cursor:hand"/>
 					<img src="${images}/export.gif" onclick="exports()" style="cursor:hand" />
 					<img src="${images}/printer.gif" style="cursor:hand" />
 				</td>

@@ -20,9 +20,6 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -122,24 +119,19 @@ public class ExcelUtil {
 	                	value="";
 	                //判断值的类型后进行强制类型转换
 	                String textValue = null;
-//	              if (value instanceof Integer) {
-//	                 int intValue = (Integer) value;
-//	                 cell.setCellValue(intValue);
-//	              } else if (value instanceof Float) {
-//	                 float fValue = (Float) value;
-//	                 textValue = new HSSFRichTextString(
-//	                       String.valueOf(fValue));
-//	                 cell.setCellValue(textValue);
-//	              } else if (value instanceof Double) {
-//	                 double dValue = (Double) value;
-//	                 textValue = new HSSFRichTextString(
-//	                       String.valueOf(dValue));
-//	                 cell.setCellValue(textValue);
-//	              } else if (value instanceof Long) {
-//	                 long longValue = (Long) value;
-//	                 cell.setCellValue(longValue);
-//	              } 
-	                if (value instanceof Boolean) {
+	              if (value instanceof Integer) {
+	                 int intValue = (Integer) value;
+	                 cell.setCellValue(intValue);
+	              } else if (value instanceof Float) {
+	                 float fValue = (Float) value;
+	                 cell.setCellValue(fValue);
+	              } else if (value instanceof Double) {
+	                 double dValue = (Double) value;
+	                 cell.setCellValue(dValue);
+	              } else if (value instanceof Long) {
+	                 long longValue = (Long) value;
+                     cell.setCellValue(longValue);
+	              } else if (value instanceof Boolean) {
 	                   boolean bValue = (Boolean) value;
 	                   //textValue = "男";
 	                   //if (!bValue) {
@@ -147,9 +139,14 @@ public class ExcelUtil {
 	                   //}
 	                } else if (value instanceof Date) {
 	                   Date date = (Date) value;
-	                   SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-	                    textValue = sdf.format(date);
-	                }  else if (value instanceof byte[]) {
+	                   SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	                   textValue = sdf.format(date);
+	                      HSSFRichTextString richString = new HSSFRichTextString(textValue);
+	                      HSSFFont font3 = workbook.createFont();
+	                      font3.setColor(HSSFColor.BLUE.index);
+	                      richString.applyFont(font3);
+	                      cell.setCellValue(richString);
+	                }else if (value instanceof byte[]) {
 	                   // 有图片时，设置行高为60px;
 	                   row.setHeightInPoints(60);
 	                   // 设置图片所在列宽度为80px,注意这里单位的一个换算
@@ -160,17 +157,23 @@ public class ExcelUtil {
 	                         1023, 255, (short) 6, index, (short) 6, index);
 	                   anchor.setAnchorType(2);
 	                   patriarch.createPicture(anchor, workbook.addPicture(
-	                         bsValue, HSSFWorkbook.PICTURE_TYPE_JPEG));
-	                } else{
-	                   //其它数据类型都当作字符串简单处理
-	                   textValue = value.toString();
-	                }
-	                
+	                   bsValue, HSSFWorkbook.PICTURE_TYPE_JPEG));
 	                      HSSFRichTextString richString = new HSSFRichTextString(textValue);
 	                      HSSFFont font3 = workbook.createFont();
 	                      font3.setColor(HSSFColor.BLUE.index);
 	                      richString.applyFont(font3);
 	                      cell.setCellValue(richString);
+	                } else{
+	                   //其它数据类型都当作字符串简单处理
+	                   textValue = value.toString();
+	                      HSSFRichTextString richString = new HSSFRichTextString(textValue);
+	                      HSSFFont font3 = workbook.createFont();
+	                      font3.setColor(HSSFColor.BLUE.index);
+	                      richString.applyFont(font3);
+	                      cell.setCellValue(richString);
+	                }
+	                
+
 	            } catch (SecurityException e) {
 	                // TODO Auto-generated catch block
 	                e.printStackTrace();

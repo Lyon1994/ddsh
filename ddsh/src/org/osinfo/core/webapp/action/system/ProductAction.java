@@ -153,12 +153,15 @@ public class ProductAction<T> extends CrudAction{
 		String submitdate=getCurrentTime();
 		String operator=(String) getSession().getAttribute("userid");
 	    if(!"".equals(ids.trim())){
-	    	String sql="update dd_product set status='1',barcode='"+getRandomBarCode()+"',date='"+submitdate+"',operator='"+operator+"' where id in ("+ids+")";
-			int r=CommonDAO.executeUpdate(sql);
-	    	if(r>0)
-	    		renderSimpleResult(true,r+"条处理成功！");
+	    	String[] tmp=ids.split(",");
+	    	for(int i=0;i<tmp.length;i++)
+	    	{
+		    	String sql="update dd_product set status='1',barcode='"+getRandomBarCode()+"',date='"+submitdate+"',operator='"+operator+"' where id ="+tmp[i];
+				CommonDAO.executeUpdate(sql);
+	    	}
 	    }
-        return null;
+	    renderSimpleResult(true,"处理成功！");
+	    return null;
 	}
     private static void copy(File src, File dst)  {
         try  {
@@ -203,7 +206,7 @@ public class ProductAction<T> extends CrudAction{
 		}
 		String json = JsonUtil.list2json(l_);
     	renderJson(json.toString());
-	    System.out.println(json.toString());
+	    //System.out.println(json.toString());
 	    
         return null;
 	}
@@ -323,9 +326,9 @@ public class ProductAction<T> extends CrudAction{
 				status="<font color='green'>已审核</font>";
 			
 			if(type.equals("1"))
-				content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td class='editbox' id='price'>"+d.getPrice()+"</td><td>"+type_+"</td><td>"+status+"</td><td><img src='../upload/"+d.getImage()+"' width=50 height=20/></td><td>"+d.getUserid()+"</td><td class='editbox' id='spec'>"+d.getSpec()+"</td><td class='editbox' id='grade'>"+d.getGrade()+"</td><td class='editbox' id='material'>"+d.getMaterial()+"</td><td class='editbox' id='location'>"+d.getLocation()+"</td><td>"+d.getDate()+"</td></tr>\",";
+				content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td class='editbox' id='price'>"+d.getPrice()+"</td><td>"+type_+"</td><td>"+status+"</td><td><a href='../upload/"+d.getImage()+"'><img src='../upload/"+d.getImage()+"' width=50 height=20/></a></td><td>"+d.getUserid()+"</td><td class='editbox' id='spec'>"+d.getSpec()+"</td><td class='editbox' id='grade'>"+d.getGrade()+"</td><td class='editbox' id='material'>"+d.getMaterial()+"</td><td class='editbox' id='location'>"+d.getLocation()+"</td><td>"+d.getDate()+"</td></tr>\",";
 			else
-				content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getName()+"</td><td>"+d.getPrice()+"</td><td>"+type_+"</td><td>"+status+"</td><td><img src='../upload/"+d.getImage()+"' width=50 height=20/></td><td>"+d.getUserid()+"</td><td>"+d.getSpec()+"</td><td>"+d.getGrade()+"</td><td>"+d.getMaterial()+"</td><td>"+d.getLocation()+"</td><td>"+d.getMemo()+"</td><td>"+d.getSubmitdate()+"</td></tr>\",";
+				content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getName()+"</td><td>"+d.getPrice()+"</td><td>"+type_+"</td><td>"+status+"</td><td><a href='../upload/"+d.getImage()+"'><img src='../upload/"+d.getImage()+"' width=50 height=20/></a></td><td>"+d.getUserid()+"</td><td>"+d.getSpec()+"</td><td>"+d.getGrade()+"</td><td>"+d.getMaterial()+"</td><td>"+d.getLocation()+"</td><td>"+d.getMemo()+"</td><td>"+d.getSubmitdate()+"</td></tr>\",";
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";

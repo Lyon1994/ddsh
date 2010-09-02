@@ -87,6 +87,14 @@ public class WorkbenchAction extends BaseAction {
 			getRequest().setAttribute("page", "workbench_upload");
 		return "main";
 	}
+	@Action("/password.*") 
+	public String password()
+	{
+		if(logger.isDebugEnabled())
+			logger.debug("密码修改...");
+		getRequest().setAttribute("page", "password");
+		return "main";
+	}
 	public static Map getTree(String type)
 	{
 		Map m=new LinkedHashMap();

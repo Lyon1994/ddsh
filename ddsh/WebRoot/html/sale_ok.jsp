@@ -74,8 +74,8 @@
 									var para='rowsvalue='+rowsvalue+'&totalprice='+totalprice+'&receive='+receive+'&change='+change+'&transaction='+transaction+'&t='+new Date().getTime();
 									if($("#print").attr('checked')==true)
 									{
-										//CreatePrintPage(rowsvalue,totalprice,receive,change,transaction);
-										//LODOP.PRINT();	
+										CreatePrintPage(rowsvalue,totalprice,receive,change,transaction);
+										LODOP.PRINT();	
 									}
 									$.ajax({
 										 	url: '../system/sale!add.zf',
@@ -90,8 +90,12 @@
 										 	}
 									});
 								}else
-									$("#change").attr('value',ForDight(v,2));
-								
+								{
+									if(v>=0)
+										$("#change").attr('value',ForDight(v,2));
+									else
+										alert('实收金额小于物品金额！');
+								}
 							}else if(event.keyCode==46){//del键
 								var rowsvalue='<%=rowsvalue%>';
 								var totalprice='<%=totalprice%>';

@@ -218,6 +218,7 @@ public class WalletAction<T> extends CrudAction{
 			sql="select sum(p.price*s.discount*s.amount) as sum from dd_sales s left join dd_product p on s.barcode=p.barcode order by p.userid";
 	  
 		sale=CommonDAO.sum(sql);
+
 		m.put("sale", FloatUtil.round(sale, 2));//总销售额
 		
 		if(t.equals("2"))
@@ -240,6 +241,11 @@ public class WalletAction<T> extends CrudAction{
 			sql="select sum(w.money) as sum from dd_wallet w";
 		money=CommonDAO.sum(sql);
 		m.put("money", FloatUtil.round(money, 2));//余额
+		
+		if(t.equals("2"))
+			sql="select w.balance from dd_wallet w where w.userid='"+operator+"' ";
+
+		
 		
 	    try
 	    {

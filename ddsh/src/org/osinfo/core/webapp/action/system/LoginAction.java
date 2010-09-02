@@ -21,6 +21,7 @@ import org.osinfo.core.webapp.Constants;
 import org.osinfo.core.webapp.action.BaseAction;
 import org.osinfo.core.webapp.dao.CommonDAO;
 import org.osinfo.core.webapp.model.DdUser;
+import org.osinfo.core.webapp.util.SecurityUtil;
 @Results({
 	 @Result(name="login",location = "/WEB-INF/result/system/login.ftl"),
 	 @Result(name="workbench",location = "/WEB-INF/result/system/workbench.ftl"),
@@ -88,6 +89,7 @@ public class LoginAction extends BaseAction{
 			logger.debug("用户登录校验...");
 		String userid=getParameter("userid");
 		String password=getParameter("password");
+		password=SecurityUtil.encodeMD5(password);//md5加密
 		String code=getParameter("code");
 		if(code.equalsIgnoreCase((String) getSession().getAttribute(Constants.VALIDATECODE)))
 		{
