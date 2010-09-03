@@ -195,9 +195,9 @@ public class BackAction<T> extends CrudAction{
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
 		if(t.equals("2"))
-			sql="select * from (select b.id,b.barcode,b.transaction,p.name,p.userid,b.amount,p.price,(select value from dd_dic d where d.parent='back' and d.child=b.type) as type,(select value from dd_dic d where d.parent='reason' and d.child=b.reason) as reason,b.operator,b.date from dd_back b left join dd_product p on b.barcode=p.barcode where p.userid='"+userid+"' and b.id>=(select v.id from dd_back v left join dd_product p1 on v.barcode=p1.barcode where p1.userid='"+userid+"'  order by v.id limit "+(start-1)+",1) order by  b.id) as s order by s.date desc";
+			sql="select * from (select b.id,b.barcode,b.transaction,p.name,p.userid,b.amount,p.price,(select value from dd_dic d where d.parent='back' and d.child=b.type) as type,(select value from dd_dic d where d.parent='reason' and d.child=b.reason) as reason,b.operator,b.date from dd_back b left join dd_product p on b.barcode=p.barcode where p.userid='"+userid+"' and b.id<=(select v.id from dd_back v left join dd_product p1 on v.barcode=p1.barcode where p1.userid='"+userid+"'  order by v.id desc limit "+(start-1)+",1) ) as s order by s.id desc";
 		else
-			sql="select * from (select b.id,b.barcode,b.transaction,p.name,p.userid,b.amount,p.price,(select value from dd_dic d where d.parent='back' and d.child=b.type) as type,(select value from dd_dic d where d.parent='reason' and d.child=b.reason) as reason,b.operator,b.date from dd_back b left join dd_product p on b.barcode=p.barcode  where  b.id>=(select id from dd_back order by id limit "+(start-1)+",1)  order by  b.id) as s order by s.date desc";
+			sql="select * from (select b.id,b.barcode,b.transaction,p.name,p.userid,b.amount,p.price,(select value from dd_dic d where d.parent='back' and d.child=b.type) as type,(select value from dd_dic d where d.parent='reason' and d.child=b.reason) as reason,b.operator,b.date from dd_back b left join dd_product p on b.barcode=p.barcode  where  b.id<=(select id from dd_back order by id desc limit "+(start-1)+",1) ) as s order by s.id desc";
 		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(this.total,sql,start,perpage,Back.class);
 		
 		String content = "totalPage = " + p.getTotalPageCount() + ";";
