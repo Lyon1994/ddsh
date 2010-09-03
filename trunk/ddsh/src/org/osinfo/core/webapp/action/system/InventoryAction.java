@@ -255,10 +255,10 @@ public class InventoryAction<T> extends CrudAction{
 		String sql;
 		if(t.equals("2"))
 		{
-			sql="select i.id,i.barcode,p.name,p.userid,i.amount,p.price,i.discount,i.operator,i.date from dd_inventory i left join dd_product p on i.barcode=p.barcode where p.userid='"+userid+"' and i.amount>0 order by i.id,p.userid,p.name";
+			sql="select i.id,i.barcode,p.name,p.userid,i.amount,p.price,i.discount,i.operator,i.date from dd_inventory i left join dd_product p on i.barcode=p.barcode where p.userid='"+userid+"'  order by i.id,p.userid,p.name";
 		}else
 		{
-			sql="select i.id,i.barcode,p.name,p.userid,i.amount,p.price,i.discount,i.operator,i.date from dd_inventory i left join dd_product p on i.barcode=p.barcode where i.amount>0 order by i.id,p.userid,p.name";
+			sql="select i.id,i.barcode,p.name,p.userid,i.amount,p.price,i.discount,i.operator,i.date from dd_inventory i left join dd_product p on i.barcode=p.barcode  order by i.id,p.userid,p.name";
 		}
 		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,Inventory.class);
 		Collection<T> l = (Collection<T>) p.getResult();
@@ -282,10 +282,10 @@ public class InventoryAction<T> extends CrudAction{
 		String t=(String) getSession().getAttribute("type");
 		if(t.equals("2"))
 		{
-			sql="select i.id,i.barcode,p.name,p.userid,i.amount,p.price,i.discount,i.operator,i.date from dd_inventory i left join dd_product p on i.barcode=p.barcode where p.userid='"+userid+"' and i.amount>0 and i.id>=(select v.id from dd_inventory v left join dd_product p1 on v.barcode=p1.barcode where p1.userid='"+userid+"' and v.amount>0 order by v.id limit "+(start-1)+",1) order by i.id,p.userid,p.name";
+			sql="select i.id,i.barcode,p.name,p.userid,i.amount,p.price,i.discount,i.operator,i.date from dd_inventory i left join dd_product p on i.barcode=p.barcode where p.userid='"+userid+"' and  i.id>=(select v.id from dd_inventory v left join dd_product p1 on v.barcode=p1.barcode where p1.userid='"+userid+"'  order by v.id limit "+(start-1)+",1) order by i.id,p.userid,p.name";
 		}else
 		{
-			sql="select i.id,i.barcode,p.name,p.userid,i.amount,p.price,i.discount,i.operator,i.date from dd_inventory i left join dd_product p on i.barcode=p.barcode where i.amount>0 and i.id>=(select id from dd_inventory order by id limit "+(start-1)+",1) order by i.id,p.userid,p.name";
+			sql="select i.id,i.barcode,p.name,p.userid,i.amount,p.price,i.discount,i.operator,i.date from dd_inventory i left join dd_product p on i.barcode=p.barcode where  i.id>=(select id from dd_inventory order by id limit "+(start-1)+",1) order by i.id,p.userid,p.name";
 		}
 		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(this.total,sql,start,perpage,Inventory.class);
 		String content = "totalPage = " + p.getTotalPageCount() + ";";
@@ -317,12 +317,9 @@ public class InventoryAction<T> extends CrudAction{
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
 		if(t.equals("2"))
-		{
-			sql="select i.id from dd_inventory i left join dd_product p on i.barcode=p.barcode where p.userid='"+userid+"' and i.amount>0";
-		}else
-		{
-			 sql="select i.id from dd_inventory i where i.amount>0";
-		}
+			sql="select i.id from dd_inventory i left join dd_product p on i.barcode=p.barcode where p.userid='"+userid+"' ";
+		else
+			 sql="select i.id from dd_inventory i ";
 		int count=CommonDAO.count(sql);
 		this.total=count;
 		return count;

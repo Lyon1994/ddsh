@@ -13,19 +13,33 @@ public class Back implements java.io.Serializable {
 	private Integer id;
 	private String barcode;
 	private String transaction;
+	private String name;
+	private String userid;
+	private Integer amount;
+	private Float price;
+	public String getUserid() {
+		return userid;
+	}
+	public void setUserid(String userid) {
+		this.userid = userid;
+	}
+	public Float getPrice() {
+		return price;
+	}
+	public void setPrice(Float price) {
+		this.price = price;
+	}
+	private String type;
+	private String reason;
+	private String operator;
+	private Timestamp date;
+	
 	public String getTransaction() {
 		return transaction;
 	}
 	public void setTransaction(String transaction) {
 		this.transaction = transaction;
 	}
-	private String name;
-	
-	private Integer amount;
-	private String type;
-	private String reason;
-	private String operator;
-	private Timestamp date;
 	public Integer getId() {
 		return id;
 	}

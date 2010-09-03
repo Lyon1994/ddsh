@@ -135,14 +135,14 @@ public class SaleAction<T> extends CrudAction{
 			name2 = URLEncoder.encode(name, "UTF-8");//IE浏览器 终极解决文件名乱码
 
 		getResponse().setHeader("Content-disposition","attachment;filename=" +name2+"-"+getCurrentTime() + ".xls");
-		String[] headers = { "序号","交易号","条形码", "名称","折扣", "数量", "价格","操作者","日期"};
+		String[] headers = { "序号","交易号","条形码", "名称","设计师","折扣", "数量", "价格","操作者","日期"};
 		String sql;
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
 		if(t.equals("2"))
-			sql="select s.id,s.transaction,s.barcode,p.name,s.discount,s.amount,p.price,s.operator,s.date from dd_sales s left join dd_product p on s.barcode=p.barcode where p.userid='"+userid+"' and s.amount>0 order by s.date desc";
+			sql="select s.id,s.transaction,s.barcode,p.name,p.userid,s.discount,s.amount,p.price,s.operator,s.date from dd_sales s left join dd_product p on s.barcode=p.barcode where p.userid='"+userid+"' order by s.date desc";
 		else
-			sql="select s.id,s.transaction,s.barcode,p.name,s.discount,s.amount,p.price,s.operator,s.date from dd_sales s left join dd_product p on s.barcode=p.barcode where s.amount>0 order by s.date desc";;
+			sql="select s.id,s.transaction,s.barcode,p.name,p.userid,s.discount,s.amount,p.price,s.operator,s.date from dd_sales s left join dd_product p on s.barcode=p.barcode  order by s.date desc";;
 		
 			PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,Sales.class);
 		Collection<T> l = (Collection<T>) p.getResult();
@@ -165,11 +165,11 @@ public class SaleAction<T> extends CrudAction{
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
 		if(t.equals("2"))
-			sql="select s.id,s.transaction,s.barcode,p.name,s.discount,s.amount,p.price,s.operator,s.date from dd_sales s left join dd_product p on s.barcode=p.barcode where p.userid='"+userid+"' and s.amount>0 order by s.date desc";
+			sql="select * from (select s.id,s.transaction,s.barcode,p.name,p.userid,s.discount,s.amount,p.price,s.operator,s.date from dd_sales s left join dd_product p on s.barcode=p.barcode where p.userid='"+userid+"' and s.id>=(select v.id from dd_sales v left join dd_product p1 on v.barcode=p1.barcode where p1.userid='"+userid+"'  order by v.id limit "+(start-1)+",1) order by  s.id) as s order by s.date desc";
 		else
-			sql="select s.id,s.transaction,s.barcode,p.name,s.discount,s.amount,p.price,s.operator,s.date from dd_sales s left join dd_product p on s.barcode=p.barcode where s.amount>0 order by s.date desc";;
+			sql="select * from (select s.id,s.transaction,s.barcode,p.name,p.userid,s.discount,s.amount,p.price,s.operator,s.date from dd_sales s left join dd_product p on s.barcode=p.barcode where  s.id>=(select id from dd_sales order by id limit "+(start-1)+",1) order by s.id) as s order by s.date desc";
 		
-		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,Sales.class);
+		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(this.total,sql,start,perpage,Sales.class);
 		
 		String content = "totalPage = " + p.getTotalPageCount() + ";";
 		content += "dataStore = [";
@@ -179,7 +179,7 @@ public class SaleAction<T> extends CrudAction{
 		{
 			Sales d=(Sales)l.get(i);
 
-			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getTransaction()+"</td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td>"+d.getDiscount()+"</td><td>"+d.getAmount()+"</td><td>"+d.getPrice()+"</td><td>"+d.getOperator()+"</td><td>"+d.getDate()+"</td></tr>\",";
+			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getTransaction()+"</td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td>"+d.getUserid()+"</td><td>"+d.getDiscount()+"</td><td>"+d.getAmount()+"</td><td>"+d.getPrice()+"</td><td>"+d.getOperator()+"</td><td>"+d.getDate()+"</td></tr>\",";
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";
@@ -193,11 +193,12 @@ public class SaleAction<T> extends CrudAction{
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
 		if(t.equals("2"))
-			sql="select s.id  from dd_sales s left join dd_product p on s.barcode=p.barcode where p.userid='"+userid+"' and s.amount>0 order by s.date desc";
+			sql="select s.id  from dd_sales s left join dd_product p on s.barcode=p.barcode where p.userid='"+userid+"'  order by s.date desc";
 		else
-			sql="select * from dd_sales  where  amount>0 order by date desc";;
+			sql="select * from dd_sales  order by date desc";
 		
 		int count=CommonDAO.count(sql);
+		this.total=count;
 		return count;
 	}
 }

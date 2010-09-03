@@ -66,7 +66,7 @@
 			
 			function load(param)
 			{
-				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th width='1%'><input type='checkbox' name='select' onclick='ck()'/></th><th>交易号</th><th>条形码</th><th>物品名称</th><th>数量</th><th>退回原因</th><th>操作人</th><th>操作日期</th></tr></thead><tbody>";
+				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th width='1%'><input type='checkbox' name='select' onclick='ck()'/></th><th>交易号</th><th>条形码</th><th>物品名称</th><th>设计师</th><th>数量</th><th>单价</th><th>退回原因</th><th>操作人</th><th>操作日期</th></tr></thead><tbody>";
 				var a="</tbody></table>";
 				$.ajax({
 					 	url: 'rsale!count.zf?type=0&t='+new Date().getTime(),
