@@ -66,7 +66,7 @@
 							}else{
 								cancel(obtn);
 							}
-							load('');
+							//load('');
 					 	}
 				}); 
 			}

@@ -20,11 +20,12 @@ import org.osinfo.core.webapp.action.CrudAction;
 import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
 import org.osinfo.core.webapp.model.DdRsales;
+import org.osinfo.core.webapp.model.custom.Rsales;
 import org.osinfo.core.webapp.util.ExcelUtil;
 import org.osinfo.core.webapp.util.PageUtil;
 @Results({
 	 @Result(name="list",location = "/WEB-INF/result/system/rsale/list.ftl"),
-	 @Result(name="list2",location = "/WEB-INF/result/system/rsale/list2.ftl"),
+	 @Result(name="list2",location = "/WEB-INF/result/system/rsale/list2.ftl")
 })
 /**
  * @Author Lucifer.Zhou 4:29:47 PM Jan 6, 2010
@@ -42,6 +43,9 @@ public class RsaleAction<T> extends CrudAction{
 	private static final long serialVersionUID = 1L;
 	//退回商品
 	public String list() {
+		String t=(String) getSession().getAttribute("type");
+		if(t.equals("2"))
+			return "list2";
 		return "list";
 	}
 
@@ -50,15 +54,14 @@ public class RsaleAction<T> extends CrudAction{
 	public String add() {
 		// TODO Auto-generated method stub
 		String transaction=getParameter("transaction");
-		String name=getParameter("name");
 		String amount=getParameter("amount");
 		String reason=getParameter("reason");
 		String submitdate=getCurrentTime();
 		String barcode=getParameter("barcode");
 		String operator=(String) getSession().getAttribute("userid");
 
-		String sql="insert into dd_rsales (transaction,barcode,name,amount,reason,operator,date) " +
-		"values ('"+transaction+"','"+barcode+"','"+name+"',"+amount+",'"+reason+"','"+operator+"','"+submitdate+"')";
+		String sql="insert into dd_rsales (transaction,barcode,amount,reason,operator,date) " +
+		"values ('"+transaction+"','"+barcode+"',"+amount+",'"+reason+"','"+operator+"','"+submitdate+"')";
 		CommonDAO.executeUpdate(sql);
     	renderSimpleResult(true,"处理成功");
 	    return null;
@@ -95,12 +98,16 @@ public class RsaleAction<T> extends CrudAction{
 			name2 = URLEncoder.encode(name, "UTF-8");//IE浏览器 终极解决文件名乱码
 
 		getResponse().setHeader("Content-disposition","attachment;filename=" +name2+"-"+getCurrentTime() + ".xls");
-		String[] headers = { "序号","交易号","条形码", "名称", "数量", "退回原因","操作者","日期"};
+		String[] headers = { "序号","交易号","条形码", "名称", "设计师","数量","单价", "退回原因","操作者","日期"};
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
 		String sql;
-		sql="select * from dd_rsales where amount>0 order by date desc";
-		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,DdRsales.class);
+		if(t.equals("2"))
+			sql="select s.id,s.transaction,s.barcode,p.name,p.userid,s.amount,p.price,s.reason,s.operator,s.date from dd_rsales s left join dd_product p on s.barcode=p.barcode where p.userid='"+userid+"' order by s.date desc";
+		else
+			sql="select s.id,s.transaction,s.barcode,p.name,p.userid,s.amount,p.price,s.reason,s.operator,s.date from dd_rsales s left join dd_product p on s.barcode=p.barcode order by s.date desc";
+		
+		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,Rsales.class);
 		Collection<T> l = (Collection<T>) p.getResult();
 		return ExcelUtil.exportExcel(workbook,name, headers, l);
 	}
@@ -120,8 +127,12 @@ public class RsaleAction<T> extends CrudAction{
 		String sql;
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
-		sql="select * from dd_rsales where amount>0 order by date desc";
-		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,DdRsales.class);
+		if(t.equals("2"))
+			sql="select * from (select s.id,s.transaction,s.barcode,p.name,p.userid,s.amount,p.price,s.reason,s.operator,s.date from dd_rsales s left join dd_product p on s.barcode=p.barcode where p.userid='"+userid+"' and s.id>=(select v.id from dd_rsales v left join dd_product p1 on v.barcode=p1.barcode where p1.userid='"+userid+"'  order by v.id limit "+(start-1)+",1) order by s.id) as s order by s.date desc";
+		else
+			sql="select * from (select s.id,s.transaction,s.barcode,p.name,p.userid,s.amount,p.price,s.reason,s.operator,s.date from dd_rsales s left join dd_product p on s.barcode=p.barcode where  s.id>=(select id from dd_rsales order by id limit "+(start-1)+",1) order by s.id) as s order by s.date desc";
+		
+		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(this.total,sql,start,perpage,Rsales.class);
 		
 		String content = "totalPage = " + p.getTotalPageCount() + ";";
 		content += "dataStore = [";
@@ -129,9 +140,9 @@ public class RsaleAction<T> extends CrudAction{
 		List l=(List)p.getResult();
 		for(int i=0;i<l.size();i++)
 		{
-			DdRsales d=(DdRsales)l.get(i);
+			Rsales d=(Rsales)l.get(i);
 
-			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getTransaction()+"</td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td>"+d.getAmount()+"</td><td>"+d.getReason()+"</td><td>"+d.getOperator()+"</td><td>"+d.getDate()+"</td></tr>\",";
+			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getTransaction()+"</td><td>"+d.getBarcode()+"</td><td>"+d.getName()+"</td><td>"+d.getUserid()+"</td><td>"+d.getAmount()+"</td><td>"+d.getPrice()+"</td><td>"+d.getReason()+"</td><td>"+d.getOperator()+"</td><td>"+d.getDate()+"</td></tr>\",";
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";
@@ -144,9 +155,13 @@ public class RsaleAction<T> extends CrudAction{
 		String sql;
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
-		sql="select * from dd_rsales where amount>0";
-		
+		if(t.equals("2"))
+			sql="select s.id  from dd_rsales s left join dd_product p on s.barcode=p.barcode where p.userid='"+userid+"'  order by s.date desc";
+		else
+			sql="select * from dd_rsales  order by date desc";
+
 		int count=CommonDAO.count(sql);
+		this.total=count;
 		return count;
 	}
 }
