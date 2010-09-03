@@ -165,9 +165,9 @@ public class SaleAction<T> extends CrudAction{
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
 		if(t.equals("2"))
-			sql="select * from (select s.id,s.transaction,s.barcode,p.name,p.userid,s.discount,s.amount,p.price,s.operator,s.date from dd_sales s left join dd_product p on s.barcode=p.barcode where p.userid='"+userid+"' and s.id>=(select v.id from dd_sales v left join dd_product p1 on v.barcode=p1.barcode where p1.userid='"+userid+"'  order by v.id limit "+(start-1)+",1) order by  s.id) as s order by s.date desc";
+			sql="select * from (select s.id,s.transaction,s.barcode,p.name,p.userid,s.discount,s.amount,p.price,s.operator,s.date from dd_sales s left join dd_product p on s.barcode=p.barcode where p.userid='"+userid+"' and s.id<=(select v.id from dd_sales v left join dd_product p1 on v.barcode=p1.barcode where p1.userid='"+userid+"'  order by v.id desc limit "+(start-1)+",1) ) as t order by t.id desc";
 		else
-			sql="select * from (select s.id,s.transaction,s.barcode,p.name,p.userid,s.discount,s.amount,p.price,s.operator,s.date from dd_sales s left join dd_product p on s.barcode=p.barcode where  s.id>=(select id from dd_sales order by id limit "+(start-1)+",1) order by s.id) as s order by s.date desc";
+			sql="select * from (select s.id,s.transaction,s.barcode,p.name,p.userid,s.discount,s.amount,p.price,s.operator,s.date from dd_sales s left join dd_product p on s.barcode=p.barcode where  s.id<=(select id from dd_sales order by id  desc limit "+(start-1)+",1) ) as t order by t.id desc";
 		
 		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(this.total,sql,start,perpage,Sales.class);
 		
