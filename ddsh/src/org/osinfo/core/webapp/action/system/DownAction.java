@@ -56,29 +56,7 @@ public class DownAction<T> extends CrudAction{
 	@Override
 	public String add() {
 		// TODO Auto-generated method stub
-		String name=getParameter("name");
-		String image=getParameter("image");
-		String amount=getParameter("amount");
-		
-		String price=getParameter("price");
-		String totalprice=getParameter("totalprice");
-		String spec=getParameter("spec");		
-		
-		String material=getParameter("material");
-		String grade=getParameter("grade");
-		String location=getParameter("location");		
-		
-		String memo=getParameter("memo");
-		String submitdate=getCurrentTime();
 
-		String operator=(String) getSession().getAttribute("userid");
-
-		String sql="insert into dd_topper (name,image,amount,price,totalprice,spec,material,grade,location,memo,status,submitdate,userid) " +
-				"values ('"+name+"','"+image+"',"+amount+","+price+","+totalprice+",'"+spec+"','"+material+"','"+grade+"','"+location+"','"+memo+"','0','"+submitdate+"','"+operator+"')";
-		int v=CommonDAO.executeUpdate(sql);
-		if(v>0)
-			return "success";
-		else
 			return "error";
 	}
 
@@ -91,7 +69,7 @@ public class DownAction<T> extends CrudAction{
 	    String ids=getParameter("ids");
 	    if(!"".equals(ids.trim())){
 	    		String sql="delete from dd_down where id in ("+ids.substring(0,ids.length()-1)+")";
-	    		CommonDAO.executeUpdate(sql);
+	    		CommonDAO.executeUpdate("删除下架",sql);
 	    }
 	    renderSimpleResult(true,"ok");
         return null;
@@ -99,13 +77,7 @@ public class DownAction<T> extends CrudAction{
 	@Override
 	public String edit() {
 		// TODO Auto-generated method stub
-		String trid=getParameter("trid");
-		String tdid=getParameter("tdid");
-		String value=getParameter("value");
-		
-		String sql="update dd_topper set "+tdid+"="+value+" where id ="+trid;
-		CommonDAO.executeUpdate(sql);
-		renderSimpleResult(true,"修改成功");
+
 		return null;
 	}
 	@Override

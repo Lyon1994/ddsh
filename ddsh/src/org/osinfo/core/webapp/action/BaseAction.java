@@ -14,6 +14,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,6 +25,7 @@ import net.sf.json.JsonConfig;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.osinfo.core.webapp.Constants;
@@ -174,6 +176,10 @@ public class BaseAction extends ActionSupport {
     protected Cookie[] getCookies() {
         return Struts2Utils.getCookies();
     }
+    protected ServletContext context;   
+    public ServletContext getServletContext() {   
+    	return ServletActionContext.getServletContext();
+    } 
     /**
      * 
      * @Author Lucifer.Zhou 4:14:54 PM Jan 6, 2010

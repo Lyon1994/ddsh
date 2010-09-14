@@ -48,7 +48,6 @@ public class ActiveAction<T> extends CrudAction{
 	}
 
 
-	//商品递交
 	@Override
 	public String add() {
 		// TODO Auto-generated method stub
@@ -59,7 +58,7 @@ public class ActiveAction<T> extends CrudAction{
 
 		String sql="insert into dd_active (name,operator,date) " +
 				"values ('"+name+"','"+operator+"','"+submitdate+"')";
-		CommonDAO.executeUpdate(sql);
+		CommonDAO.executeUpdate("添加活动",sql);
 		return "success2";
 	}
 	public String loadOne() {
@@ -90,7 +89,7 @@ public class ActiveAction<T> extends CrudAction{
 	    String ids=getParameter("ids");
 	    if(!"".equals(ids.trim())){
 	    		String sql="delete from dd_active where id in ("+ids.substring(0,ids.length()-1)+")";
-	    		CommonDAO.executeUpdate(sql);
+	    		CommonDAO.executeUpdate("删除活动",sql);
 	    }
 	    renderSimpleResult(true,"处理成功");
         return null;
@@ -103,7 +102,7 @@ public class ActiveAction<T> extends CrudAction{
 		String value=getParameter("value");
 		
 		String sql="update dd_active set "+tdid+"="+value+" where id ="+trid;
-		CommonDAO.executeUpdate(sql);
+		CommonDAO.executeUpdate("修改活动",sql);
 		renderSimpleResult(true,"修改成功");
 		return null;
 	}

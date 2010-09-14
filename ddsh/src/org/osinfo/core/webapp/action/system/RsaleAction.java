@@ -62,7 +62,7 @@ public class RsaleAction<T> extends CrudAction{
 
 		String sql="insert into dd_rsales (transaction,barcode,amount,reason,operator,date) " +
 		"values ('"+transaction+"','"+barcode+"',"+amount+",'"+reason+"','"+operator+"','"+submitdate+"')";
-		CommonDAO.executeUpdate(sql);
+		CommonDAO.executeUpdate("添加rsale",sql);
     	renderSimpleResult(true,"处理成功");
 	    return null;
 	}
@@ -75,7 +75,7 @@ public class RsaleAction<T> extends CrudAction{
 	    String ids=getParameter("ids");
 	    if(!"".equals(ids.trim())){
 	    		String sql="delete from dd_rsales where id in ("+ids.substring(0,ids.length()-1)+")";
-	    		CommonDAO.executeUpdate(sql);
+	    		CommonDAO.executeUpdate("删除退货",sql);
 	    }
 	    renderSimpleResult(true,"ok");
         return null;

@@ -67,7 +67,7 @@ public class NoticeAction<T> extends CrudAction{
 
 		String sql="insert into dd_notice (name,detail,operator,date) " +
 				"values ('"+name+"','"+detail+"','"+operator+"','"+submitdate+"')";
-		CommonDAO.executeUpdate(sql);
+		CommonDAO.executeUpdate("添加公告",sql);
 		return "success2";
 	}
 	public String loadAll() {
@@ -135,7 +135,7 @@ public class NoticeAction<T> extends CrudAction{
 	    String ids=getParameter("ids");
 	    if(!"".equals(ids.trim())){
 	    		String sql="delete from dd_notice where id in ("+ids.substring(0,ids.length()-1)+")";
-	    		CommonDAO.executeUpdate(sql);
+	    		CommonDAO.executeUpdate("删除公告",sql);
 	    }
 	    renderSimpleResult(true,"处理成功");
         return null;
@@ -148,7 +148,7 @@ public class NoticeAction<T> extends CrudAction{
 		String value=getParameter("value");
 		
 		String sql="update dd_topper set "+tdid+"="+value+" where id ="+trid;
-		CommonDAO.executeUpdate(sql);
+		CommonDAO.executeUpdate("编辑公告",sql);
 		renderSimpleResult(true,"修改成功");
 		return null;
 	}
@@ -202,11 +202,15 @@ public class NoticeAction<T> extends CrudAction{
 		for(int i=0;i<l.size();i++)
 		{
 			DdNotice d=(DdNotice)l.get(i);
-
-			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getName()+"</td><td>"+d.getDetail()+"</td><td>"+d.getOperator()+"</td><td>"+d.getDate()+"</td></tr>\",";
+			String detail=org.osinfo.core.webapp.util.StringUtil.html2Text(d.getDetail().replace('\n', ' ').replace('\n', ' ').replaceAll("<br>", ""));
+			if(detail.length()>4)
+				detail=detail.substring(0,4)+"...";
+			
+			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getName()+"</td><td><a href='../html/notice.jsp?id="+d.getId()+"'>"+detail+"</a></td><td>"+d.getOperator()+"</td><td>"+d.getDate()+"</td></tr>\",";
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";
+		
 		return content;
 	}
 	@Override

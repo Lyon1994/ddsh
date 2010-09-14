@@ -56,7 +56,7 @@ public class GridAction<T> extends CrudAction{
 		String userid=getParameter("userid");
 		String sql="insert into dd_grid (gridid,name,location,userid) " +
 				"values ('"+gridid+"','"+name+"','"+location+"','"+userid+"')";
-		CommonDAO.executeUpdate(sql);
+		CommonDAO.executeUpdate("添加格子",sql);
 		return "success";
 	}
 
@@ -69,7 +69,7 @@ public class GridAction<T> extends CrudAction{
 	    String ids=getParameter("ids");
 	    if(!"".equals(ids.trim())){
 	    		String sql="delete from dd_grid where id in ("+ids.substring(0,ids.length()-1)+")";
-	    		CommonDAO.executeUpdate(sql);
+	    		CommonDAO.executeUpdate("删除格子",sql);
 	    }
 	    renderSimpleResult(true,"ok");
         return null;
@@ -77,12 +77,7 @@ public class GridAction<T> extends CrudAction{
 	@Override
 	public String edit() {
 		// TODO Auto-generated method stub
-		String trid=getParameter("trid");
-		String tdid=getParameter("tdid");
-		String value=getParameter("value");
-		
-		String sql="update dd_topper set "+tdid+"="+value+" where id ="+trid;
-		CommonDAO.executeUpdate(sql);
+
 		renderSimpleResult(true,"修改成功");
 		return null;
 	}

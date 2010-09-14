@@ -54,7 +54,7 @@ public class DicAction<T> extends CrudAction{
 		String child=getParameter("child");
 		String value=getParameter("value");
 		String sql="insert into dd_dic (parent,child,value) values ('"+parent+"','"+child+"','"+value+"')";
-		CommonDAO.executeUpdate(sql);
+		CommonDAO.executeUpdate("添加字典",sql);
 		return "success2";
 
 	}
@@ -90,7 +90,7 @@ public class DicAction<T> extends CrudAction{
 
 	    if(!"".equals(ids.trim())){
 	    		String sql="delete from dd_dic where id in ("+ids.substring(0,ids.length()-1)+")";
-	    		CommonDAO.executeUpdate(sql);
+	    		CommonDAO.executeUpdate("删除字典",sql);
 	    }
 	    renderSimpleResult(true,"处理成功");
         return null;
@@ -103,7 +103,7 @@ public class DicAction<T> extends CrudAction{
 		String value=getParameter("value");
 		
 		String sql="update dd_dic set "+tdid+"='"+value+"' where id ='"+trid+"'";
-		CommonDAO.executeUpdate(sql);
+		CommonDAO.executeUpdate("编辑字典",sql);
 		renderSimpleResult(true,"修改成功");
 		return null;
 	}

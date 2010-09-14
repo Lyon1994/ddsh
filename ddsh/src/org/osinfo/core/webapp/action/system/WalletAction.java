@@ -79,7 +79,7 @@ public class WalletAction<T> extends CrudAction{
 		String sql="insert into dd_wallet (userid,account,bankname,accounter,location,money,balance,operator,date) " +
 				"values ('"+userid+"','"+account+"','"+bankname+"','"+accounter+"','"+location+"',"+money+",0.5,'"+operator+"','"+date+"')";
 
-		int v=CommonDAO.executeUpdate(sql);
+		int v=CommonDAO.executeUpdate("添加账号",sql);
 		if(v>0)
 			return "success2";
 		else
@@ -101,7 +101,7 @@ public class WalletAction<T> extends CrudAction{
 		{
 			sql="insert into dd_transaction (userid,user,type,status,money,memo,submitdate) " +
 			"values ('"+operator+"','東東設會','"+type+"','0',"+money+",'"+memo+"','"+submitdate+"')";
-			v=CommonDAO.executeUpdate(sql);
+			v=CommonDAO.executeUpdate("插入交易表",sql);
 		}
 		else
 		{
@@ -115,10 +115,12 @@ public class WalletAction<T> extends CrudAction{
 				
 				sql="insert into dd_transaction (userid,user,type,status,money,memo,submitdate,operator,date) " +
 				"values ('東東設會','"+user+"','"+type+"','1',"+money+",'"+memo+"','"+submitdate+"','"+operator+"','"+submitdate+"')";
+				logger.info("插入交易表"+sql);
 				stmt.executeUpdate(sql);
 				
 				sql="select money as sum from dd_wallet where userid='"+user+"'";
-				rs=stmt.executeQuery(sql);
+				logger.info("获取余额");
+				rs=stmt.executeQuery(sql+sql);
 				while(rs.next())
 					wallet=Float.parseFloat(rs.getString("sum"));
 				
@@ -126,6 +128,7 @@ public class WalletAction<T> extends CrudAction{
 	    			sql="update dd_wallet set money="+(wallet+Float.parseFloat(money))+" ,operator='"+operator+"', date='"+submitdate+"' where userid='"+user+"'";
 	    		else
 	    			sql="update dd_wallet set money="+(wallet-Float.parseFloat(money))+" ,operator='"+operator+"', date='"+submitdate+"' where userid='"+user+"'";
+				logger.info("更新钱包余额"+sql);
 				stmt.executeUpdate(sql);
 				conn.commit();//提交JDBC事务  
 				conn.setAutoCommit(true);// 恢复JDBC事务的默认提交方式   
@@ -135,6 +138,7 @@ public class WalletAction<T> extends CrudAction{
 				// TODO Auto-generated catch block
 				v=-1;
 				try {
+					logger.info("交易失败,回滚");
 					conn.rollback();
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
@@ -165,6 +169,7 @@ public class WalletAction<T> extends CrudAction{
 
 		String operator=(String) getSession().getAttribute("userid");
 		String sql="select * from dd_wallet where userid='"+operator+"'";
+		
 		List l=CommonDAO.executeQuery(sql, DdWallet.class);
 		if(l.size()>0)
 			sql="update dd_wallet set account='"+account+"',bankname='"+bankname+"',accounter='"+accounter+"',location='"+location+"',operator='"+operator+"',date='"+date+"' where userid='"+operator+"'";
@@ -172,7 +177,7 @@ public class WalletAction<T> extends CrudAction{
 			sql="insert into dd_wallet (userid,account,bankname,accounter,location,money,operator,date) " +
 				"values ('"+operator+"','"+account+"','"+bankname+"','"+accounter+"','"+location+"',0,'"+operator+"','"+date+"')";
 
-		int v=CommonDAO.executeUpdate(sql);
+		int v=CommonDAO.executeUpdate("编辑账号",sql);
 		if(v>0)
 			return "success2";
 		else
@@ -266,7 +271,7 @@ public class WalletAction<T> extends CrudAction{
 	    String ids=getParameter("ids");
 	    if(!"".equals(ids.trim())){
 	    		String sql="delete from dd_wallet where id in ("+ids.substring(0,ids.length()-1)+")";
-	    		CommonDAO.executeUpdate(sql);
+	    		CommonDAO.executeUpdate("删除账号",sql);
 	    }
 	    renderSimpleResult(true,"ok");
         return null;
@@ -279,7 +284,7 @@ public class WalletAction<T> extends CrudAction{
 		String value=getParameter("value");
 		
 		String sql="update dd_wallet set "+tdid+"='"+value+"' where id ='"+trid+"'";
-		CommonDAO.executeUpdate(sql);
+		CommonDAO.executeUpdate("编辑账号",sql);
 		renderSimpleResult(true,"修改成功");
 		return null;
 	}

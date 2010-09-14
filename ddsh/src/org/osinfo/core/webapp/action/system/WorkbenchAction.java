@@ -30,6 +30,7 @@ import org.osinfo.core.webapp.action.BaseAction;
 
 @Results({
 	 @Result(name="header",location = "/WEB-INF/result/system/header.ftl"),
+	 @Result(name="footer",location = "/WEB-INF/result/system/footer.ftl"),
 	 @Result(name="left",location = "/WEB-INF/result/system/left.ftl"),
 	 @Result(name="right",location = "/WEB-INF/result/system/right.ftl"),
 	 @Result(name="main",location = "/WEB-INF/result/system/main.ftl")
@@ -60,22 +61,21 @@ public class WorkbenchAction extends BaseAction {
 	@Action("/header.*") 
 	public String header()
 	{
-		if(logger.isDebugEnabled())
-			logger.debug("获取头...");
 		return "header";
+	}
+	@Action("/footer.*") 
+	public String footer()
+	{
+		return "footer";
 	}
 	@Action("/left.*") 
 	public String left()
 	{
-		if(logger.isDebugEnabled())
-			logger.debug("获取左...");
 		return "left";
 	}
 	@Action("/main.*") 
 	public String main()
 	{
-		if(logger.isDebugEnabled())
-			logger.debug("获取正文...");
 		String t=(String) getSession().getAttribute("type");
 		if(t.equals("1"))
 			getRequest().setAttribute("page", "workbench_admin");
@@ -90,8 +90,6 @@ public class WorkbenchAction extends BaseAction {
 	@Action("/password.*") 
 	public String password()
 	{
-		if(logger.isDebugEnabled())
-			logger.debug("密码修改...");
 		getRequest().setAttribute("page", "password");
 		return "main";
 	}
@@ -105,8 +103,9 @@ public class WorkbenchAction extends BaseAction {
 			m.put("商品审批", "system/product!list5.zf");
 			m.put("商品管理", "system/product!list.zf");
 			m.put("货品审批", "system/submit!list.zf");
+			m.put("已批记录", "system/submit!list3.zf");
 			m.put("库存管理", "system/inventory!list.zf");//这里有上架
-			m.put("上架记录", "system/upload!list.zf");
+			//m.put("上架记录", "system/upload!list.zf");
 			m.put("销售记录", "system/sale!list.zf");
 			m.put("退回记录", "system/back!list.zf");
 			//m.put("当前在售", "system/sell!list.zf");//这里有下架
@@ -130,8 +129,9 @@ public class WorkbenchAction extends BaseAction {
 			m.put("我的商品", "system/product!list2.zf");
 			m.put("上货审批", "html/product_submit.html");
 			m.put("待批货品", "system/submit!list2.zf");
+			m.put("已批记录", "system/submit!list3.zf");
 			m.put("库存记录", "system/inventory!list.zf");
-			m.put("上架记录", "system/upload!list.zf");
+			//m.put("上架记录", "system/upload!list.zf");
 			m.put("销售记录", "system/sale!list.zf");
 			m.put("退回记录", "system/back!list.zf");
 			//m.put("当前在售", "system/sell!list.zf");
@@ -147,7 +147,7 @@ public class WorkbenchAction extends BaseAction {
 		}else if(type.equals("4"))//上货员
 		{
 			m.put("库存记录", "system/inventory!list.zf");
-			m.put("上架记录", "system/upload!list.zf");
+			//m.put("上架记录", "system/upload!list.zf");
 		}
 		return m;
 	}

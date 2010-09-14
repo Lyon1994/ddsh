@@ -89,7 +89,7 @@ public class TransaAction<T> extends CrudAction{
 		String sql="insert into dd_transaction (userid,shop,from,to,type,money,memo,operator,date) " +
 				"values ('"+userid+"','"+shop+"','"+from+"','"+to+"','"+type+"',"+money+",'"+memo+"','"+operator+"','"+submitdate+"')";
 
-		int v=CommonDAO.executeUpdate(sql);
+		int v=CommonDAO.executeUpdate("插入交易",sql);
 		if(v>0)
 			return "success";
 		else
@@ -104,7 +104,7 @@ public class TransaAction<T> extends CrudAction{
 	    String ids=getParameter("ids");
 	    if(!"".equals(ids.trim())){
 	    		String sql="delete from dd_transaction where id in ("+ids.substring(0,ids.length()-1)+")";
-	    		CommonDAO.executeUpdate(sql);
+	    		CommonDAO.executeUpdate("删除交易",sql);
 	    }
 	    renderSimpleResult(true,"处理成功");
         return null;
@@ -118,43 +118,67 @@ public class TransaAction<T> extends CrudAction{
 	    ids=ids.substring(0,ids.length()-1);
 	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");//可以方便地修改日期格式   
 	    String operator=(String) getSession().getAttribute("userid");
-		String date=dateFormat.format(new Date()); 
+		String date=dateFormat.format(new Date());
+		Connection conn=DBUtil.getConnection();
+		Statement stmt = null;
+		ResultSet rs = null;
 	    if(!"".equals(ids.trim())){
+	    	try{
+	    		conn.setAutoCommit(false);
+	    		stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
 	    		String[] tmp=ids.split("\\,");
 	    		for(int i=0;i<tmp.length;i++)
 	    		{
 	    			String sql="update dd_transaction set status='1' ,operator='"+operator+"', date='"+date+"' where id ="+tmp[i];
-		    		CommonDAO.executeUpdate(sql);
+	    			logger.info("更新交易"+sql);
+	    			stmt.executeQuery(sql);
 		    		sql="select userid,type,money from dd_transaction where id="+tmp[i];
-		    		ResultSet rs = null;
-		    		Statement stmt = null;
+
 		    		String userid = null;
 		    		String type = null;
 		    		float money = 0;
-		    		Connection conn=DBUtil.getConnection();
-		    		try {
-		    			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
-		    			rs=stmt.executeQuery(sql);
-		    			while(rs.next())
-		    			{
-		    				userid=rs.getString("userid");
-		    				type=rs.getString("type");
-		    				money=Float.parseFloat(rs.getString("money"));
-		    			}
-		    		} catch (SQLException e) {
-		    			// TODO Auto-generated catch block
-		    			e.printStackTrace();
-		    		}finally {
-		    			DBUtil.close(rs, stmt, conn);
-		    		}
+		    		logger.info("查找交易"+sql);
+		    		rs=stmt.executeQuery(sql);
+	    			while(rs.next())
+	    			{
+	    				userid=rs.getString("userid");
+	    				type=rs.getString("type");
+	    				money=Float.parseFloat(rs.getString("money"));
+	    			}
 		    		sql="select money as sum from dd_wallet where userid='"+userid+"'";
-		    		float wallet=CommonDAO.sum(sql);
+		    		float wallet=0;
+		    		logger.info("获取余额"+sql);
+					rs=stmt.executeQuery(sql);
+					while(rs.next())
+					{
+						String sum_=rs.getString("sum");
+						if(sum_==null)
+							sum_="0";
+						wallet=Float.parseFloat(sum_);
+					}
 		    		if(type.equals("01"))//充值
 		    			sql="update dd_wallet set money="+(wallet+money)+" ,operator='"+operator+"', date='"+date+"' where userid='"+userid+"'";
 		    		else
 		    			sql="update dd_wallet set money="+(wallet-money)+" ,operator='"+operator+"', date='"+date+"' where userid='"+userid+"'";
-		    		CommonDAO.executeUpdate(sql);
+		    		logger.info("更新钱包"+sql);
+	    			stmt.executeQuery(sql);
+	    	    	conn.commit();
+	    	    	conn.setAutoCommit(true);
 	    		}
+	    	} catch (SQLException e) {
+	    			// TODO Auto-generated catch block
+				try {
+					logger.info("交易失败！回滚");
+					conn.rollback();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}//回滚JDBC事务   
+	    			renderSimpleResult(false,"交易失败！");
+	    			e.printStackTrace();
+	    	}finally {
+	    			DBUtil.close(rs, stmt, conn);
+	    	}
 	    }
 	    renderSimpleResult(true,"处理成功");
         return null;

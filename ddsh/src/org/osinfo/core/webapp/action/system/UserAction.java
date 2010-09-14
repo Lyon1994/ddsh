@@ -86,17 +86,35 @@ public class UserAction<T> extends CrudAction{
 		String submitdate=getCurrentTime();
 		String operator=(String) getSession().getAttribute("userid");
 		String sql="";
-
-		if(type==null)//等待开通
-		{
-			type="2";//默认设计师
-			sql="insert into dd_user (userid,name,brand,password,type,status,idcard,sex,address,mobile,telephone,fax,mail,submitdate) values " +
-					"('"+userid+"','"+name+"','"+brand+"','"+password+"','"+type+"','0','"+idcard+"','"+sex+"','"+address+"','"+mobile+"','"+telephone+"','"+fax+"','"+mail+"','"+submitdate+"')";
-		}else
-			sql="insert into dd_user (userid,name,brand,password,type,status,idcard,sex,address,mobile,telephone,fax,mail,submitdate,operator,date) values " +
+		int v=0;
+		Connection conn=DBUtil.getConnection();
+		Statement stmt = null;
+		try {
+			conn.setAutoCommit(false);
+			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+			
+			if(type==null)//等待开通
+				sql="insert into dd_user (userid,name,brand,password,type,status,idcard,sex,address,mobile,telephone,fax,mail,submitdate) values " +
+					"('"+userid+"','"+name+"','"+brand+"','"+password+"','2','0','"+idcard+"','"+sex+"','"+address+"','"+mobile+"','"+telephone+"','"+fax+"','"+mail+"','"+submitdate+"')";
+			else
+				sql="insert into dd_user (userid,name,brand,password,type,status,idcard,sex,address,mobile,telephone,fax,mail,submitdate,operator,date) values " +
 					"('"+userid+"','"+name+"','"+brand+"','"+password+"','"+type+"','1','"+idcard+"','"+sex+"','"+address+"','"+mobile+"','"+telephone+"','"+fax+"','"+mail+"','"+submitdate+"','"+operator+"','"+submitdate+"')";
-
-		int v=CommonDAO.executeUpdate(sql);
+			logger.info("新增用户"+sql);
+			stmt.executeUpdate(sql);
+			sql="insert into dd_login (userid,lastime,ip,location1,location2) values " +
+			"('"+userid+"','"+submitdate+"','127.0.0.1','上海市','黄埔区')";
+			logger.info("写入登录日志"+sql);
+			stmt.executeUpdate(sql);
+	    	conn.commit();
+	    	conn.setAutoCommit(true);
+	    	v=1;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			DBUtil.close(null, stmt, conn);
+		}
+		
 		if(v>0)
 		{
 			if(result==null)
@@ -121,7 +139,7 @@ public class UserAction<T> extends CrudAction{
 	    String operator=(String) getSession().getAttribute("userid");
 	    
 	    String sql="update dd_user set password='"+password2+"' where userid ='"+operator+"' and password='"+password1+"'";
-	    int r=CommonDAO.executeUpdate(sql);
+	    int r=CommonDAO.executeUpdate("修改密码",sql);
 	    if(r>0)
 	    	return "success2";
 	    else
@@ -139,7 +157,7 @@ public class UserAction<T> extends CrudAction{
 		String date=dateFormat.format(new Date()); 
 	    if(!"".equals(ids.trim())){
 	    		String sql="update dd_user set status='1' ,operator='"+operator+"', date='"+date+"' where id in ("+ids.substring(0,ids.length()-1)+")";
-	    		CommonDAO.executeUpdate(sql);
+	    		CommonDAO.executeUpdate("启用用户",sql);
 	    }
 	    renderSimpleResult(true,"处理成功");
         return null;
@@ -185,7 +203,7 @@ public class UserAction<T> extends CrudAction{
 
 	    if(!"".equals(ids.trim())){
 	    		String sql="delete from dd_user where id in ("+ids.substring(0,ids.length()-1)+")";
-	    		CommonDAO.executeUpdate(sql);
+	    		CommonDAO.executeUpdate("删除用户",sql);
 	    }
 	    renderSimpleResult(true,"处理成功");
         return null;
@@ -201,7 +219,7 @@ public class UserAction<T> extends CrudAction{
 			sql="update dd_user set "+tdid+"='"+SecurityUtil.encodeMD5(value)+"' where id ='"+trid+"'";
 		else
 			sql="update dd_user set "+tdid+"='"+value+"' where id ='"+trid+"'";
-		CommonDAO.executeUpdate(sql);
+		CommonDAO.executeUpdate("编辑用户",sql);
 		renderSimpleResult(true,"修改成功");
 		return null;
 	}

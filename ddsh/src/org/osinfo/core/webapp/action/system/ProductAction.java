@@ -130,7 +130,7 @@ public class ProductAction<T> extends CrudAction{
 	    sql="insert into dd_product (name,price,type,status,image,userid,spec,material,grade,location,memo,submitdate) " +
 			"values ('"+name+"','"+FloatUtil.round(Float.parseFloat(price), 2)+"','"+type+"','0','"+imageFileName+"','"+operator+"','"+spec+"','"+material+"','"+grade+"','"+location+"','"+memo+"','"+submitdate+"')";
 
-		int v=CommonDAO.executeUpdate(sql);
+		int v=CommonDAO.executeUpdate("添加商品",sql);
 		if(v>0)
 		{
 			if(result==null)
@@ -157,7 +157,7 @@ public class ProductAction<T> extends CrudAction{
 	    	for(int i=0;i<tmp.length;i++)
 	    	{
 		    	String sql="update dd_product set status='1',barcode='"+getRandomBarCode()+"',date='"+submitdate+"',operator='"+operator+"' where id ="+tmp[i];
-				CommonDAO.executeUpdate(sql);
+				CommonDAO.executeUpdate("审核商品",sql);
 	    	}
 	    }
 	    renderSimpleResult(true,"处理成功！");
@@ -200,7 +200,7 @@ public class ProductAction<T> extends CrudAction{
 		{
 			Map m=new HashMap();
 			DdProduct p=(DdProduct)l.get(i);
-			m.put("name",p.getBarcode());
+			m.put("name",p.getName());
 			m.put("value",p.getBarcode());
 			l_.add(m);
 		}
@@ -218,7 +218,7 @@ public class ProductAction<T> extends CrudAction{
 	    String ids=getParameter("ids");
 	    if(!"".equals(ids.trim())){
 	    		String sql="delete from dd_product where id in ("+ids.substring(0,ids.length()-1)+")";
-	    		CommonDAO.executeUpdate(sql);
+	    		CommonDAO.executeUpdate("删除商品",sql);
 	    }
 	    renderSimpleResult(true,"ok");
         return null;
@@ -234,7 +234,7 @@ public class ProductAction<T> extends CrudAction{
 		String operator=(String) getSession().getAttribute("userid");
 		
 		String sql="update dd_product set "+tdid+"='"+value+"',date='"+submitdate+"',operator='"+operator+"' where id ="+trid;
-		CommonDAO.executeUpdate(sql);
+		CommonDAO.executeUpdate("编辑商品",sql);
 		renderSimpleResult(true,"修改成功");
 		return null;
 	}

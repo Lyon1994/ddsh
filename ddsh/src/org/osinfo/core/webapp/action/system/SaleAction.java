@@ -77,24 +77,36 @@ public class SaleAction<T> extends CrudAction{
 				String[] b=v[i].split("\\,");
 				String sql="insert into dd_sales (transaction,barcode,discount,amount,operator,date) " +
 				"values ('"+transaction+"','"+b[0]+"',"+b[3]+","+b[4]+",'"+operator+"','"+submitdate+"')";
+				logger.info("插入销售表"+sql);
 				stmt.executeUpdate(sql);
 				sql="select * from dd_inventory where barcode='"+b[0]+"'";//获取库存数量
+				logger.info("查找库存"+sql);
 				rs=stmt.executeQuery(sql);
 				List l2 = DBUtil.populate(rs, DdInventory.class);
 				if(l2.size()==1)
 				{
 					DdInventory vs=(DdInventory)l2.get(0);//更新库存数量
 					sql="update dd_inventory set amount="+(vs.getAmount()-Integer.valueOf(b[4]))+" where id ="+vs.getId();
+					logger.info("更新库存"+sql);
+					stmt.executeUpdate(sql);
 				}	
 			}
 			//记录交易记录表 
 			String sql="insert into dd_bill (transaction,receive,changes,totalprice,operator,date) " +
 			"values ('"+transaction+"',"+receive+","+change+","+totalprice+",'"+operator+"','"+submitdate+"')";
+			logger.info("插入交易表"+sql);
 			stmt.executeUpdate(sql);
 	    	conn.commit();
 	    	conn.setAutoCommit(true);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
+			try {
+				logger.info("操作失败,交易回滚!");
+				conn.rollback();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}//回滚JDBC事务   
 			renderSimpleResult(false,"交易失败！");
 			e.printStackTrace();
 		}finally {
@@ -112,7 +124,7 @@ public class SaleAction<T> extends CrudAction{
 	    String ids=getParameter("ids");
 	    if(!"".equals(ids.trim())){
 	    		String sql="delete from dd_sales where id in ("+ids.substring(0,ids.length()-1)+")";
-	    		CommonDAO.executeUpdate(sql);
+	    		CommonDAO.executeUpdate("删除销售记录",sql);
 	    }
 	    renderSimpleResult(true,"操作成功");
         return null;

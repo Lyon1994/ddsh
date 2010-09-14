@@ -787,7 +787,7 @@ public class QueryAction<T> extends CrudAction{
 		}
 
 
-		System.out.println(chart.toString());
+		//System.out.println(chart.toString());
 		getPrintWriter().print(chart.toString());   
 
 		return null;
@@ -800,7 +800,7 @@ public class QueryAction<T> extends CrudAction{
 	    String ids=getParameter("ids");
 	    if(!"".equals(ids.trim())){
 	    		String sql="delete from dd_back where id in ("+ids.substring(0,ids.length()-1)+")";
-	    		CommonDAO.executeUpdate(sql);
+	    		CommonDAO.executeUpdate("删除退货",sql);
 	    }
 	    renderSimpleResult(true,"ok");
         return null;
