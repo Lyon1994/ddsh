@@ -116,29 +116,7 @@ public class InventoryAction<T> extends CrudAction{
 	@Override
 	public String add() {
 		// TODO Auto-generated method stub
-		String name=getParameter("name");
-		String image=getParameter("image");
-		String amount=getParameter("amount");
-		
-		String price=getParameter("price");
-		String totalprice=getParameter("totalprice");
-		String spec=getParameter("spec");		
-		
-		String material=getParameter("material");
-		String grade=getParameter("grade");
-		String location=getParameter("location");		
-		
-		String memo=getParameter("memo");
-		String submitdate=getCurrentTime();
 
-		String operator=(String) getSession().getAttribute("userid");
-
-		String sql="insert into dd_topper (name,image,amount,price,totalprice,spec,material,grade,location,memo,status,submitdate,userid) " +
-				"values ('"+name+"','"+image+"',"+amount+","+price+","+totalprice+",'"+spec+"','"+material+"','"+grade+"','"+location+"','"+memo+"','0','"+submitdate+"','"+operator+"')";
-		int v=CommonDAO.executeUpdate(sql);
-		if(v>0)
-			return "success";
-		else
 			return "error";
 	}
 	//上架操作
@@ -152,7 +130,7 @@ public class InventoryAction<T> extends CrudAction{
 
 		String sql="insert into dd_upload (barcode,amount,operator,date) " +
 				"values ('"+barcode+"',"+amount+",'"+operator+"','"+submitdate+"')";
-		CommonDAO.executeUpdate(sql);
+		CommonDAO.executeUpdate("库存上架",sql);
 
     	renderSimpleResult(true,"操作成功");
     	return null;
@@ -219,7 +197,7 @@ public class InventoryAction<T> extends CrudAction{
 	    String ids=getParameter("ids");
 	    if(!"".equals(ids.trim())){
 	    		String sql="delete from dd_inventory where id in ("+ids.substring(0,ids.length()-1)+")";
-	    		CommonDAO.executeUpdate(sql);
+	    		CommonDAO.executeUpdate("删除库存记录",sql);
 	    }
 	    renderSimpleResult(true,"操作成功");
         return null;
@@ -232,7 +210,7 @@ public class InventoryAction<T> extends CrudAction{
 		String value=getParameter("value");
 		
 		String sql="update dd_inventory set "+tdid+"='"+value+"' where id ="+trid;
-		CommonDAO.executeUpdate(sql);
+		CommonDAO.executeUpdate("更新库存记录",sql);
 		renderSimpleResult(true,"操作成功");
 		return null;
 	}

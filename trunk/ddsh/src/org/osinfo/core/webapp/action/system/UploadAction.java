@@ -70,19 +70,19 @@ public class UploadAction<T> extends CrudAction{
 
 		String sql="insert into dd_upload (inventoryid,barcode,name,amount,gridid,price,discount,userid,operator,date) " +
 				"values ("+inventoryid+",'"+barcode+"','"+name+"',"+amount+",'"+gridid+"',"+price+","+discount+",'"+userid+"','"+operator+"','"+submitdate+"')";
-		CommonDAO.executeUpdate(sql);
+		CommonDAO.executeUpdate("插入上架",sql);
 		sql="select * from dd_sell where inventoryid="+inventoryid+" and gridid='"+gridid+"'";//判断是不是上传的格子编号和物品都相同，如是则累加
 		List l=CommonDAO.executeQuery(sql, DdSell.class);
 		if(l.size()>0)
 		{
 			DdSell v=(DdSell)l.get(0);
 			sql="update dd_sell set amount="+(v.getAmount()+Integer.valueOf(amount))+" where id ="+v.getId();
-			CommonDAO.executeUpdate(sql);
+			CommonDAO.executeUpdate("更新在线",sql);
 		}else
 		{
 			sql="insert into dd_sell (inventoryid,barcode,name,amount,gridid,price,discount,userid) " +
 			"values ("+inventoryid+",'"+barcode+"','"+name+"',"+amount+",'"+gridid+"',"+price+","+discount+",'"+userid+"')";
-			CommonDAO.executeUpdate(sql);
+			CommonDAO.executeUpdate("插入在线",sql);
 		}
 
 		sql="select * from dd_inventory where id="+inventoryid;//获取库存数量
@@ -91,7 +91,7 @@ public class UploadAction<T> extends CrudAction{
 		{
 			DdInventory v=(DdInventory)l2.get(0);
 			sql="update dd_inventory set amount="+(v.getAmount()-Integer.valueOf(amount))+" where id ="+v.getId();
-			CommonDAO.executeUpdate(sql);
+			CommonDAO.executeUpdate("更新库存",sql);
 		}
     	renderSimpleResult(true,"ok");
     	return null;
@@ -105,7 +105,7 @@ public class UploadAction<T> extends CrudAction{
 	    String ids=getParameter("ids");
 	    if(!"".equals(ids.trim())){
 	    		String sql="delete from dd_upload where id in ("+ids.substring(0,ids.length()-1)+")";
-	    		CommonDAO.executeUpdate(sql);
+	    		CommonDAO.executeUpdate("删除上传",sql);
 	    }
 	    renderSimpleResult(true,"ok");
         return null;
@@ -118,7 +118,7 @@ public class UploadAction<T> extends CrudAction{
 		String tdid=getParameter("tdid");
 		String value=getParameter("value");
 		String sql="update dd_upload set "+tdid+"='"+value+"' where id ="+trid;
-		CommonDAO.executeUpdate(sql);
+		CommonDAO.executeUpdate("编辑上传",sql);
 		renderSimpleResult(true,"修改成功");
 		return null;
 	}

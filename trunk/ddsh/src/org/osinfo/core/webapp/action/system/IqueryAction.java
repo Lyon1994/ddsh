@@ -20,7 +20,6 @@ import org.apache.struts2.convention.annotation.Results;
 import org.osinfo.core.webapp.action.CrudAction;
 import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
-import org.osinfo.core.webapp.model.DdInventory;
 import org.osinfo.core.webapp.model.custom.Inventory;
 import org.osinfo.core.webapp.util.ExcelUtil;
 import org.osinfo.core.webapp.util.PageUtil;
@@ -66,7 +65,7 @@ public class IqueryAction<T> extends CrudAction{
 	    String ids=getParameter("ids");
 	    if(!"".equals(ids.trim())){
 	    		String sql="delete from dd_inventory where id in ("+ids.substring(0,ids.length()-1)+")";
-	    		CommonDAO.executeUpdate(sql);
+	    		CommonDAO.executeUpdate("删除库存记录",sql);
 	    }
 	    renderSimpleResult(true,"操作成功");
         return null;
@@ -79,7 +78,7 @@ public class IqueryAction<T> extends CrudAction{
 		String value=getParameter("value");
 		
 		String sql="update dd_inventory set "+tdid+"='"+value+"' where id ="+trid;
-		CommonDAO.executeUpdate(sql);
+		CommonDAO.executeUpdate("更新库存记录",sql);
 		renderSimpleResult(true,"操作成功");
 		return null;
 	}
@@ -88,7 +87,7 @@ public class IqueryAction<T> extends CrudAction{
 			String bound, String where, String sort, String dir)
 			throws Exception {
 		// TODO Auto-generated method stub
-		String name="销售记录表";
+		String name="库存表";
 		String name2=name;
 		if (getRequest().getHeader("User-Agent").toLowerCase().indexOf("firefox") > 0)
 			name2 = new String(name.getBytes("UTF-8"), "ISO8859-1");//firefox浏览器

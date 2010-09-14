@@ -14,7 +14,7 @@ public class Submit implements java.io.Serializable {
 	private String barcode;
 	private String name;
 	private Integer amount;
-	private String status;
+	private String userid;
 	private String type;
 	private String place;
 	private String ems;
@@ -63,11 +63,11 @@ public class Submit implements java.io.Serializable {
 	public void setAmount(Integer amount) {
 		this.amount = amount;
 	}
-	public String getStatus() {
-		return status;
+	public String getUserid() {
+		return userid;
 	}
-	public void setStatus(String status) {
-		this.status = status;
+	public void setUserid(String userid) {
+		this.userid = userid;
 	}
 	public String getPlace() {
 		return place;

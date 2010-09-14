@@ -64,6 +64,7 @@ public class BackAction<T> extends CrudAction{
 		
 		String type=getParameter("type");
 		String amount=getParameter("amount");
+		String discount=getParameter("discount");
 		String reason=getParameter("reason");
 		String submitdate=getCurrentTime();
 
@@ -76,13 +77,15 @@ public class BackAction<T> extends CrudAction{
 		if(type.equals("02"))//库存退回，则库存数量减少
 		{
 			
-			sql="insert into dd_back (barcode,amount,type,reason,operator,date) " +
-			"values ('"+barcode+"',"+amount+",'02','"+reason+"','"+operator+"','"+submitdate+"')";
+			sql="insert into dd_back (barcode,amount,discount,type,reason,operator,date) " +
+			"values ('"+barcode+"',"+amount+",1,'02','"+reason+"','"+operator+"','"+submitdate+"')";
 			String sql2="select * from dd_inventory where barcode ='"+barcode+"'";
 			try {
 				conn.setAutoCommit(false);
 				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+				logger.info("插入退货..."+sql);
 				stmt.executeUpdate(sql);
+				logger.info("查找库存..."+sql2);
 				rs=stmt.executeQuery(sql2);
 				list = DBUtil.populate(rs, DdInventory.class);
 
@@ -90,12 +93,20 @@ public class BackAction<T> extends CrudAction{
 		    	{
 		    		DdInventory t=(DdInventory)list.get(i);
 		    		sql="update dd_inventory set  amount="+(t.getAmount()-Integer.valueOf(amount))+" where id ="+t.getId();
+		    		logger.info("更新库存..."+sql);
 		    		stmt.executeUpdate(sql);
 		    	}
 		    	conn.commit();
 		    	conn.setAutoCommit(true);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
+				try {
+					logger.info("交易失败,回滚!");
+					conn.rollback();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}//回滚JDBC事务   
 		    	renderSimpleResult(false,"交易失败！");
 				e.printStackTrace();
 			}finally {
@@ -104,27 +115,38 @@ public class BackAction<T> extends CrudAction{
 
 		}else if(type.equals("03"))//售后退回，则一律先进入库存
 		{
-			sql="insert into dd_back (barcode,transaction,amount,type,reason,operator,date) " +
-			"values ('"+barcode+"','"+transaction+"',"+amount+",'03','"+reason+"','"+operator+"','"+submitdate+"')";
+			sql="insert into dd_back (barcode,transaction,amount,discount,type,reason,operator,date) " +
+			"values ('"+barcode+"','"+transaction+"',"+amount+","+discount+",'03','"+reason+"','"+operator+"','"+submitdate+"')";
 			
 			String sql2="select * from dd_inventory where barcode ='"+barcode+"'";
 			try {
 				conn.setAutoCommit(false);
 				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+				logger.info("插入退货..."+sql);
 				stmt.executeUpdate(sql);
+				logger.info("查找库存..."+sql2);
 				rs=stmt.executeQuery(sql2);
 				list = DBUtil.populate(rs, DdInventory.class);
 
 		    	for(int i=0;i<list.size();i++)
 		    	{
 		    		DdInventory t=(DdInventory)list.get(i);
+		    		
 		    		sql="update dd_inventory set  amount="+(t.getAmount()+Integer.valueOf(amount))+" where id ="+t.getId();
-			    	stmt.executeUpdate(sql);
+		    		logger.info("更新库存..."+sql);
+		    		stmt.executeUpdate(sql);
 		    	}
 		    	conn.commit();
 		    	conn.setAutoCommit(true);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
+				try {
+					logger.info("交易失败,回滚!");
+					conn.rollback();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}//回滚JDBC事务   
 				renderSimpleResult(false,"交易失败！");
 				e.printStackTrace();
 			}finally {
@@ -143,7 +165,7 @@ public class BackAction<T> extends CrudAction{
 	    String ids=getParameter("ids");
 	    if(!"".equals(ids.trim())){
 	    		String sql="delete from dd_back where id in ("+ids.substring(0,ids.length()-1)+")";
-	    		CommonDAO.executeUpdate(sql);
+	    		CommonDAO.executeUpdate("执行删除",sql);
 	    }
 	    renderSimpleResult(true,"处理完毕");
         return null;
@@ -166,14 +188,14 @@ public class BackAction<T> extends CrudAction{
 			name2 = URLEncoder.encode(name, "UTF-8");//IE浏览器 终极解决文件名乱码
 
 		getResponse().setHeader("Content-disposition","attachment;filename=" +name2+"-"+getCurrentTime() + ".xls");
-		String[] headers = { "序号","条形码","交易号","名称","设计师","数量","单价","退回类型","原因","操作人","日期"};
+		String[] headers = { "序号","条形码","交易号","名称","设计师","数量","单价","折扣","退回类型","原因","操作人","日期"};
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
 		String sql;
 		if(t.equals("2"))
-				sql="select b.id,b.barcode,b.transaction,p.name,p.userid,b.amount,p.price,(select value from dd_dic d where d.parent='back' and d.child=b.type) as type,(select value from dd_dic d where d.parent='reason' and d.child=b.reason) as reason,b.operator,b.date from dd_back b left join dd_product p on b.barcode=p.barcode where p.userid='"+userid+"'  order by b.date desc";
+				sql="select b.id,b.barcode,b.transaction,p.name,p.userid,b.amount,p.price,b.discount,(select value from dd_dic d where d.parent='back' and d.child=b.type) as type,(select value from dd_dic d where d.parent='reason' and d.child=b.reason) as reason,b.operator,b.date from dd_back b left join dd_product p on b.barcode=p.barcode where p.userid='"+userid+"'  order by b.date desc";
 		else
-				sql="select b.id,b.barcode,b.transaction,p.name,p.userid,b.amount,p.price,(select value from dd_dic d where d.parent='back' and d.child=b.type) as type,(select value from dd_dic d where d.parent='reason' and d.child=b.reason) as reason,b.operator,b.date from dd_back b left join dd_product p on b.barcode=p.barcode  order by b.date desc";
+				sql="select b.id,b.barcode,b.transaction,p.name,p.userid,b.amount,p.price,b.discount,(select value from dd_dic d where d.parent='back' and d.child=b.type) as type,(select value from dd_dic d where d.parent='reason' and d.child=b.reason) as reason,b.operator,b.date from dd_back b left join dd_product p on b.barcode=p.barcode  order by b.date desc";
 		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,Back.class);
 		Collection<T> l = (Collection<T>) p.getResult();
 		return ExcelUtil.exportExcel(workbook,name, headers, l);
@@ -195,9 +217,9 @@ public class BackAction<T> extends CrudAction{
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
 		if(t.equals("2"))
-			sql="select * from (select b.id,b.barcode,b.transaction,p.name,p.userid,b.amount,p.price,(select value from dd_dic d where d.parent='back' and d.child=b.type) as type,(select value from dd_dic d where d.parent='reason' and d.child=b.reason) as reason,b.operator,b.date from dd_back b left join dd_product p on b.barcode=p.barcode where p.userid='"+userid+"' and b.id<=(select v.id from dd_back v left join dd_product p1 on v.barcode=p1.barcode where p1.userid='"+userid+"'  order by v.id desc limit "+(start-1)+",1) ) as s order by s.id desc";
+			sql="select * from (select b.id,b.barcode,b.transaction,p.name,p.userid,b.amount,p.price,b.discount,(select value from dd_dic d where d.parent='back' and d.child=b.type) as type,(select value from dd_dic d where d.parent='reason' and d.child=b.reason) as reason,b.operator,b.date from dd_back b left join dd_product p on b.barcode=p.barcode where p.userid='"+userid+"' and b.id<=(select v.id from dd_back v left join dd_product p1 on v.barcode=p1.barcode where p1.userid='"+userid+"'  order by v.id desc limit "+(start-1)+",1) ) as s order by s.id desc";
 		else
-			sql="select * from (select b.id,b.barcode,b.transaction,p.name,p.userid,b.amount,p.price,(select value from dd_dic d where d.parent='back' and d.child=b.type) as type,(select value from dd_dic d where d.parent='reason' and d.child=b.reason) as reason,b.operator,b.date from dd_back b left join dd_product p on b.barcode=p.barcode  where  b.id<=(select id from dd_back order by id desc limit "+(start-1)+",1) ) as s order by s.id desc";
+			sql="select * from (select b.id,b.barcode,b.transaction,p.name,p.userid,b.amount,p.price,b.discount,(select value from dd_dic d where d.parent='back' and d.child=b.type) as type,(select value from dd_dic d where d.parent='reason' and d.child=b.reason) as reason,b.operator,b.date from dd_back b left join dd_product p on b.barcode=p.barcode  where  b.id<=(select id from dd_back order by id desc limit "+(start-1)+",1) ) as s order by s.id desc";
 		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(this.total,sql,start,perpage,Back.class);
 		
 		String content = "totalPage = " + p.getTotalPageCount() + ";";
@@ -208,7 +230,7 @@ public class BackAction<T> extends CrudAction{
 		{
 			Back d=(Back)l.get(i);
 
-			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td>"+d.getTransaction()+"</td><td>"+d.getName()+"</td><td>"+d.getUserid()+"</td><td>"+d.getAmount()+"</td><td>"+d.getPrice()+"</td><td>"+d.getType()+"</td><td>"+d.getReason()+"</td><td>"+d.getOperator()+"</td><td>"+d.getDate()+"</td></tr>\",";
+			content += "\"<tr id='"+d.getId()+"'><td><input type='checkbox' name='row' value='"+d.getId()+"'/></td><td>"+d.getBarcode()+"</td><td>"+d.getTransaction()+"</td><td>"+d.getName()+"</td><td>"+d.getUserid()+"</td><td>"+d.getAmount()+"</td><td>"+d.getPrice()+"</td><td>"+d.getDiscount()+"</td><td>"+d.getType()+"</td><td>"+d.getReason()+"</td><td>"+d.getOperator()+"</td><td>"+d.getDate()+"</td></tr>\",";
 		}
 		content = content.substring(0,content.length()-1);
 		content += "];";

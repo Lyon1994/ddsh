@@ -104,7 +104,7 @@ public class SellAction<T> extends CrudAction{
 	    {
 	    	DdSell s=(DdSell)l.get(i);
 	    	sql="update dd_sell set amount="+(s.getAmount()-Integer.valueOf(amount))+" where id="+id;//更新在售表数量
-	    	CommonDAO.executeUpdate(sql);
+	    	CommonDAO.executeUpdate("下架",sql);
 	    }
 	    
 	    sql="select * from dd_inventory where barcode='"+barcode+"'";
@@ -113,7 +113,7 @@ public class SellAction<T> extends CrudAction{
 	    {
 	    	DdInventory s=(DdInventory)l.get(i);
 	    	sql="update dd_inventory set amount="+(s.getAmount()+Integer.valueOf(amount))+" where barcode='"+barcode+"'";//更新库存表数量
-	    	CommonDAO.executeUpdate(sql);
+	    	CommonDAO.executeUpdate("更新库存",sql);
 	    }
 	    String submitdate=getCurrentTime();
 
@@ -121,7 +121,7 @@ public class SellAction<T> extends CrudAction{
 
 	    sql="insert into dd_down (inventoryid,barcode,name,gridid,amount,price,userid,reason,operator,date) " +
 		"select inventoryid,barcode,name,gridid,'"+amount+"',price,userid,'"+reason+"','"+operator+"','"+submitdate+"' from dd_sell where id ="+id;
-	    CommonDAO.executeUpdate(sql);
+	    CommonDAO.executeUpdate("插入下架",sql);
 	    renderSimpleResult(true,"处理成功");
         return null;
 	}
@@ -140,25 +140,7 @@ public class SellAction<T> extends CrudAction{
 	@Override
 	public String add() {
 		// TODO Auto-generated method stub
-		String name=getParameter("name");
-		String image=getParameter("image");
-		String amount=getParameter("amount");
-		String price=getParameter("price");
-		String totalprice=getParameter("totalprice");
-		String spec=getParameter("spec");
-		String material=getParameter("material");
-		String grade=getParameter("grade");
-		String location=getParameter("location");
-		String memo=getParameter("memo");
-		String submitdate=getCurrentTime();
-		String operator=(String) getSession().getAttribute("userid");
 
-		String sql="insert into dd_topper (name,image,amount,price,totalprice,spec,material,grade,location,memo,status,submitdate,userid) " +
-				"values ('"+name+"','"+image+"',"+amount+","+price+","+totalprice+",'"+spec+"','"+material+"','"+grade+"','"+location+"','"+memo+"','0','"+submitdate+"','"+operator+"')";
-		int v=CommonDAO.executeUpdate(sql);
-		if(v>0)
-			return "success";
-		else
 			return "error";
 	}
 
@@ -171,7 +153,7 @@ public class SellAction<T> extends CrudAction{
 	    String ids=getParameter("ids");
 	    if(!"".equals(ids.trim())){
 	    		String sql="delete from dd_sell where id in ("+ids.substring(0,ids.length()-1)+")";
-	    		CommonDAO.executeUpdate(sql);
+	    		CommonDAO.executeUpdate("删除dd_sell",sql);
 	    }
 	    renderSimpleResult(true,"ok");
         return null;
@@ -184,7 +166,7 @@ public class SellAction<T> extends CrudAction{
 		String value=getParameter("value");
 		
 		String sql="update dd_topper set "+tdid+"="+value+" where id ="+trid;
-		CommonDAO.executeUpdate(sql);
+		CommonDAO.executeUpdate("编辑货架",sql);
 		renderSimpleResult(true,"修改成功");
 		return null;
 	}

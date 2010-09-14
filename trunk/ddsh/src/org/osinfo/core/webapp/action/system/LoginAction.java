@@ -14,6 +14,7 @@ import java.util.List;
 import javax.servlet.http.Cookie;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
@@ -21,7 +22,9 @@ import org.osinfo.core.webapp.Constants;
 import org.osinfo.core.webapp.action.BaseAction;
 import org.osinfo.core.webapp.dao.CommonDAO;
 import org.osinfo.core.webapp.model.DdUser;
+import org.osinfo.core.webapp.model.custom.User;
 import org.osinfo.core.webapp.util.SecurityUtil;
+import org.osinfo.core.webapp.util.StringUtil;
 @Results({
 	 @Result(name="login",location = "/WEB-INF/result/system/login.ftl"),
 	 @Result(name="workbench",location = "/WEB-INF/result/system/workbench.ftl"),
@@ -69,11 +72,8 @@ public class LoginAction extends BaseAction{
 	@Action("/logout.*")   
 	public String logout()
 	{
-		getSession().setAttribute("userid", null);
-		getSession().setAttribute("name", null);
-		getSession().setAttribute("type",null);
-		getSession().setAttribute("menu", null);
-		getSession().setAttribute("typename", null);
+		logger.info("用户 "+getSession().getAttribute("userid")+" 注销...");
+		getSession().invalidate();
 		try {
 			getResponse().sendRedirect("/ddsh");
 		} catch (IOException e) {
@@ -87,20 +87,23 @@ public class LoginAction extends BaseAction{
 	{
 		if(logger.isDebugEnabled())
 			logger.debug("用户登录校验...");
+		
 		String userid=getParameter("userid");
 		String password=getParameter("password");
+		logger.info("用户登录:"+userid+","+password);
 		password=SecurityUtil.encodeMD5(password);//md5加密
 		String code=getParameter("code");
 		if(code.equalsIgnoreCase((String) getSession().getAttribute(Constants.VALIDATECODE)))
 		{
-			String sql="select * from dd_user where userid='"+userid+"' and password='"+password+"'";
-			List l=CommonDAO.executeQuery(sql,DdUser.class);
+			String sql="select u.id,u.userid,u.name,u.type,u.status,l.lastime,l.ip,l.location1,l.location2 from dd_user u left join dd_login l on u.userid=l.userid where u.userid='"+userid+"' and u.password='"+password+"'";
+			List l=CommonDAO.executeQuery(sql,User.class);
 			if(l.size()>=1)
 			{
-				DdUser user=(DdUser)l.get(0);
+				User user=(User)l.get(0);
 				if(user.getStatus().equals("0"))//未开通
 				{
 					try {
+						logger.info("未开通，跳转");
 						getResponse().sendRedirect("/ddsh/html/error3.html");
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
@@ -112,8 +115,12 @@ public class LoginAction extends BaseAction{
 					getSession().setAttribute("userid", user.getUserid());
 					getSession().setAttribute("name", user.getName());
 					getSession().setAttribute("type", user.getType());
+					getSession().setAttribute("lastime", user.getLastime());
+					getSession().setAttribute("ip", user.getIp());
+					getSession().setAttribute("location1", user.getLocation1());
+					getSession().setAttribute("location2", user.getLocation2());
 					getSession().setAttribute("menu", WorkbenchAction.getTree(user.getType()));
-					
+
 					if(user.getType().equals("1"))
 						getSession().setAttribute("typename", "管理员");
 					else if(user.getType().equals("2"))
@@ -122,8 +129,16 @@ public class LoginAction extends BaseAction{
 						getSession().setAttribute("typename", "收银员");
 					else if(user.getType().equals("4"))
 						getSession().setAttribute("typename", "上货员");
-
+					String info=getParameter("info");
+					String[] tmp=info.split(",");
+					String date=getCurrentTime();
+					if(info=="")
+						sql="update dd_login set lastime='"+date+"',ip='127.0.0.1',location1='本机' where userid='"+userid+"'";
+					else
+						sql="update dd_login set lastime='"+date+"',ip='"+tmp[0]+"',location1='"+tmp[2]+"' where userid='"+userid+"'";
+					CommonDAO.executeUpdate("更新登录",sql);
 					try {
+						logger.info("登录成功，跳转");
 						getResponse().sendRedirect("workbench_.zf");
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
@@ -132,6 +147,7 @@ public class LoginAction extends BaseAction{
 				}
 			}
 		}
+		logger.info("登录失败，跳转");
 		return "login";
 	}
 	@Action("/workbench_.*")   
@@ -139,6 +155,11 @@ public class LoginAction extends BaseAction{
 	{
 		if(logger.isDebugEnabled())
 			logger.debug("转到工作台...");
+		logger.info("跳转到工作台...");
+		List online = (List)getServletContext().getAttribute("online");
+		getSession().setAttribute("onlines",online.size());
+		System.out.println("onlines="+online.size());
+		
 		if(getSession().getAttribute("id")==null)
 			return "login";
 		return "workbench";

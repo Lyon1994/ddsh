@@ -32,7 +32,7 @@ import org.osinfo.core.webapp.util.SQLUtil;
 public class CommonDAO {
 	protected final static Logger logger = Logger.getLogger(CommonDAO.class);
 	public static List executeQuery(String sql,Class c) {
-		System.out.println(sql);
+		logger.info(sql);
 		ResultSet rs = null;
 		Statement stmt = null;
 		List list = new ArrayList();
@@ -50,7 +50,7 @@ public class CommonDAO {
 		return list;
 	}
 	public static float sum(String sql) {
-		System.out.println(sql);
+		logger.info(sql);
 		ResultSet rs = null;
 		Statement stmt = null;
 		float sum=0;
@@ -74,8 +74,8 @@ public class CommonDAO {
 		return sum;
 	}
 
-	public static int executeUpdate(String sql) {
-		System.out.println(sql);
+	public static int executeUpdate(String event,String sql) {
+		logger.info("执行"+event+"..."+sql);
 		int r=0;
 		Connection conn=DBUtil.getConnection();
 		Statement stmt = null;
@@ -93,9 +93,7 @@ public class CommonDAO {
 	public static int count(String sql)
 	{
 		sql=SQLUtil.buildSQL(sql).toString();
-		System.out.println(sql);
-
-
+		logger.info(sql);
 		ResultSet rs = null;
 		Statement stmt = null;
 		Connection conn=DBUtil.getConnection();
@@ -123,7 +121,7 @@ public class CommonDAO {
 		try {
 			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
 			rs=stmt.executeQuery(sql+" limit "+(start-1)+","+pageSize);
-			System.out.println(sql+" limit "+(start-1)+","+pageSize);
+			logger.info(sql+" limit "+pageSize);
 			list = DBUtil.populate(rs, c);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -144,7 +142,7 @@ public class CommonDAO {
 		try {
 			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
 			rs=stmt.executeQuery(sql+" limit "+pageSize);
-			System.out.println(sql+" limit "+pageSize);
+			logger.info(sql+" limit "+pageSize);
 			list = DBUtil.populate(rs, c);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -157,7 +155,7 @@ public class CommonDAO {
 	}
 	public static PageUtil findByMultiTableSQLQuery(String sql,Class c)
 	{
-		System.out.println(sql);
+		logger.info(sql);
 		ResultSet rs = null;
 		Statement stmt = null;
 		Connection conn=DBUtil.getConnection();

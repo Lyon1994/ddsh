@@ -20,7 +20,6 @@ import org.osinfo.core.webapp.action.CrudAction;
 import org.osinfo.core.webapp.action.util.DynamicGrid;
 import org.osinfo.core.webapp.dao.CommonDAO;
 import org.osinfo.core.webapp.model.DdInventory;
-import org.osinfo.core.webapp.model.custom.Sales;
 import org.osinfo.core.webapp.model.custom.Total;
 import org.osinfo.core.webapp.util.ExcelUtil;
 import org.osinfo.core.webapp.util.PageUtil;
@@ -49,50 +48,14 @@ public class TotalAction<T> extends CrudAction{
 	@Override
 	public String add() {
 		// TODO Auto-generated method stub
-		String rowsvalue=getParameter("rowsvalue");
-		String totalprice=getParameter("totalprice");
-		String receive=getParameter("receive");
-		String change=getParameter("change");
-		String transaction=getParameter("transaction");
-		String submitdate=getCurrentTime();
-		String operator=(String) getSession().getAttribute("userid");
-		//记录明细表
-		String[] v=rowsvalue.split("\\|");
-		for(int i=0;i<v.length;i++)
-		{
-			String[] b=v[i].split("\\,");
-			String sql="insert into dd_sales (transaction,barcode,discount,amount,operator,date) " +
-			"values ('"+transaction+"','"+b[0]+"',"+b[3]+","+b[4]+",'"+operator+"','"+submitdate+"')";
-			CommonDAO.executeUpdate(sql);
-			sql="select * from dd_inventory where barcode='"+b[0]+"'";//获取库存数量
-			List l2=CommonDAO.executeQuery(sql, DdInventory.class);
-			if(l2.size()==1)
-			{
-				DdInventory vs=(DdInventory)l2.get(0);//更新库存数量
-				sql="update dd_inventory set amount="+(vs.getAmount()-Integer.valueOf(b[4]))+" where id ="+vs.getId();
-				CommonDAO.executeUpdate(sql);
-			}	
 
-		}
-		//记录交易记录表 
-		String sql="insert into dd_bill (transaction,receive,changes,totalprice,operator,date) " +
-		"values ('"+transaction+"',"+receive+","+change+","+totalprice+",'"+operator+"','"+submitdate+"')";
-		CommonDAO.executeUpdate(sql);
-    	renderSimpleResult(true,"操作成功,交易号:"+transaction);
 	    return null;
 	}
 	
 	@Override
 	public String del() {
 		// TODO Auto-generated method stub
-		if(logger.isDebugEnabled())
-			logger.debug("加载删除页面...");
-	    String ids=getParameter("ids");
-	    if(!"".equals(ids.trim())){
-	    		String sql="delete from dd_sales where id in ("+ids.substring(0,ids.length()-1)+")";
-	    		CommonDAO.executeUpdate(sql);
-	    }
-	    renderSimpleResult(true,"操作成功");
+
         return null;
 	}
 	@Override
