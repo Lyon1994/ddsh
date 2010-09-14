@@ -6,6 +6,18 @@
     
     <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
 	<link href="../css/mainstyle.css" rel="stylesheet" type="text/css"/>
+	<script type="text/javascript" src="../fckeditor/fckeditor.js"></script>
+	<script type="text/javascript">
+	
+	//初始化fckeditor
+	window.onload = function()
+	{
+		var sBasePath = "../fckeditor/";
+		var oFCKeditor = new FCKeditor('detail');
+		oFCKeditor.BasePath	= sBasePath ;
+		oFCKeditor.ReplaceTextarea() ;
+	}
+	</script>
   </head>
   
   <body>
@@ -28,14 +40,14 @@
 			<td class="maintab_kuang">
 	<table border="0" width="100%" id="table3" cellspacing="0" cellpadding="0" class="tab_table_title">
 		<tr>
-			<td>名称：</td>
+			<td>标题：</td>
 			<td><input type="text" name="name" size="20" class="text"/></td>
-			<td>　</td>
-			<td>　</td>
+			<td> </td>
+			<td>必填</td>
 		</tr>
 		<tr>
 			<td>内容：</td>
-			<td><input type="text" name="detail" size="20" class="text"/></td>
+			<td> <textarea   name="detail" rows="10" cols="90" style="width: 90%; height:250px" ></textarea></td>
 			<td></td>
 			<td></td>
 		</tr>

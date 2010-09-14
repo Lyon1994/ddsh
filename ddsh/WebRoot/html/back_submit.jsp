@@ -36,7 +36,8 @@
 							var reason=$('#reason').attr('value');
 							var amount=$('#amount').attr('value');
 							var barcode=$('#barcode').attr('value');
-							var para='id='+id+'&amount='+amount+'&reason='+reason+'&barcode='+barcode+'&t='+new Date().getTime();
+							var discount=$('#discount').attr('value');
+							var para='id='+id+'&amount='+amount+'&reason='+reason+'&barcode='+barcode+'&discount='+discount+'&t='+new Date().getTime();
 							
 							$.ajax({
 								 	url: '../system/submit!back.zf',
@@ -78,12 +79,11 @@
 					<td></td>
 				</tr>
 				<tr>
+					<td>折扣：</td>
+					<td><input type="text" id="discount" name="discount" value='1' size="20" class="text"/></td>
 					<td>数量：</td>
-					<td><input type="text" id="amount" name="amount" size="20" class="text required digits" minlength="1"/></td>
-					<td></td>
-					<td></td>
+					<td><input type="text" id="amount" name="amount" value='1' size="20" class="text"/></td>
 				</tr>
-				
 				<tr>
 					<td>退回原因：</td>
 					<td><select id="reason" name="reason"></select></td>
