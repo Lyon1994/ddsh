@@ -1,0 +1,30 @@
+YUI Compressor是使用Java编写的工具，需要Java版本大于等于1.4。 
+
+工作原理简介： 
+主要是去掉冗余的空白，主要包括空格，换行符、制表符。 
+对于 Javascript，还采用缩短变量名的方法压缩文件，就是在保证代码正确性的情况下将变量名用只有1个字符的字符串代替，或者2个、3个字符，总之尽量短。 
+对于 CSS，还有采用优化0值属性值的表示，优化颜色值的方法压缩文件。 
+CSS的优化比 CSSTidy 功能弱。CSSTidy还能支持一些相关属性的合并。 
+
+用法： 
+代码: 
+java -jar yuicompressor-x.y.z.jar myfile.js -o myfile-min.js 
+
+注：x,y,z 代表版本号 
+
+最简单的语法 
+java -jar yuicompressor-2.4.1.jar in.js -o out.js 
+
+in.js ，out.js分别是输入和输出文件 
+
+最安全的语法，不混淆、不去分号、不优化 
+java -jar yuicompressor-2.4.1.jar --nomunge --preserve-semi  --disable-optimizations  in.js -o out.js 
+
+utf8编码可以指定 
+java -jar yuicompressor-2.4.1.jar  --charset utf-8  in.js -o out.js 
+
+关于压缩效率可以在 
+
+http://compressorrater.thruhere.net/ 
+
+查看，粘贴一个脚本可以在线压缩并比较 
