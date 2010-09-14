@@ -2,16 +2,7 @@
 <#include "/include/header.ftl" encoding="utf-8" parse=true>
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <!-- HTTP 1.1 -->
-        <meta http-equiv="Cache-Control" content="no-store"/>
-        <!-- HTTP 1.0 -->
-        <meta http-equiv="Pragma" content="no-cache"/>
-        <!-- Prevents caching at the Proxy Server -->
-        <meta http-equiv="Expires" content="0"/>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    	<title></title>
-		<link href="${css}/mainstyle.css" rel="stylesheet" type="text/css">
-		<script language="javascript" src="${js}/jquery/jquery-1.4.2.min.js"></script>
+		<#include "/include/meta.ftl" encoding="utf-8" parse=true>
 		<script language="javascript" src="${js}/jquery/jquery-plugins/jQuery.FillOptions.js"></script>
 
 		<script language="javascript">
@@ -65,7 +56,10 @@
 							<td align="right"><span id='time'></span>&nbsp;<span><font color="blue"><b>欢迎您：<#if Session.userid?exists>${Session.typename} ${Session.name}(${Session.userid})</#if></b></font></span></td>
 						</tr>
 						<tr>
-							<td align="right"><br>&nbsp;【<a href="#" onclick="window.parent.document.getElementById('main').contentWindow.location='main.zf'; ">商户首页</a>】&nbsp;<span>门 店：</span>&nbsp;<select name="store" id="store"></select>&nbsp;【<a href="#" onclick="window.parent.document.getElementById('main').contentWindow.location='password.zf';" >修改密码</a>】&nbsp;【<a href="javascript:parent.location='logout.zf'">退出系统</a>】</td>
+							<td align="right">&nbsp;</td>
+						</tr>
+						<tr>
+							<td align="right">【<a href="#" onclick="window.parent.document.getElementById('main').contentWindow.location='main.zf'; ">商户首页</a>】&nbsp;<span>门 店：</span>&nbsp;<select name="store" id="store"></select>&nbsp;【<a href="#" onclick="window.parent.document.getElementById('main').contentWindow.location='password.zf';" >修改密码</a>】&nbsp;【<a href="javascript:parent.location='logout.zf'">退出系统</a>】</td>
 						</tr>
 					</table>
 					</td>

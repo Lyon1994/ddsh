@@ -4,6 +4,21 @@
     <head>
 	    <#include "/include/meta.ftl" encoding="utf-8">
 	    <title>东东设会在线销售管理系统</title>
+		<script type="text/javascript">   
+		<!--     
+		    window.onbeforeunload = onbeforeunload_handler;   
+		    window.onunload = onunload_handler;   
+		    function onbeforeunload_handler(){   
+		       window.event.returnValue = "为了账号安全,退出请点系统的【退出按钮】！";
+		    }   
+		       
+		    function onunload_handler(){   
+		        //var warning="谢谢光临";   
+		        //alert(warning); 
+		        //window.location.href='logout.zf';
+		    }   
+		// -->   
+		</script>  
 	</head>
 	<frameset framespacing="0" border="0" frameborder="0" rows="101,*,40">
 		<frame name="banner" scrolling="no" noresize target="contents" src="header.zf">
@@ -11,7 +26,7 @@
 			<frame id='contents' name="contents" src="left.zf">
 			<frame id='main' name="main" src="main.zf" scrolling="no">
 		</frameset>
-		<frame name="bottom" scrolling="no" noresize target="contents" src="html/foot.html">
+		<frame name="bottom" scrolling="no" noresize target="contents" src="footer.zf">
 		<noframes>
 		<body>
 	 
