@@ -2,19 +2,16 @@
 <#include "/include/header.ftl" encoding="utf-8" parse=true>
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <!-- HTTP 1.1 -->
-        <meta http-equiv="Cache-Control" content="no-store"/>
-        <!-- HTTP 1.0 -->
-        <meta http-equiv="Pragma" content="no-cache"/>
-        <!-- Prevents caching at the Proxy Server -->
-        <meta http-equiv="Expires" content="0"/>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-
+		<#include "/include/meta.ftl" encoding="utf-8" parse=true>
     	<title>用户登录</title>
-		<link href="${css}/mainstyle.css" rel="stylesheet" type="text/css">
-		<script language="javascript" src="js/jquery/jquery-1.4.2.min.js"></script>
 
+		
+		<script type=text/javascript src="http://fw.qq.com/ipaddress" charset=gb2312></script>
 		<script language="javascript">
+			var isIE=!!window.ActiveXObject;
+			var isIE6=isIE&&!window.XMLHttpRequest;
+			var isIE8=isIE&&!!document.documentMode;
+			var isIE7=isIE&&!isIE6&&!isIE8;
 
 			$(document).ready(
 				function(){
@@ -26,7 +23,18 @@
 							if(event.keyCode==13){
 								document.login.submit();
 							}   
-						}); 
+						});
+						$("#info").attr("value",IPData[0]+","+IPData[1]+","+IPData[2]+","+IPData[3]);
+						if(isIE){
+							if(isIE6){
+								$("#explorer").append("<font color='red'>经检测您的浏览器太老了<br>为了更好的体验,建议您使用IE8浏览器!</font>");
+							}else if(isIE8){
+								$("#explorer").append("<font color='green'>经检测您的浏览器完全符合本系统!</font>");
+							}else if(isIE7){
+								$("#explorer").append("<font color='red'>经检测您的浏览器太老了<br>为了更好的体验,建议您使用IE8浏览器!</font>");
+							}
+						}else
+							$("#explorer").append("<font color='red'>经检测您的浏览器为非IE<br>为了更好的体验,建议您使用IE8浏览器!</font>");
 				}
 			)
 		</script>
@@ -150,6 +158,7 @@
 	</table>
 	</div>
 	<form name="login" action='submit.zf' method='post'>
+	<input type='hidden' name='info' id='info'/>
 	<div id="diyright">
 	<table border="0" width="100%" id="table2">
 		<tr>
@@ -209,7 +218,13 @@
 					<a href="html/regedit_user.html">立即免费注册</a></td>
 				</tr>
 				<tr>
-					<td>　</td>
+					<td><b class="text2"><br><span id='explorer'></span></b><br>
+					<br>
+					立刻下载 &nbsp;<a target='_blank' href="http://www.google.com/toolbar/ie8/intl/zh-CN/install.html">Internet Explorer 8</a>
+					<br>
+					系统建议<br>
+					分辨率：1024*768以上
+					</td>
 				</tr>
 				<tr>
 					<td>　</td>
@@ -240,7 +255,7 @@
 			<tr>
 				<td>
 				<p align="center">Copyright &copy; 2010 DDSOHO. All Rights 
-				Reserved 東東設會 版权所有</td>
+				Reserved 東東設會 版权所有&nbsp;系统支持：<a target="_blank" href="http://www.zf-info.com">上海竹枫软件</a>&nbsp;TEL:13761844061</td>
 			</tr>
 		</table>
 	</div>

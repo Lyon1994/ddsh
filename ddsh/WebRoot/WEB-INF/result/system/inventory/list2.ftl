@@ -2,17 +2,10 @@
 <#include "/include/header.ftl" encoding="utf-8" parse=true>
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <!-- HTTP 1.1 -->
-        <meta http-equiv="Cache-Control" content="no-store"/>
-        <!-- HTTP 1.0 -->
-        <meta http-equiv="Pragma" content="no-cache"/>
-        <!-- Prevents caching at the Proxy Server -->
-        <meta http-equiv="Expires" content="0"/>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<#include "/include/meta.ftl" encoding="utf-8" parse=true>
 
     	<title>库存列表</title>
-		<link href="${css}/mainstyle.css" rel="stylesheet" type="text/css">
-		<script language="javascript" src="${jquery}/jquery-1.4.2.min.js"></script>
+
 		<script language="javascript" src="${jquery_lib}/jquery.cookie.min.js"></script>
     	<script language="javascript" src="${jquery_jpage}/jquery.jpage.js"></script>
 

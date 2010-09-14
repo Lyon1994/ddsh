@@ -2,17 +2,9 @@
 <#include "/include/header.ftl" encoding="utf-8" parse=true>
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <!-- HTTP 1.1 -->
-        <meta http-equiv="Cache-Control" content="no-store"/>
-        <!-- HTTP 1.0 -->
-        <meta http-equiv="Pragma" content="no-cache"/>
-        <!-- Prevents caching at the Proxy Server -->
-        <meta http-equiv="Expires" content="0"/>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-
+		<#include "/include/meta.ftl" encoding="utf-8" parse=true>
     	<title>商品退回列表</title>
-		<link href="${css}/mainstyle.css" rel="stylesheet" type="text/css">
-		<script language="javascript" src="${jquery}/jquery-1.4.2.min.js"></script>
+
 		<script language="javascript" src="${jquery_lib}/jquery.cookie.min.js"></script>
     	<script language="javascript" src="${jquery_jpage}/jquery.jpage.js"></script>
 
@@ -34,7 +26,7 @@
 			
 			function load(param)
 			{
-				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th width='1%'><input type='checkbox' name='select' onclick='ck()'/></th><th>条形码</th><th>交易号</th><th>名称</th><th>设计师</th><th>数量</th><th>单价</th><th>退回类型</th><th>原因</th><th>操作人</th><th>日期</th></tr></thead><tbody>";
+				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th width='1%'><input type='checkbox' name='select' onclick='ck()'/></th><th>条形码</th><th>交易号</th><th>名称</th><th>设计师</th><th>数量</th><th>单价</th><th>折扣</th><th>退回类型</th><th>原因</th><th>操作人</th><th>日期</th></tr></thead><tbody>";
 				var a="</tbody></table>";
 				$.ajax({
 					 	url: 'back!count.zf?type=0&t='+new Date().getTime(),
