@@ -1,0 +1,138 @@
+今天，帮朋友优化一个网站，首先选择的就是从优化MySQL做起，添加了不少索引，后来发现有些索引居然没办法被使用，看了不少资料，解决了不少问题.然后和同事聊起关于select的优化，想起了之前看过的一篇Limit的优化，找到了下面的这文章，现在摘录下来：
+
+转载正文如下：
+
+MYSQL的优化是非常重要的。其他最常用也最需要优化的就是limit。mysql的limit给分页带来了极大的方便，但数据量一大的时候，limit的性能就急剧下降。
+同样是取10条数据
+
+select * from yanxue8_visit limit 10000,10
+和
+
+select * from yanxue8_visit limit 0,10
+就不是一个数量级别的。
+
+网上也很多关于limit的五条优化准则，都是翻译自mysql手册，虽然正确但不实用。今天发现一篇文章写了些关于limit优化的，很不错。
+
+文中不是直接使用limit，而是首先获取到offset的id然后直接使用limit size来获取数据。根据他的数据，明显要好于直接使用limit。这里我具体使用数据分两种情况进行测试。（测试环境win2033+p4双核 (3GHZ) +4G内存 mysql 5.0.19）
+
+1、offset比较小的时候。
+
+select * from yanxue8_visit limit 10,10
+多次运行，时间保持在0.0004-0.0005之间
+
+Select * From yanxue8_visit Where vid >=(
+Select vid From yanxue8_visit Order By vid limit 10,1
+) limit 10
+多次运行，时间保持在0.0005-0.0006之间，主要是0.0006
+结论：偏移offset较小的时候，直接使用limit较优。这个显然是子查询的原因。
+
+2、offset大的时候。
+
+select * from yanxue8_visit limit 10000,10
+多次运行，时间保持在0.0187左右
+
+Select * From yanxue8_visit Where vid >=(
+Select vid From yanxue8_visit Order By vid limit 10000,1
+) limit 10
+
+多次运行，时间保持在0.0061左右，只有前者的1/3。可以预计offset越大，后者越优。
+
+附上原文：
+
+select * from table LIMIT 5,10; #返回第6-15行数据
+select * from table LIMIT 5; #返回前5行
+select * from table LIMIT 0,5; #返回前5行
+
+性能优化：
+
+基于MySQL5.0中limit的高性能,我对数据分页也重新有了新的认识.
+
+1.
+Select * From cyclopedia Where ID>=(
+Select Max(ID) From (
+Select ID From cyclopedia Order By ID limit 90001
+) As tmp
+) limit 100;
+
+2.
+Select * From cyclopedia Where ID>=(
+Select Max(ID) From (
+Select ID From cyclopedia Order By ID limit 90000,1
+) As tmp
+) limit 100;
+
+同样是取90000条后100条记录,第1句快还是第2句快?
+第1句是先取了前90001条记录,取其中最大一个ID值作为起始标识,然后利用它可以快速定位下100条记录
+第2句择是仅仅取90000条记录后1条,然后取ID值作起始标识定位下100条记录
+第1句执行结果.100 rows in set (0.23) sec
+第2句执行结果.100 rows in set (0.19) sec
+
+很明显第2句胜出.看来limit好像并不完全像我之前想象的那样做全表扫描返回limit offset+length条记录,这样看来limit比起MS-SQL的Top性能还是要提高不少的.
+
+其实第2句完全可以简化成
+
+Select * From cyclopedia Where ID>=(
+Select ID From cyclopedia limit 90000,1
+)limit 100;
+
+直接利用第90000条记录的ID,不用经过Max运算,这样做理论上效率因该高一些,但在实际使用中几乎看不到效果,因为本身定位ID返回的就是1条记录,Max几乎不用运作就能得到结果,但这样写更清淅明朗,省去了画蛇那一足.
+
+可是,既然MySQL有limit可以直接控制取出记录的位置,为什么不干脆用Select * From cyclopedia limit 90000,1呢?岂不更简洁?
+这样想就错了,试了就知道,结果是:1 row in set (8.88) sec,怎么样,够吓人的吧,让我想起了昨天在4.1中比这还有过之的”高分”.Select * 最好不要随便用,要本着用什么,选什么的原则, Select的字段越多,字段数据量越大,速度就越慢. 上面2种分页方式哪种都比单写这1句强多了,虽然看起来好像查询的次数更多一些,但实际上是以较小的代价换取了高效的性能,是非常值得的.
+
+第1种方案同样可用于MS-SQL,而且可能是最好的.因为靠主键ID来定位起始段总是最快的.
+
+Select Top 100 * From cyclopedia Where ID>=(
+Select Top 90001 Max(ID) From (
+Select ID From cyclopedia Order By ID
+) As tmp
+)
+
+但不管是实现方式是存贮过程还是直接代码中,瓶颈始终在于MS-SQL的TOP总是要返回前N个记录,这种情况在数据量不大时感受不深,但如果成百上千万,效率肯定会低下的.相比之下MySQL的limit就有优势的多,执行:
+Select ID From cyclopedia limit 90000
+Select ID From cyclopedia limit 90000,1
+的结果分别是:
+90000 rows in set (0.36) sec
+1 row in set (0.06) sec
+而MS-SQL只能用Select Top 90000 ID From cyclopedia 执行时间是390ms,执行同样的操作时间也不及MySQL的360ms.
+
+个人测试分析：
+这个例子非常经典，但个人感觉说明不详细，经分析，总结如下（其中，id为主键）：
+主要值得注意的有好几项：
+
+
+第一：
+SELECT * FROM tbl_name LIMIT 1000000,10
+SELECT id FROM tbl_name LIMIT 1000000,10
+第一条SQL没有能使用主键进行索引，而第二条则使用了，经测试，使用主键进行索引反而变慢，前者大约快一倍。
+如果把第二条改为：
+SELECT id FROM tbl_name IGNORE INDEX(primary) LIMIT 1000000,10
+
+速度就一样了，因此，估计是因为多了对索引文件(这里是主键)的相关操作.不使用的话，就直接对主表进行扫描就行。
+
+第二：
+在第一点的基础上，加上ORDER BY，情况就完全不同了：
+SELECT * FROM tbl_name ORDER BY id DESC LIMIT 1000000,10
+SELECT id FROM tbl_name ORDER BY id DESC LIMIT 1000000,10
+由于第二条SQL使用了索引，ORDER BY就能使用该索引，效果明显，前者需要5秒多，后者只要 0.6秒多点
+
+第三：
+这里解释一下引文中的例子：
+Select * From cyclopedia Where ID>=(
+Select Max(ID) From (
+Select ID From cyclopedia Order By ID limit 90000,1
+) As tmp
+) limit 100;
+正如引文所说，该语句可以改写为：
+Select * From cyclopedia Where ID>=(
+Select ID From cyclopedia Order By ID limit 90000,1
+) limit 100;
+好，为什么这里会比直接使用 LIMIT 快呢？
+
+正如前两点说的，第一子查询中使用了ORDER BY,因此只使用 `ID`使用查询结果的字段，才会使用索引，如果这里在`ID`后加多一个不在索引内的字段(如：`ID`,`other_field`)，那么也要5秒多的时间，这就是第一点快的原因。
+
+第二，外层查询这里虽然使用 ‘*’作为要查询的字段，但由于使用了WHERE ID>=n ,因此使用了索引而作出了快速定位。
+
+而单纯的Select * From cyclopedia ORDER BY `ID` DESC LIMIT 90000,1 由于是要查询的字段使用“*”，另外由于ORDER BY子句并不会使用索引，因此就会慢。
+
+如果改定为：Select `ID` From cyclopedia ORDER BY `ID` DESC LIMIT 90000,1就会变快，但奇怪的是强制使用索引子句Select * From cyclopedia FORCE INDEX(PRIMARY) ORDER BY `ID` DESC LIMIT 90000,1居然无效,这样看来，MySQL的内置优先机制的优先级更高。

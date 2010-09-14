@@ -1,0 +1,1 @@
+"insert into stocksale(cardid,pcode,pname,price,pnum) select" +cardid.text+"," +pcode.text+"," +pnum.text+",pname,price,pnum from 表2"
