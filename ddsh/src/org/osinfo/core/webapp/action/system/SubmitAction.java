@@ -230,10 +230,11 @@ public class SubmitAction<T> extends CrudAction{
 	    				}
 	
 	    				sql="update dd_submit set status='1',date='"+submitdate+"',operator='"+operator+"' where id ="+id;
-	    				logger.info("更新提交商品提交"+sql);
+	    				logger.info("更新提交状态为已接收"+sql);
 	    				stmt.executeUpdate(sql);
 	    				sql="select * from dd_inventory  where barcode='"+barcode+"'";
-	    				rs=stmt.executeQuery(sql+sql);
+	    				logger.info("查找库存"+sql);
+	    				rs=stmt.executeQuery(sql);
 	    				List l = DBUtil.populate(rs, DdInventory.class);
 	    				if(l.size()>=1)
 	    				{

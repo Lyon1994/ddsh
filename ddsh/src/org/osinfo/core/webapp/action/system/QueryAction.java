@@ -14,7 +14,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -62,6 +61,8 @@ public class QueryAction<T> extends CrudAction{
 		String name=getParameter("name");
 		String begin=getParameter("begin");
 		String end=getParameter("end");
+		if(userid==null)
+			userid=(String) getSession().getAttribute("userid");
 		getRequest().setAttribute("transaction", transaction);
 		getRequest().setAttribute("userid", userid);
 		getRequest().setAttribute("barcode", barcode);

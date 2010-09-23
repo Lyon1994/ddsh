@@ -31,7 +31,8 @@
 										var barcode=$('#barcode').attr('value');
 										var amount=$('#amount').attr('value');
 										var reason=$('#reason').attr('value');
-										var para='type=03&transaction='+transaction+'&amount='+amount+'&barcode='+barcode+'&reason='+reason+'&t='+new Date().getTime();
+										var discount=$('#discount').attr('value');
+										var para='type=03&transaction='+transaction+'&amount='+amount+'&barcode='+barcode+'&reason='+reason+'&discount='+discount+'&t='+new Date().getTime();
 										
 										$.ajax({
 											 	url: '../system/back!add.zf',
@@ -70,8 +71,8 @@
 								var barcode=$('#barcode').attr('value');
 								var amount=$('#amount').attr('value');
 								var reason=$('#reason').attr('value');
-								var para='type=03&transaction='+transaction+'&amount='+amount+'&barcode='+barcode+'&reason='+reason+'&t='+new Date().getTime();
-								
+								var discount=$('#discount').attr('value');
+								var para='type=03&transaction='+transaction+'&amount='+amount+'&barcode='+barcode+'&reason='+reason+'&discount='+discount+'&t='+new Date().getTime();
 								$.ajax({
 									 	url: '../system/back!add.zf',
 									 	type: 'POST',
@@ -95,7 +96,8 @@
 							var barcode=$('#barcode').attr('value');
 							var amount=$('#amount').attr('value');
 							var reason=$('#reason').attr('value');
-							var para='type=03&transaction='+transaction+'&amount='+amount+'&barcode='+barcode+'&reason='+reason+'&t='+new Date().getTime();
+							var discount=$('#discount').attr('value');
+							var para='type=03&transaction='+transaction+'&amount='+amount+'&barcode='+barcode+'&reason='+reason+'&discount='+discount+'&t='+new Date().getTime();
 							
 							$.ajax({
 								 	url: '../system/back!add.zf',

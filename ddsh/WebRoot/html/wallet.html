@@ -130,7 +130,6 @@
 						error: function(){alert('处理错误！');},
 						success: function(json){
 								 $("#money_").append(json.money);   
-								 $("#sale_").append(json.sale);
 								 $("#chongzhi_").append(json.chongzhi);
 								 $("#tixian_").append(json.tixian);
 						}
@@ -163,7 +162,6 @@
 			<div class=mytable id=tab>
 			<ul>
 			    <li><a href="#">我的钱包余额：￥<span id='money_'></span></a></li>
-			<li>我的累计销售额：￥<span id='sale_'></span></li>
 			<li><a href="#">我的累计提现额：￥<span id='tixian_'></span></a></li>
 			<li>我的累计充值额：￥<span id='chongzhi_'></span></li>
 			</ul></div>

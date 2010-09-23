@@ -141,7 +141,7 @@
 				var name=$('#name').attr('value');
 				var para='userid='+userid+'&barcode='+barcode+'&name='+name+'&t='+new Date().getTime();
 
-				window.open('pquery!export.zf?'+para);
+				window.open('pquery!export.zf?'+encodeURI(para));
 			}
 			$(document).ready(
 				function(){

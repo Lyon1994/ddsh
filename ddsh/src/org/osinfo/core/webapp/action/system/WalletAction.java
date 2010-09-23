@@ -208,24 +208,15 @@ public class WalletAction<T> extends CrudAction{
 		if(logger.isDebugEnabled())
 			logger.debug("加载装入页面...");
 		float money=0;//余额
-		float sale=0;//总销售额
+
 		float tixian=0;//总提现额
 		float chongzhi=0;//总充值额
-		
-		String submitdate=getCurrentTime();
+
 		String operator=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
 		Map m=new HashMap();
 		String sql="";
-		if(t.equals("2"))
-			sql="select sum(p.price*s.discount*s.amount) as sum from dd_sales s left join dd_product p on s.barcode=p.barcode where p.userid='"+operator+"' order by p.userid";
-		else
-			sql="select sum(p.price*s.discount*s.amount) as sum from dd_sales s left join dd_product p on s.barcode=p.barcode order by p.userid";
-	  
-		sale=CommonDAO.sum(sql);
 
-		m.put("sale", FloatUtil.round(sale, 2));//总销售额
-		
 		if(t.equals("2"))
 			sql="select sum(w.money) as sum from dd_transaction w where w.type='01'  and status='1' and (w.userid='"+operator+"' or w.user='user2') ";
 		else
@@ -247,16 +238,11 @@ public class WalletAction<T> extends CrudAction{
 		money=CommonDAO.sum(sql);
 		m.put("money", FloatUtil.round(money, 2));//余额
 		
-		if(t.equals("2"))
-			sql="select w.balance from dd_wallet w where w.userid='"+operator+"' ";
-
-		
-		
 	    try
 	    {
 	    	String json = JsonUtil.map2json(m);
 	    	renderJson(json.toString());
-		    System.out.println(json.toString());
+		    //System.out.println(json.toString());
 	    }catch(Exception e)
 	    {
 	    	e.printStackTrace();

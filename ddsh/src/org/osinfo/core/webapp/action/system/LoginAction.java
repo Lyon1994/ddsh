@@ -14,17 +14,14 @@ import java.util.List;
 import javax.servlet.http.Cookie;
 
 import org.apache.log4j.Logger;
-import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.osinfo.core.webapp.Constants;
 import org.osinfo.core.webapp.action.BaseAction;
 import org.osinfo.core.webapp.dao.CommonDAO;
-import org.osinfo.core.webapp.model.DdUser;
 import org.osinfo.core.webapp.model.custom.User;
 import org.osinfo.core.webapp.util.SecurityUtil;
-import org.osinfo.core.webapp.util.StringUtil;
 @Results({
 	 @Result(name="login",location = "/WEB-INF/result/system/login.ftl"),
 	 @Result(name="workbench",location = "/WEB-INF/result/system/workbench.ftl"),
@@ -158,7 +155,6 @@ public class LoginAction extends BaseAction{
 		logger.info("跳转到工作台...");
 		List online = (List)getServletContext().getAttribute("online");
 		getSession().setAttribute("onlines",online.size());
-		System.out.println("onlines="+online.size());
 		
 		if(getSession().getAttribute("id")==null)
 			return "login";

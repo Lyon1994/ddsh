@@ -61,7 +61,7 @@
 				var transaction=$('#transaction').attr('value');
 				var para='transaction='+transaction+'&userid='+userid+'&barcode='+barcode+'&name='+name+'&begin='+begin+'&end='+end+'&t='+new Date().getTime();
 
-				window.open('query!export.zf?'+para);
+				window.open('query!export.zf?'+encodeURI(para));
 			}
 			$(document).ready(
 				function(){
