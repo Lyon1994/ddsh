@@ -38,7 +38,7 @@
 							var barcode=$('#barcode').attr('value');
 							var discount=$('#discount').attr('value');
 							var para='id='+id+'&amount='+amount+'&reason='+reason+'&barcode='+barcode+'&discount='+discount+'&t='+new Date().getTime();
-							
+							alert(para);
 							$.ajax({
 								 	url: '../system/submit!back.zf',
 								 	type: 'POST',

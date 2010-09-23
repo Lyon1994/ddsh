@@ -20,33 +20,45 @@ package org.osinfo.core.webapp.model.custom;
  */
 public class Total  implements java.io.Serializable{
 	private Integer id;
+	private String year;
+	private String userid;
 	public Integer getId() {
 		return id;
 	}
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	private String userid;
-	private String month;
-	private double amount;
+	public String getYear() {
+		return year;
+	}
+	public void setYear(String year) {
+		this.year = year;
+	}
 	public String getUserid() {
 		return userid;
 	}
 	public void setUserid(String userid) {
 		this.userid = userid;
 	}
-	public String getMonth() {
-		return month;
+	public double getSum1() {
+		return sum1;
 	}
-	public void setMonth(String month) {
-		this.month = month;
+	public void setSum1(double sum1) {
+		this.sum1 = sum1;
 	}
-	public double getAmount() {
-		return amount;
+	public double getSum2() {
+		return sum2;
 	}
-	public void setAmount(double amount) {
-		this.amount = amount;
+	public void setSum2(double sum2) {
+		this.sum2 = sum2;
 	}
-
-
+	public double getSum3() {
+		return sum3;
+	}
+	public void setSum3(double sum3) {
+		this.sum3 = sum3;
+	}
+	private double sum1;
+	private double sum2;
+	private double sum3;
 }

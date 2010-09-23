@@ -143,7 +143,7 @@
 				var name=$('#name').attr('value');
 				var para='userid='+userid+'&barcode='+barcode+'&name='+name+'&t='+new Date().getTime();
 
-				window.open('iquery!export.zf?'+para);
+				window.open('iquery!export.zf?'+encodeURI(para));
 			}
 			$(document).ready(
 				function(){

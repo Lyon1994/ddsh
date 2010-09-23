@@ -24,15 +24,15 @@ import org.osinfo.core.webapp.model.custom.Total;
 import org.osinfo.core.webapp.util.ExcelUtil;
 import org.osinfo.core.webapp.util.PageUtil;
 @Results({
-	 @Result(name="list",location = "/WEB-INF/result/system/total/list.ftl")
+	 @Result(name="list",location = "/WEB-INF/result/system/total4/list.ftl")
 })
 /**
  * @Author Lucifer.Zhou 4:29:47 PM Jan 6, 2010
  * @Description
  * 统计记录
  */
-public class TotalAction<T> extends CrudAction{
-	private static Logger logger = Logger.getLogger ( TotalAction.class.getName () ) ;
+public class Total4Action<T> extends CrudAction{
+	private static Logger logger = Logger.getLogger ( Total4Action.class.getName () ) ;
 	/**
 	 * @Author Lucifer.Zhou 4:30:01 PM Jan 6, 2010
 	 * long LoginAction.java
@@ -76,16 +76,16 @@ public class TotalAction<T> extends CrudAction{
 			name2 = URLEncoder.encode(name, "UTF-8");//IE浏览器 终极解决文件名乱码
 
 		getResponse().setHeader("Content-disposition","attachment;filename=" +name2+"-"+getCurrentTime() + ".xls");
-		String[] headers = { "编号","年份","设计师","销售额","退货额","净利润"};
+		String[] headers = { "编号","月份","设计师","销售额","退货额","净利润"};
 		String userid=(String) getSession().getAttribute("userid");
 		String t=(String) getSession().getAttribute("type");
 		String sql;
 		if(t.equals("2"))
 		{
-			sql="select id,year,userid,sum1, sum2,(sum1-sum2) as sum3 from(SELECT s.id,DATE_FORMAT(S.DATE, '%Y') AS year,P.userid,IFNULL(ROUND(SUM(S.DISCOUNT * P.PRICE * S.AMOUNT), 2),0) AS sum1,IFNULL((select ROUND(SUM(b.DISCOUNT * P1.PRICE * b.AMOUNT), 2) from dd_back AS b  LEFT OUTER JOIN dd_product AS P1 ON b.BARCODE = P1.BARCODE where DATE_FORMAT(b.DATE, '%Y')=year and b.type='03' and p1.userid=P.userid),0) as sum2 FROM dd_sales AS S LEFT OUTER JOIN dd_product AS P ON S.BARCODE = P.BARCODE  GROUP BY DATE_FORMAT(S.DATE, '%Y'),userid) as v where userid='"+userid+"'";
+			sql="select id,year,userid,sum1, sum2,(sum1-sum2) as sum3 from(SELECT s.id,DATE_FORMAT(S.DATE, '%Y-%m') AS year,P.userid,IFNULL(ROUND(SUM(S.DISCOUNT * P.PRICE * S.AMOUNT), 2),0) AS sum1,IFNULL((select ROUND(SUM(b.DISCOUNT * P1.PRICE * b.AMOUNT), 2) from dd_back AS b  LEFT OUTER JOIN dd_product AS P1 ON b.BARCODE = P1.BARCODE where DATE_FORMAT(b.DATE, '%Y-%m')=year and b.type='03' and p1.userid=P.userid),0) as sum2 FROM dd_sales AS S LEFT OUTER JOIN dd_product AS P ON S.BARCODE = P.BARCODE  GROUP BY DATE_FORMAT(S.DATE, '%Y-%m'),userid) as v where userid='"+userid+"'";
 		}else
 		{
-			sql="select id,year,userid,sum1, sum2,(sum1-sum2) as sum3 from(SELECT s.id,DATE_FORMAT(S.DATE, '%Y') AS year,P.userid,IFNULL(ROUND(SUM(S.DISCOUNT * P.PRICE * S.AMOUNT), 2),0) AS sum1,IFNULL((select ROUND(SUM(b.DISCOUNT * P1.PRICE * b.AMOUNT), 2) from dd_back AS b  LEFT OUTER JOIN dd_product AS P1 ON b.BARCODE = P1.BARCODE where DATE_FORMAT(b.DATE, '%Y')=year and b.type='03' and p1.userid=P.userid),0) as sum2 FROM dd_sales AS S LEFT OUTER JOIN dd_product AS P ON S.BARCODE = P.BARCODE  GROUP BY DATE_FORMAT(S.DATE, '%Y'),userid) as v";
+			sql="select id,year,userid,sum1, sum2,(sum1-sum2) as sum3 from(SELECT s.id,DATE_FORMAT(S.DATE, '%Y-%m') AS year,P.userid,IFNULL(ROUND(SUM(S.DISCOUNT * P.PRICE * S.AMOUNT), 2),0) AS sum1,IFNULL((select ROUND(SUM(b.DISCOUNT * P1.PRICE * b.AMOUNT), 2) from dd_back AS b  LEFT OUTER JOIN dd_product AS P1 ON b.BARCODE = P1.BARCODE where DATE_FORMAT(b.DATE, '%Y-%m')=year and b.type='03' and p1.userid=P.userid),0) as sum2 FROM dd_sales AS S LEFT OUTER JOIN dd_product AS P ON S.BARCODE = P.BARCODE  GROUP BY DATE_FORMAT(S.DATE, '%Y-%m'),userid) as v";
 		}
 		PageUtil p=CommonDAO.findByMultiTableSQLQuery(sql,Total.class);
 		Collection<T> l = (Collection<T>) p.getResult();
@@ -109,10 +109,10 @@ public class TotalAction<T> extends CrudAction{
 		String sql;
 		if(t.equals("2"))
 		{
-			sql="select id,year,userid,sum1, sum2,(sum1-sum2) as sum3 from(SELECT s.id,DATE_FORMAT(S.DATE, '%Y') AS year,P.userid,IFNULL(ROUND(SUM(S.DISCOUNT * P.PRICE * S.AMOUNT), 2),0) AS sum1,IFNULL((select ROUND(SUM(b.DISCOUNT * P1.PRICE * b.AMOUNT), 2) from dd_back AS b  LEFT OUTER JOIN dd_product AS P1 ON b.BARCODE = P1.BARCODE where DATE_FORMAT(b.DATE, '%Y')=year and b.type='03' and p1.userid=P.userid),0) as sum2 FROM dd_sales AS S LEFT OUTER JOIN dd_product AS P ON S.BARCODE = P.BARCODE  GROUP BY DATE_FORMAT(S.DATE, '%Y'),userid) as v where userid='"+userid+"'";
+			sql="select id,year,userid,sum1, sum2,(sum1-sum2) as sum3 from(SELECT s.id,DATE_FORMAT(S.DATE, '%Y-%m') AS year,P.userid,IFNULL(ROUND(SUM(S.DISCOUNT * P.PRICE * S.AMOUNT), 2),0) AS sum1,IFNULL((select ROUND(SUM(b.DISCOUNT * P1.PRICE * b.AMOUNT), 2) from dd_back AS b  LEFT OUTER JOIN dd_product AS P1 ON b.BARCODE = P1.BARCODE where DATE_FORMAT(b.DATE, '%Y-%m')=year and b.type='03' and p1.userid=P.userid),0) as sum2 FROM dd_sales AS S LEFT OUTER JOIN dd_product AS P ON S.BARCODE = P.BARCODE  GROUP BY DATE_FORMAT(S.DATE, '%Y-%m'),userid) as v where userid='"+userid+"'";
 		}else
 		{
-			sql="select id,year,userid,sum1, sum2,(sum1-sum2) as sum3 from(SELECT s.id,DATE_FORMAT(S.DATE, '%Y') AS year,P.userid,IFNULL(ROUND(SUM(S.DISCOUNT * P.PRICE * S.AMOUNT), 2),0) AS sum1,IFNULL((select ROUND(SUM(b.DISCOUNT * P1.PRICE * b.AMOUNT), 2) from dd_back AS b  LEFT OUTER JOIN dd_product AS P1 ON b.BARCODE = P1.BARCODE where DATE_FORMAT(b.DATE, '%Y')=year and b.type='03' and p1.userid=P.userid),0) as sum2 FROM dd_sales AS S LEFT OUTER JOIN dd_product AS P ON S.BARCODE = P.BARCODE  GROUP BY DATE_FORMAT(S.DATE, '%Y'),userid) as v";
+			sql="select id,year,userid,sum1, sum2,(sum1-sum2) as sum3 from(SELECT s.id,DATE_FORMAT(S.DATE, '%Y-%m') AS year,P.userid,IFNULL(ROUND(SUM(S.DISCOUNT * P.PRICE * S.AMOUNT), 2),0) AS sum1,IFNULL((select ROUND(SUM(b.DISCOUNT * P1.PRICE * b.AMOUNT), 2) from dd_back AS b  LEFT OUTER JOIN dd_product AS P1 ON b.BARCODE = P1.BARCODE where DATE_FORMAT(b.DATE, '%Y-%m')=year and b.type='03' and p1.userid=P.userid),0) as sum2 FROM dd_sales AS S LEFT OUTER JOIN dd_product AS P ON S.BARCODE = P.BARCODE  GROUP BY DATE_FORMAT(S.DATE, '%Y-%m'),userid) as v";
 		}
 		PageUtil p=CommonDAO.findPageByMultiTableSQLQuery(sql,start,end,perpage,Total.class);
 		
@@ -137,10 +137,10 @@ public class TotalAction<T> extends CrudAction{
 		String sql;
 		if(t.equals("2"))
 		{
-			sql="SELECT s.id FROM dd_sales AS S LEFT OUTER JOIN dd_product AS P ON S.BARCODE = P.BARCODE  where userid='"+userid+"' GROUP BY DATE_FORMAT(s.date,'%Y'),userid";
+			sql="SELECT s.id FROM dd_sales AS S LEFT OUTER JOIN dd_product AS P ON S.BARCODE = P.BARCODE  where userid='"+userid+"' GROUP BY DATE_FORMAT(s.date,'%Y-%m'),userid";
 		}else
 		{
-			sql="SELECT s.id FROM dd_sales AS S LEFT OUTER JOIN dd_product AS P ON S.BARCODE = P.BARCODE  GROUP BY DATE_FORMAT(s.date,'%Y'),userid";
+			sql="SELECT s.id FROM dd_sales AS S LEFT OUTER JOIN dd_product AS P ON S.BARCODE = P.BARCODE  GROUP BY DATE_FORMAT(s.date,'%Y-%m'),userid";
 		}
 
 		int count=CommonDAO.count(sql);

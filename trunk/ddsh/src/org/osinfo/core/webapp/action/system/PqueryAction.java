@@ -8,6 +8,7 @@
  */
 package org.osinfo.core.webapp.action.system;
 
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.util.Collection;
@@ -98,7 +99,13 @@ public class PqueryAction<T> extends CrudAction{
 		String[] headers = { "序号","条形码", "名称", "单价", "类型", "状态", "图片","设计师", "规格","材料","尺寸","产地","备注","提交日期","操作者","验证日期"};
 		String userid=getParameter("userid");
 		String barcode=getParameter("barcode");
-		String name_=org.osinfo.core.webapp.util.StringUtil.convertUTF8(getParameter("name"));
+
+		String name_=URLDecoder.decode(org.osinfo.core.webapp.util.StringUtil.convertUTF8(getParameter("name")));
+		System.out.println(name_);
+
+		String name5=org.osinfo.core.webapp.util.StringUtil.convertUTF8(getParameter("name"));
+		System.out.println(name5);
+		
 		StringBuffer sql=new StringBuffer();
 
 			sql.append("select * from dd_product p where 1=1 ");

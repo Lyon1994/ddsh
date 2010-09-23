@@ -136,7 +136,7 @@ public class WorkbenchAction extends BaseAction {
 			m.put("退回记录", "system/back!list.zf");
 			//m.put("当前在售", "system/sell!list.zf");
 			//m.put("下架记录", "system/down!list.zf");
-			//m.put("售货分析", "html/sale_query.html");
+			m.put("售货分析", "html/sale_q.html");
 			//m.put("退货分析", "html/rsale_query.html");
 			m.put("电子钱包", "html/wallet.html");
 			m.put("交易待批", "system/transa!list2.zf");

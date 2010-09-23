@@ -2,17 +2,8 @@
 <#include "/include/header.ftl" encoding="utf-8" parse=true>
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <!-- HTTP 1.1 -->
-        <meta http-equiv="Cache-Control" content="no-store"/>
-        <!-- HTTP 1.0 -->
-        <meta http-equiv="Pragma" content="no-cache"/>
-        <!-- Prevents caching at the Proxy Server -->
-        <meta http-equiv="Expires" content="0"/>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-
-    	<title>设计师每年统计分析</title>
-		<link href="${css}/mainstyle.css" rel="stylesheet" type="text/css">
-		<script language="javascript" src="${jquery}/jquery-1.4.2.min.js"></script>
+    	<title>月报</title>
+		<#include "/include/meta.ftl" encoding="utf-8" parse=true>
 		<script language="javascript" src="${jquery_lib}/jquery.cookie.min.js"></script>
     	<script language="javascript" src="${jquery_jpage}/jquery.jpage.js"></script>
 
@@ -23,23 +14,23 @@
 
 			function load(param)
 			{
-				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th>年份</th><th>设计师</th><th>销售额</th><th>退货额</th><th>净销售额</th></tr></thead><tbody>";
+				var b="<table class='maintab_content_table' width='100%'><thead><tr class='maintab_content_table_title'><th>月份</th><th>销售额</th><th>退货额</th><th>净销售额</th></tr></thead><tbody>";
 				var a="</tbody></table>";
 				$.ajax({
-					 	url: 'total!count.zf?type=0&t='+new Date().getTime(),
+					 	url: 'total3!count.zf?type=0&t='+new Date().getTime(),
 					 	type: 'POST',
 					 	dataType: 'json',
 					 	error: function(){alert('error');},
 					 	success: function(json){
 							//蓝色主题
-							$('#list').jpage({dataBefore:b,dataAfter:a,dataStore: null,themeName:'blue',totalRecord:json[0],proxyUrl:'total!result.zf?t='+new Date().getTime()+'&type=0',openCookies:false,
+							$('#list').jpage({dataBefore:b,dataAfter:a,dataStore: null,themeName:'blue',totalRecord:json[0],proxyUrl:'total3!result.zf?t='+new Date().getTime()+'&type=0',openCookies:false,
 							showMode:'full',ajaxParam:param}); 
 					 	}
 					}); 
 			}
 			function exports()
 			{
-				window.open('total!export.zf?type=0&t='+new Date().getTime());
+				window.open('total3!export.zf?type=0&t='+new Date().getTime());
 			}
 			$(document).ready(
 				function(){
@@ -60,7 +51,7 @@
 	<table border="0" width="100%" cellspacing="0" cellpadding=" height="25">
 	<tr class="tree_title_txt">
 	<td nowrap width="100%" class="tree_title_txt" valign="middle" id="cwCellTopTitTxt">
-	设计师年销售统计列表</td>
+	月报</td>
 	</tr>
 	</table>
 	<!--标题结束-->
